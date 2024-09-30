@@ -124,7 +124,7 @@ const DashboardLayout = () => {
               !open && "scale-0"
             }`}
           >
-            AgriPeace
+            EcoTech
           </h1>
         </div>
 

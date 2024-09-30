@@ -13,7 +13,7 @@ app.use(express.json());
 // Connect to MongoDB using Mongoose
 mongoose
   .connect(
-    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@agripeace-server.sqb4jsm.mongodb.net/agripeace?retryWrites=true&w=majority`,
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.aetnw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`,
     {
       connectTimeoutMS: 30000, // Adjust timeout as needed
     }
@@ -172,5 +172,5 @@ app.get("/", (req, res) => {
 
 // Start server
 app.listen(port, () => {
-  console.log(`AgriPeace Server listening on port ${port}`);
+  console.log(`EcoTech Server listening on port ${port}`);
 });

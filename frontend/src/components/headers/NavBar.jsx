@@ -131,10 +131,10 @@ const NavBar = () => {
           >
             <div>
               <h1 className="text-2xl font-bold inline-flex gap-3 items-center">
-                AgriPeace <img src="/logo.png" alt="" className="w-8 h-8" />
+                EcoTech <img src="/logo.png" alt="" className="w-8 h-8" />
               </h1>
               <p className="font-bold text-[13px] tracking-[6px]">
-                Farm With Ease
+              Clean. Green. Efficient.
               </p>
             </div>
           </div>
