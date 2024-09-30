@@ -12,28 +12,28 @@ const Hero = () => {
       <div className="min-h-screen flex justify-start pl-11 items-center text-white bg-black bg-opacity-50">
         <div>
           <div className="space-y-4">
-            <p className="md:text-4xl text-2xl">Cultivating a</p>
+            <p className="md:text-4xl text-2xl">Managing Waste for a</p>
             <h1 className="md:text-7xl text-4xl font-bold">
-              Brighter Future Together
+              Cleaner, Greener Tomorrow
             </h1>
 
             <div className="md:w-1/2">
               <p>
-                Empowering farmers with innovative solutions and expert
-                guidance. From soil testing to sustainable farming practices, we
-                provide comprehensive services to help you achieve success in
-                the field.
+                Empowering communities with smart waste management solutions.
+                From efficient collection to recycling, we provide innovative
+                services to help reduce environmental impact and promote
+                sustainability.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-5">
-              <Link to={'/login'}>
-              <button className="px-7 py-3 rounded-lg bg-secondary font-bold uppercase hover:scale-105 duration-300">
-                Join Today
-              </button>
+              <Link to={"/login"}>
+                <button className="px-7 py-3 rounded-lg bg-secondary font-bold uppercase hover:scale-105 duration-300">
+                  Get Involved
+                </button>
               </Link>
-              <NavLink to={'/services'}>
+              <NavLink to={"/services"}>
                 <button className="px-7 py-3 rounded-lg border hover:bg-secondary font-bold uppercase">
-                  Explore Our Services
+                  Explore Our Solutions
                 </button>
               </NavLink>
             </div>

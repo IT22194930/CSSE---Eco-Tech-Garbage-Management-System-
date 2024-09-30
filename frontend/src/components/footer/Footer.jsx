@@ -1,4 +1,5 @@
 import React from "react";
+import logo from "../../assets/logo.png"
 import { NavLink } from "react-router-dom";
 
 const Footer = () => {
@@ -8,7 +9,7 @@ const Footer = () => {
         <div className="lg:flex lg:items-start lg:gap-8">
           <div className="">
             <img
-              src={"./logo.png"}
+              src={logo}
               alt=""
               className="w-screen px-20 h-auto md:hidden lg:hidden"
             />

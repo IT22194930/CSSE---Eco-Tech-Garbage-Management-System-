@@ -4,6 +4,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { FaBars, FaMoon } from "react-icons/fa"; // Import the sun and moon icons
 import { LuSun } from "react-icons/lu";
 import farmerImg from "../../assets/farmer.jpg";
+import logo from "../../assets/logo.png";
 import { motion } from "framer-motion";
 import { AuthContext } from "../../utilities/providers/AuthProvider";
 import Swal from "sweetalert2";
@@ -131,7 +132,7 @@ const NavBar = () => {
           >
             <div>
               <h1 className="text-2xl font-bold inline-flex gap-3 items-center">
-                EcoTech <img src="/logo.png" alt="" className="w-8 h-8" />
+                EcoTech <img src={logo} alt="" className="w-10 h-10" />
               </h1>
               <p className="font-bold text-[13px] tracking-[6px]">
               Clean. Green. Efficient.

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import useUser from "../hooks/useUser";
-import logo from "/logo.png";
+import logo from "../assets/logo.png";
 import { BiHomeAlt, BiLogInCircle } from "react-icons/bi";
 import { FaUsers, FaUserAlt } from "react-icons/fa";
 import { GiFertilizerBag, GiField } from "react-icons/gi";

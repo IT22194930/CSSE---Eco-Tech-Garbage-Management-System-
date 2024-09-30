@@ -55,59 +55,58 @@ const ContactUs = () => {
           </div>
 
           <div className="w-full lg:-mt-96 lg:w-2/6 px-8 py-12 ml-auto bg-blue-900 rounded-2xl">
-            <div className="flex flex-col text-white">
-              <h1 className="font-bold uppercase text-4xl my-4">
-                Drop in our office
-              </h1>
-              <p className="text-gray-400">
-                Welcome to AgriPeace! We're dedicated to supporting sustainable
-                agriculture and empowering farmers with innovative solutions.
-                Visit our office or contact us for any inquiries.
-              </p>
+  <div className="flex flex-col text-white">
+    <h1 className="font-bold uppercase text-4xl my-4">
+      Visit Our Office
+    </h1>
+    <p className="text-gray-400">
+      Welcome to EcoTech! We are committed to sustainable waste management and creating cleaner, greener communities. Feel free to visit our office or contact us for any inquiries.
+    </p>
 
-              <div className="flex my-4 w-2/3 lg:w-1/2">
-                <div className="flex flex-col">
-                  <i className="fas fa-map-marker-alt pt-2 pr-2" />
-                </div>
-                <div className="flex flex-col">
-                  <h2 className="text-2xl">Main Office</h2>
-                  <p className="text-gray-400">
-                    New Kandy Road, Malabe North, Western
-                  </p>
-                </div>
-              </div>
+    <div className="flex my-4 w-2/3 lg:w-1/2">
+      <div className="flex flex-col">
+        <i className="fas fa-map-marker-alt pt-2 pr-2" />
+      </div>
+      <div className="flex flex-col">
+        <h2 className="text-2xl">Main Office</h2>
+        <p className="text-gray-400">
+          45 Eco Lane, Green Town, Western
+        </p>
+      </div>
+    </div>
 
-              <div className="flex my-4 w-2/3 lg:w-1/2">
-                <div className="flex flex-col">
-                  <i className="fas fa-phone-alt pt-2 pr-2" />
-                </div>
-                <div className="flex flex-col">
-                  <h2 className="text-2xl">Call Us</h2>
-                  <p className="text-gray-400">Tel: +94 117 544 801</p>
-                  <p className="text-gray-400">Fax: +94 11 241 3901</p>
-                </div>
-              </div>
+    <div className="flex my-4 w-2/3 lg:w-1/2">
+      <div className="flex flex-col">
+        <i className="fas fa-phone-alt pt-2 pr-2" />
+      </div>
+      <div className="flex flex-col">
+        <h2 className="text-2xl">Contact Us</h2>
+        <p className="text-gray-400">Tel: +94 117 888 999</p>
+        <p className="text-gray-400">Fax: +94 11 555 2222</p>
+      </div>
+    </div>
 
-              <div className="flex my-4 w-2/3 lg:w-1/2">
-                <a
-                  href="#"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="rounded-full bg-white h-8 w-8 inline-flex items-center justify-center mx-1"
-                >
-                  <FaFacebookF className="text-blue-900" />
-                </a>
-                <a
-                  href="#"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="rounded-full bg-white h-8 w-8 inline-flex items-center justify-center mx-1"
-                >
-                  <FaLinkedinIn className="text-blue-900" />
-                </a>
-              </div>
-            </div>
-          </div>
+    <div className="flex my-4 w-2/3 lg:w-1/2">
+      <a
+        href="#"
+        target="_blank"
+        rel="noreferrer"
+        className="rounded-full bg-white h-8 w-8 inline-flex items-center justify-center mx-1"
+      >
+        <FaFacebookF className="text-blue-900" />
+      </a>
+      <a
+        href="#"
+        target="_blank"
+        rel="noreferrer"
+        className="rounded-full bg-white h-8 w-8 inline-flex items-center justify-center mx-1"
+      >
+        <FaLinkedinIn className="text-blue-900" />
+      </a>
+    </div>
+  </div>
+</div>
+
         </div>
       </div>
     </>
