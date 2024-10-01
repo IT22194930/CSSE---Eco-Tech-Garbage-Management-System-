@@ -13,7 +13,7 @@ import AdminHome from "../pages/Dashboard/Admin/AdminHome";
 import ManageUsers from "../pages/Dashboard/Admin/ManageUsers";
 import UpdateUser from "../pages/Dashboard/Admin/UpdateUser";
 import PlantManagement from "../pages/Dashboard/Admin/PlantManagement";
-import CostCalculator from "../pages/CostCalculator/CostCalculator";
+import GarbageRequest from "../pages/CostCalculator/GarbageRequest";
 import MyCrops from "../pages/Dashboard/Farmer/MyCrops/MyCrops";
 import FertilizerManagementDashboard from "../pages/Dashboard/Admin/FertilizerManagementDashboard";
 import Location from "../pages/Dashboard/Farmer/LocationManagement/Location";
@@ -53,8 +53,8 @@ export const router = createBrowserRouter([
         element: <Register />,
       },
       {
-        path: "/costCalculator",
-        element: <CostCalculator />,
+        path: "/garbageRequest",
+        element: <GarbageRequest />,
       },
     ],
   },
