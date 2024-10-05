@@ -9,7 +9,10 @@ const {
   deleteGarbageRequest,
   getRejectedGarbageRequests,
   getAcceptedGarbageRequests,
-  getPendingGarbageRequests
+  getPendingGarbageRequests,
+  getUserPendingGarbageRequests,
+  getUserAcceptedGarbageRequests,
+  getUserRejectedGarbageRequests,
 } = require("../../controllers/GarbageRequests/garbageRequestController");
 
 // Route to create a new garbage request
@@ -29,6 +32,15 @@ router.get("/accepted", getAcceptedGarbageRequests);
 
 // Route to get all declined garbage requests
 router.get("/rejected", getRejectedGarbageRequests);
+
+// Route to get a single user's pending garbage requests
+router.get("/user/pending", getUserPendingGarbageRequests);
+
+// Route to get a single user's accepted garbage requests
+router.get("/user/accepted", getUserAcceptedGarbageRequests);
+
+// Route to get a single user's declined garbage requests
+router.get("/user/rejected", getUserRejectedGarbageRequests);
 
 // Route to get a single garbage request by ID
 router.get("/:id", getGarbageRequestById); // New route to get by ID

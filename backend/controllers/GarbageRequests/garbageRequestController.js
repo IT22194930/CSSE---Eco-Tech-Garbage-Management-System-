@@ -116,3 +116,63 @@ exports.getRejectedGarbageRequests = async (req, res) => {
     res.status(500).json({ error: true, message: error.message });
   }
 };
+
+// Get a single user's pending garbage requests
+exports.getUserPendingGarbageRequests = async (req, res) => {
+   try {
+     const { userId } = req.query; // Retrieve userId from query parameters
+     if (!userId) {
+       return res.status(400).json({ message: "User ID is required" });
+     }
+     const pendingRequests = await GarbageRequest.find({
+       userId,
+       status: "Pending",
+     });
+     if (pendingRequests.length === 0) {
+       return res.status(404).json({ message: "No pending requests found for this user." });
+     }
+     res.status(200).json(pendingRequests);
+   } catch (error) {
+     res.status(500).json({ error: true, message: error.message });
+   }
+ };
+ 
+ // Get a single user's accepted garbage requests
+ exports.getUserAcceptedGarbageRequests = async (req, res) => {
+   try {
+     const { userId } = req.query; // Retrieve userId from query parameters
+     if (!userId) {
+       return res.status(400).json({ message: "User ID is required" });
+     }
+     const acceptedRequests = await GarbageRequest.find({
+       userId,
+       status: "Accepted",
+     });
+     if (acceptedRequests.length === 0) {
+       return res.status(404).json({ message: "No accepted requests found for this user." });
+     }
+     res.status(200).json(acceptedRequests);
+   } catch (error) {
+     res.status(500).json({ error: true, message: error.message });
+   }
+ };
+ 
+ // Get a single user's declined garbage requests
+ exports.getUserRejectedGarbageRequests = async (req, res) => {
+   try {
+     const { userId } = req.query; // Retrieve userId from query parameters
+     if (!userId) {
+       return res.status(400).json({ message: "User ID is required" });
+     }
+     const rejectedRequests = await GarbageRequest.find({
+       userId,
+       status: "Rejected",
+     });
+     if (rejectedRequests.length === 0) {
+       return res.status(404).json({ message: "No declined requests found for this user." });
+     }
+     res.status(200).json(rejectedRequests);
+   } catch (error) {
+     res.status(500).json({ error: true, message: error.message });
+   }
+ };
