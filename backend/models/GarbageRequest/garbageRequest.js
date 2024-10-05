@@ -23,7 +23,7 @@ const garbageRequestSchema = new mongoose.Schema({
   },
   addressLine2: {
     type: String,
-    required: false, // Optional field
+    required: false,
   },
   city: {
     type: String,
@@ -46,7 +46,7 @@ const garbageRequestSchema = new mongoose.Schema({
     required: true,
   },
   time: {
-    type: String, // Time of request (e.g., "14:00" for 2 PM)
+    type: String, // Time of request (or when the garbage will be picked up)
     required: true,
   },
   status: {

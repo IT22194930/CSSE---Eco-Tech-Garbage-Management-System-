@@ -87,11 +87,21 @@ exports.deleteGarbageRequest = async (req, res) => {
   }
 };
 
+// Get all pending garbage requests
+exports.getPendingGarbageRequests = async (req, res) => {
+   try {
+     const pendingRequests = await GarbageRequest.find({ status: "Pending" });
+     res.status(200).json(pendingRequests);
+   } catch (error) {
+     res.status(500).json({ error: true, message: error.message });
+   }
+ };
+
 // Get all accepted garbage requests
 exports.getAcceptedGarbageRequests = async (req, res) => {
   try {
-    const declinedRequests = await GarbageRequest.find({ status: "Accepted" });
-    res.status(200).json(declinedRequests);
+    const acceptedRequests = await GarbageRequest.find({ status: "Accepted" });
+    res.status(200).json(acceptedRequests);
   } catch (error) {
     res.status(500).json({ error: true, message: error.message });
   }
