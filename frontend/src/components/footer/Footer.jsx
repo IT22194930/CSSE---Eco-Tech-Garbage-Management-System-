@@ -23,8 +23,7 @@ const Footer = () => {
                 </h2>
 
                 <p className="mt-4 text-gray-500 dark:text-gray-400">
-                  Stay updated with the latest agricultural trends, innovations,
-                  and expert insights for your farming success.
+                  Stay updated with the latest waste management trends, innovations, and expert insights for a cleaner and more sustainable environment.
                 </p>
               </div>
             </div>
