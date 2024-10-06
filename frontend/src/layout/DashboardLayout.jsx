@@ -7,7 +7,7 @@ import { BiHomeAlt, BiLogInCircle } from "react-icons/bi";
 import { FaUsers, FaUserAlt } from "react-icons/fa";
 import { GiFertilizerBag, GiField } from "react-icons/gi";
 import { MdPayments } from "react-icons/md";
-import { RiPlantFill } from "react-icons/ri";
+import { BsQrCodeScan } from "react-icons/bs";
 import { RiDashboardFill } from "react-icons/ri";
 import Swal from "sweetalert2";
 import Scroll from "../hooks/useScroll";
@@ -31,8 +31,8 @@ const adminNavItems = [
   },
   {
     to: "/dashboard/manage-plant",
-    icon: <RiPlantFill className="text-2xl" />,
-    label: "Plant Mangement",
+    icon: <BsQrCodeScan className="text-2xl" />,
+    label: "QR Code Scanner",
   },
 ];
 
@@ -49,7 +49,7 @@ const farmerNavItems = [
   },
   {
     to: "/dashboard/user-plant",
-    icon: <RiPlantFill className="text-2xl" />,
+    icon: <BsQrCodeScan className="text-2xl" />,
     label: "Plants",
   },
   {
