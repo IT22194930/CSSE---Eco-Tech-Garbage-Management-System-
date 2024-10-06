@@ -13,7 +13,6 @@ import AdminHome from "../pages/Dashboard/Admin/AdminHome";
 import ManageUsers from "../pages/Dashboard/Admin/ManageUsers";
 import UpdateUser from "../pages/Dashboard/Admin/UpdateUser";
 import PlantManagement from "../pages/Dashboard/Admin/PlantManagement";
-import GarbageRequest from "../pages/CostCalculator/GarbageRequest";
 import MyCrops from "../pages/Dashboard/Farmer/MyCrops/MyCrops";
 import FertilizerManagementDashboard from "../pages/Dashboard/Admin/FertilizerManagementDashboard";
 import Location from "../pages/Dashboard/Farmer/LocationManagement/Location";
@@ -22,6 +21,8 @@ import UserDiseases from "../pages/Dashboard/Farmer/Plant/Diseases";
 import Crops from "../pages/Dashboard/Farmer/LocationManagement/Crop";
 import Profile from "../pages/Dashboard/Profile/Profile";
 import UserPlant from "../pages/Dashboard/Farmer/Plant/Plant";
+import GarbageRequest from "../pages/GarbageRequest/GarbageRequest";
+import ScheduleRequest from "../pages/GarbageRequest/ScheduleRequest";
 
 export const router = createBrowserRouter([
   {
@@ -55,6 +56,10 @@ export const router = createBrowserRouter([
       {
         path: "/garbageRequest",
         element: <GarbageRequest />,
+      },
+      {
+        path: "scheduleRequest",
+        element: <ScheduleRequest />,
       },
     ],
   },
