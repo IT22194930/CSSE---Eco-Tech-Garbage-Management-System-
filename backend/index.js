@@ -13,7 +13,7 @@ app.use(express.json());
 // Connect to MongoDB using Mongoose
 mongoose
   .connect(
-    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.aetnw.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`,
+    `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.aetnw.mongodb.net/ecotech?retryWrites=true&w=majority&appName=Cluster0`,
     {
       connectTimeoutMS: 30000, // Adjust timeout as needed
     }
