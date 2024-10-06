@@ -115,12 +115,38 @@ const Register = () => {
 
   const password = watch("password", "");
 
+  // Handler to restrict non-alphabetic characters for the name field
+  const handleNameChange = (e) => {
+    const inputValue = e.target.value.replace(/[^a-zA-Z\s]/g, "");
+    setFormData({ ...formData, name: inputValue });
+  };
+
+  // Handler to restrict non-numeric characters and limit to 10 digits
+  const handlePhoneChange = (e) => {
+    const inputValue = e.target.value.replace(/[^0-9]/g, "");
+    if (inputValue.length <= 10) {
+      setFormData({ ...formData, phone: inputValue });
+    }
+  };
+
+  // Handler to restrict special characters except "@" in the email field
+  const handleEmailChange = (e) => {
+    const inputValue = e.target.value.replace(/[^\w@.]/g, "");
+    setFormData({ ...formData, email: inputValue });
+  };
+
+  // Handler to restrict special characters for the address field, allowing commas and slashes
+  const handleAddressChange = (e) => {
+    const inputValue = e.target.value.replace(/[^a-zA-Z0-9\s,\/.]/g, "");
+    setFormData({ ...formData, address: inputValue });
+  };
+
   return (
     <div className="flex justify-center items-center pt-14 bg-white dark:bg-gray-900 -mt-14">
       <Scroll />
       <div className="bg-white p-8 rounded-lg shadow-md">
         <h2 className="text-3xl font-bold text-center text-secondary mb-6">
-          Please Register
+          Register
         </h2>
 
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -143,7 +169,7 @@ const Register = () => {
                   <img
                     src={formData.photoUrl}
                     alt="Uploaded Preview"
-                    className="w-40 h-40 rounded-md border border-gray-300"
+                    className="w-40 h-40 rounded-md border object-cover border-gray-300"
                   />
                 </div>
               )}
@@ -160,6 +186,8 @@ const Register = () => {
               <input
                 type="text"
                 placeholder="Enter your name"
+                value={formData.name}
+                onInput={handleNameChange}
                 {...register("name", { required: true })}
                 className="w-full border-gray-300 border rounded-md py-2 px-4 focus:outline-none focus:ring focus:border-blue-300"
               />
@@ -227,7 +255,19 @@ const Register = () => {
               <input
                 type="tel"
                 placeholder="Phone Number"
-                {...register("phone", { required: true })}
+                value={formData.phone}
+                onInput={handlePhoneChange}
+                {...register("phone", {
+                  required: true,
+                  minLength: {
+                    value: 10,
+                    message: "Phone number must be 10 digits long",
+                  },
+                  maxLength: {
+                    value: 10,
+                    message: "Phone number cannot exceed 10 digits",
+                  },
+                })}
                 className="w-full border-gray-300 border rounded-md py-2 px-4 focus:outline-none focus:ring focus:border-blue-300"
               />
               {errors.phone && (
@@ -245,7 +285,9 @@ const Register = () => {
               </label>
               <input
                 type="email"
-                placeholder="Enter your email"
+                placeholder="Enter your Email"
+                value={formData.email}
+                onInput={handleEmailChange}
                 {...register("email", { required: true })}
                 className="w-full border-gray-300 border rounded-md py-2 px-4 focus:outline-none focus:ring focus:border-blue-300"
               />
@@ -286,11 +328,13 @@ const Register = () => {
               Address
             </label>
             <textarea
+              placeholder="Enter your address"
+              value={formData.address}
+              onInput={handleAddressChange}
               {...register("address", { required: true })}
-              rows={3}
-              placeholder="Enter address"
+              rows="3" // Set the number of rows to 3
               className="w-full border-gray-300 border rounded-md py-2 px-4 focus:outline-none focus:ring focus:border-blue-300"
-            ></textarea>
+            />
             {errors.address && (
               <p className="text-red-500 text-sm">Address is required</p>
             )}
@@ -299,7 +343,7 @@ const Register = () => {
           <div className="text-center">
             <button
               type="submit"
-              className="bg-secondary hover:bg-blue-600 text-white py-2 px-4 rounded-md"
+              className="w-full bg-secondary text-white py-2 px-4 rounded-md hover:scale-105 transition duration-300"
             >
               Register
             </button>
@@ -312,7 +356,7 @@ const Register = () => {
         </form>
         <p className="text-center mt-4">
           Already have an account?{" "}
-          <Link to="/login" className="underline text-blue-500 ml-1">
+          <Link to="/login" className="text-blue-500 hover:underline">
             Login
           </Link>
         </p>
