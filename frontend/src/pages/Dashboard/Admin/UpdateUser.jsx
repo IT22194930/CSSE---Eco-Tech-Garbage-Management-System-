@@ -1,9 +1,13 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { FaArrowLeft, FaPencilAlt } from "react-icons/fa";
 import useAuth from "../../../hooks/useAuth";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import useAxiosFetch from "../../../hooks/useAxiosFetch";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import useUser from "../../../hooks/useUser";
+import storage from "../../../config/firebase.init";
+import Swal from "sweetalert2";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 const UpdateUser = () => {
   const { user } = useAuth();
@@ -12,24 +16,90 @@ const UpdateUser = () => {
   const axiosSecure = useAxiosSecure();
   const { currentUser } = useUser();
   const navigate = useNavigate();
+  const [img, setImg] = useState(undefined);
+  const [imgPerc, setImgPerc] = useState(0);
+  const fileInputRef = useRef(null);
+  const [uploading, setUploading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: userCredentials?.name || "",
+    email: userCredentials?.email || "",
+    phone: userCredentials?.phone || "",
+    address: userCredentials?.address || "",
+    role: userCredentials?.role || "user",
+    photoUrl: userCredentials?.photoUrl || "",
+  });
+
+  useEffect(() => {
+    if (img) {
+      uploadFile(img, "photoUrl");
+    }
+  }, [img]);
+
+  const uploadFile = (file, fileType) => {
+    const fileName = new Date().getTime() + file.name;
+    const storageRef = ref(storage, "images/profilePictures/" + fileName);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+    setUploading(true);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setImgPerc(Math.round(progress));
+      },
+      (error) => {
+        console.error(error);
+        setUploading(false);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setFormData((prev) => ({
+            ...prev,
+            [fileType]: downloadURL,
+          }));
+          setUploading(false);
+        });
+      }
+    );
+  };
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const updatedData = Object.fromEntries(formData);
     axiosSecure
-      .put(`/update-user/${userCredentials._id}`, updatedData)
-      .then((res) => {
-        alert("User updated successfully !");
+      .put(`/update-user/${userCredentials._id}`, formData)
+      .then(() => {
+        Swal.fire({
+          title: "Updated!",
+          text: "Details have been updated successfully.",
+          icon: "success",
+        });
         navigate(`/dashboard/manage-users`);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error(err));
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handlePencilClick = () => {
+    fileInputRef.current.click(); // Trigger file input on pencil icon click
   };
 
   return (
     <div>
+      <div className="flex items-center my-4">
+        <button
+          onClick={() => navigate("/dashboard/manage-users")}
+          className="inline-flex items-center gap-2 px-4 py-2 text-white bg-blue-500 rounded-md"
+        >
+          <FaArrowLeft />
+        </button>
+      </div>
       <h1 className="mt-5 text-4xl font-bold text-center">
-        Update : <span className="text-secondary">{userCredentials?.name}</span>
+        Update: <span className="text-secondary">{userCredentials?.name}</span>
       </h1>
       <p className="text-center">
         Change details about{" "}
@@ -44,89 +114,116 @@ const UpdateUser = () => {
         )}
       </div>
 
-      <section className="">
+      <section>
         <div className="px-4 pb-16 mx-auto sm:px-6 lg:px-8">
-          <div className="p-8 bg-white rounded-lg shadow-lg lg:p-12">
+          <div className="p-8 bg-white dark:bg-slate-700 rounded-lg shadow-lg lg:p-12  dark:text-white">
             <form className="space-y-4" onSubmit={handleFormSubmit}>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
-                  <label className="pb-4 ml-2" htmlFor="name">
-                    Name
+                  <label
+                    htmlFor="photoUrl"
+                    className="block text-gray-700 font-semibold mb-1"
+                  >
+                    {uploading ? `Uploading: ${imgPerc}%` : "Photo"}
                   </label>
+
+                  {/* Pencil Icon to trigger file input */}
+                  <div className="relative w-40 h-40">
+                    {formData.photoUrl && !uploading ? (
+                      <img
+                        src={formData.photoUrl}
+                        alt="Uploaded Preview"
+                        className="w-full h-full object-cover rounded-md border border-gray-300"
+                      />
+                    ) : (
+                      <div className="w-40 h-40 object-cover rounded-md border border-gray-300"></div>
+                    )}
+
+                    {/* Pencil Icon */}
+                    <button
+                      type="button"
+                      onClick={handlePencilClick}
+                      className="absolute bottom-2 right-2 bg-gray-100 rounded-full p-2 shadow-md hover:bg-gray-200"
+                    >
+                      <FaPencilAlt className="text-gray-700" />
+                    </button>
+                  </div>
+
+                  {/* Hidden file input */}
                   <input
-                    className="w-full p-3 mt-3 text-sm border rounded-lg outline-none border-secondary"
-                    placeholder="Your Name"
-                    type="text"
-                    required
-                    defaultValue={
-                      userCredentials?.name ? userCredentials?.name : ""
-                    }
-                    id="name"
-                    name="name"
-                  />
-                </div>
-                <div>
-                  <label className="pb-4 ml-2" htmlFor="email">
-                    Email
-                  </label>
-                  <input
-                    className="w-full p-3 mt-3 text-sm border rounded-lg outline-none border-secondary"
-                    placeholder="Email Address"
-                    type="email"
-                    required
-                    defaultValue={userCredentials?.email}
-                    id="email"
-                    name="email"
+                    type="file"
+                    className="hidden"
+                    ref={fileInputRef}
+                    name="photoUrl"
+                    onChange={(e) => setImg(e.target.files[0])}
                   />
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="flex-col">
                   <div>
-                    <label className="ml-2" htmlFor="phone">
-                      Phone
+                    <label className="pb-4 ml-2" htmlFor="name">
+                      Name
                     </label>
                     <input
-                      className="w-full p-3 mt-3 text-sm border rounded-lg outline-none border-secondary"
-                      placeholder="Phone Number"
-                      type="tel"
+                      className="w-full p-3 mt-1 text-sm border rounded-lg outline-none border-secondary dark:bg-slate-800"
+                      placeholder="Your Name"
+                      type="text"
                       required
-                      defaultValue={
-                        userCredentials?.phone ? userCredentials?.phone : ""
-                      }
-                      id="phone"
-                      name="phone"
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="mt-5">
+                    <label className="pb-4 ml-2" htmlFor="email">
+                      Email
+                    </label>
+                    <input
+                      className="w-full p-3 mt-3 text-sm border rounded-lg outline-none border-secondary dark:bg-slate-800"
+                      placeholder="Email Address"
+                      type="email"
+                      required
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
                     />
                   </div>
                 </div>
-              </div>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+                <div>
+                  <label className="ml-2" htmlFor="phone">
+                    Phone
+                  </label>
+                  <input
+                    className="w-full p-3 mt-3 text-sm border rounded-lg outline-none border-secondary dark:bg-slate-800"
+                    placeholder="Phone Number"
+                    type="tel"
+                    required
+                    id="phone"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                  />
+                </div>
                 <div>
                   <label className="ml-2" htmlFor="address">
                     Address
                   </label>
                   <input
-                    className="w-full p-3 mt-2 text-sm border rounded-lg outline-none border-secondary"
+                    className="w-full p-3 mt-3 text-sm border rounded-lg outline-none border-secondary dark:bg-slate-800"
                     placeholder="Address"
                     type="text"
-                    defaultValue={userCredentials?.address}
                     id="address"
                     name="address"
-                  />
-                </div>
-                <div>
-                  <label className="ml-2" htmlFor="photoUrl">
-                    Photo URL
-                  </label>
-                  <input
-                    className="w-full p-3 mt-2 text-sm border rounded-lg outline-none border-secondary"
-                    placeholder="Photo URL"
-                    type="text"
-                    defaultValue={userCredentials?.photoUrl}
-                    id="photoUrl"
-                    name="photoUrl"
+                    value={formData.address}
+                    onChange={handleChange}
                   />
                 </div>
               </div>
+
+              {/* Role Selection */}
               <h1>Please select a role</h1>
               <div className="grid grid-cols-1 gap-4 text-center sm:grid-cols-2">
                 <div>
@@ -135,16 +232,13 @@ const UpdateUser = () => {
                     id="option1"
                     type="radio"
                     value="user"
-                    defaultChecked={
-                      userCredentials?.role === "user" ? true : false
-                    }
-                    tabIndex="-1"
                     name="role"
+                    checked={formData.role === "user"}
+                    onChange={handleChange}
                   />
                   <label
                     htmlFor="option1"
-                    className="block w-full p-3 border rounded-lg border-secondary peer-checked:border-secondary peer-checked:bg-secondary peer-checked:text-white"
-                    tabIndex="0"
+                    className="block w-full p-3 border rounded-lg peer-checked:border-secondary peer-checked:bg-secondary peer-checked:text-white"
                   >
                     <span className="text-sm font-medium">User</span>
                   </label>
@@ -155,36 +249,23 @@ const UpdateUser = () => {
                     id="option2"
                     type="radio"
                     value="admin"
-                    defaultChecked={
-                      userCredentials?.role === "admin" ? true : false
-                    }
-                    tabIndex="-1"
                     name="role"
+                    checked={formData.role === "admin"}
+                    onChange={handleChange}
                   />
                   <label
                     htmlFor="option2"
-                    className="block w-full p-3 border rounded-lg border-secondary peer-checked:border-secondary peer-checked:bg-secondary peer-checked:text-white"
-                    tabIndex="0"
+                    className="block w-full p-3 border rounded-lg peer-checked:border-secondary peer-checked:bg-secondary peer-checked:text-white"
                   >
                     <span className="text-sm font-medium">Admin</span>
                   </label>
                 </div>
               </div>
-              <div>
-                <label className="sr-only" htmlFor="message">
-                  About
-                </label>
-                <textarea
-                  className="w-full p-3 text-sm border rounded-lg outline-none resize-none border-secondary"
-                  placeholder="About user"
-                  name=""
-                  id=""
-                ></textarea>
-              </div>
 
+              {/* Submit Button */}
               <div className="flex justify-center">
                 <button
-                  className="px-10 py-5 text-white rounded-lg bg-secondary hover:bg-red-500 hover:shadow-lg hover:outline-black"
+                  className="px-10 py-5 text-white rounded-lg bg-secondary hover:bg-red-500"
                   type="submit"
                 >
                   Update User

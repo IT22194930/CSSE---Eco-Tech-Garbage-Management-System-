@@ -9,6 +9,7 @@ const FarmerHome = () => {
       <div>
          <div>
             <h1 className='text-4xl capitalize font-bold'>Hi, <span className='text-secondary items-stretch'>{currentUser?.name}!</span> Welcome to your dashboard </h1>
+            <img src={currentUser?.qrCodeUrl} alt="qr code" />
 
             <div className='text-center'>
                <h2 className='font-bold'>You can jump any page you want from here .</h2>

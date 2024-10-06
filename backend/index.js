@@ -5,6 +5,7 @@ require("dotenv").config(); // Ensure dotenv is configured correctly
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const port = process.env.PORT || 3000;
+const QRCode = require('qrcode');
 
 // Middleware
 app.use(cors());
@@ -79,8 +80,21 @@ app.post("/api/set-token", (req, res) => {
 app.post("/new-user", async (req, res) => {
   try {
     const newUser = req.body;
-    const result = await User.create(newUser);
-    res.send(result);
+    const result = await User.create(newUser); // Create the new user
+
+    const userId = result._id.toString(); // Get the newly created user's ID
+
+    // Generate a URL to get the user's details, e.g., http://yourdomain.com/users/:id
+    const userDetailsUrl = `${process.env.BASE_URL}users/${userId}`;
+
+    // Generate the QR code that stores this URL
+    const qrCodeData = await QRCode.toDataURL(userDetailsUrl);
+
+    // Save the QR code URL in the user document if you want to store it in the database
+    result.qrCodeUrl = qrCodeData;
+    await result.save();
+
+    res.send(result); // Return the user object, now including the QR code URL
   } catch (error) {
     res.status(500).send({ error: true, message: error.message });
   }
