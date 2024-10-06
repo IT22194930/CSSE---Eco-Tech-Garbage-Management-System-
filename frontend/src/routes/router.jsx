@@ -23,6 +23,8 @@ import Profile from "../pages/Dashboard/Profile/Profile";
 import UserPlant from "../pages/Dashboard/Farmer/Plant/Plant";
 import GarbageRequest from "../pages/GarbageRequest/GarbageRequest";
 import ScheduleRequest from "../pages/GarbageRequest/ScheduleRequest";
+import PaymentHome from "../pages/Dashboard/Farmer/Payment/PaymentHome";
+import PaymentHistory from "../pages/Dashboard/Farmer/Payment/PaymentHistory";
 
 export const router = createBrowserRouter([
   {
@@ -61,6 +63,8 @@ export const router = createBrowserRouter([
         path: "scheduleRequest",
         element: <ScheduleRequest />,
       },
+     
+     
     ],
   },
   {
@@ -105,6 +109,15 @@ export const router = createBrowserRouter([
         loader: ({ params }) =>
           fetch(`http://localhost:3000/plants/${params.plantId}/diseases`),
       },
+      {
+        path: "payments",
+        element: <PaymentHome />,
+      },
+      {
+        path: "payment-history",
+        element: <PaymentHistory />,
+      },
+
 
       // admin routes
       {
