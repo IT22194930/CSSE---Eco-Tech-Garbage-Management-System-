@@ -49,13 +49,15 @@ const PaymentHome = () => {
 
         {/* Buttons Section */}
         <div className="p-4 space-y-4">
-          <button className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600">
+          <button 
+            onClick={() => navigate(`/dashboard/make-payment`)}
+            className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600">
             Make Payments
           </button>
           
           <button 
-             onClick={() => navigate(`/dashboard/payment-history`)}
-          className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600">
+            onClick={() => navigate(`/dashboard/payment-history`)}
+            className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600">
             View Payment History
           </button>
           

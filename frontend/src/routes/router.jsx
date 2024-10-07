@@ -25,6 +25,8 @@ import GarbageRequest from "../pages/GarbageRequest/GarbageRequest";
 import ScheduleRequest from "../pages/GarbageRequest/ScheduleRequest";
 import PaymentHome from "../pages/Dashboard/Farmer/Payment/PaymentHome";
 import PaymentHistory from "../pages/Dashboard/Farmer/Payment/PaymentHistory";
+import MakePayment from "../pages/Dashboard/Farmer/Payment/MakePayment";
+import CardPayment from "../pages/Dashboard/Farmer/Payment/CardPayment";
 
 export const router = createBrowserRouter([
   {
@@ -116,6 +118,14 @@ export const router = createBrowserRouter([
       {
         path: "payment-history",
         element: <PaymentHistory />,
+      },
+      {
+        path: "make-payment",
+        element: <MakePayment />,
+      },
+      {
+        path: "card-payment",
+        element: <CardPayment />,
       },
 
 
