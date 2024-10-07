@@ -9,11 +9,7 @@ const PaymentHome = () => {
     <div className="min-h-screen bg-green-200 p-6 flex justify-center items-center">
       <div className="max-w-lg w-full bg-white rounded-lg shadow-lg overflow-hidden">
         
-        {/* Header Section */}
-        <div className="bg-green-600 text-white p-4 flex justify-between items-center">
-          <div className="text-lg font-bold">Eco Tech</div>
-          <div className="text-sm">Last updated: 21/07/2024</div>
-        </div>
+       
 
         {/* Image Section */}
         <div className="flex justify-center py-4 bg-green-100">
