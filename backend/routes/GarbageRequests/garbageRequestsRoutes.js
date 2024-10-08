@@ -34,13 +34,13 @@ router.get("/accepted", getAcceptedGarbageRequests);
 router.get("/rejected", getRejectedGarbageRequests);
 
 // Route to get a single user's pending garbage requests
-router.get("/user/pending", getUserPendingGarbageRequests);
+router.get("/user/:userId/pending", getUserPendingGarbageRequests);
 
 // Route to get a single user's accepted garbage requests
-router.get("/user/accepted", getUserAcceptedGarbageRequests);
+router.get("/user/:userId/accepted", getUserAcceptedGarbageRequests);
 
 // Route to get a single user's declined garbage requests
-router.get("/user/rejected", getUserRejectedGarbageRequests);
+router.get("/user/:userId/rejected", getUserRejectedGarbageRequests);
 
 // Route to get a single garbage request by ID
 router.get("/:id", getGarbageRequestById); // New route to get by ID
