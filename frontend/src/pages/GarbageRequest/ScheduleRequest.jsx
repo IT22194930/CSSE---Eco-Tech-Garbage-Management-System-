@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import useUser from "../../hooks/useUser";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { useNavigate } from "react-router-dom";
@@ -8,7 +8,7 @@ const ScheduleRequest = () => {
   const userId = currentUser?._id; // Ensure userId is safely accessed
   const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
-
+  const [garbageTypes, setGarbageTypes] = useState([]);
   const [activeTab, setActiveTab] = useState(0);
   const [requestInfo, setRequestInfo] = useState({
     type: "",
@@ -71,6 +71,7 @@ const ScheduleRequest = () => {
       userId,
       ...requestInfo,
       ...pickupDetails,
+      cost: cost.toFixed(2)
     };
 
     try {
@@ -93,7 +94,7 @@ const ScheduleRequest = () => {
           time: "",
         });
         setActiveTab(0); // Reset to the first tab
-        navigate('/garbageRequest')
+        navigate("/garbageRequest");
       } else {
         console.error("Response not OK:", response);
         alert("Failed to save request. Please try again.");
@@ -107,6 +108,23 @@ const ScheduleRequest = () => {
       }
     }
   };
+
+  useEffect(() => {
+    const fetchTypes = async () => {
+      try {
+        const garbageTypes = await axiosSecure.get(`api/garbageTypes/`);
+        setGarbageTypes(garbageTypes.data);
+      } catch (error) {
+        console.error("Error fetching garbage types:", error);
+      }
+    };
+
+    fetchTypes();
+  }, [axiosSecure]);
+
+  const selectedGarbageType = garbageTypes.find(type => type.type === requestInfo.type);
+  const unitPrice = selectedGarbageType ? selectedGarbageType.unitPrice : 0;
+  const cost = unitPrice * requestInfo.quantity;
 
   return (
     <div className="max-w-4xl mx-auto mt-28 p-6 bg-white rounded-lg shadow-md">
@@ -165,22 +183,23 @@ const ScheduleRequest = () => {
             required
           >
             <option value="">Select Type</option>
-            <option value="Bulk Waste">Bulk Waste</option>
-            <option value="E Waste">E Waste</option>
-            <option value="Hazardous Waste">Hazardous Waste</option>
-            <option value="Other Special Waste">Other Special Waste</option>
+            {garbageTypes.map((type) => (
+              <option key={type._id} value={type.type}>
+                {type.type}
+              </option>
+            ))}
           </select>
           <div className="flex gap-4">
-          <input
-            type="number"
-            name="quantity"
-            value={requestInfo.quantity}
-            placeholder="Quantity"
-            onChange={handleChangeRequestInfo}
-            className="w-full border border-gray-300 rounded-lg p-2"
-            required
-          />
-          <p className="font-bold my-auto">kg</p>
+            <input
+              type="number"
+              name="quantity"
+              value={requestInfo.quantity}
+              placeholder="Quantity"
+              onChange={handleChangeRequestInfo}
+              className="w-full border border-gray-300 rounded-lg p-2"
+              required
+            />
+            <p className="font-bold my-auto">kg</p>
           </div>
           <textarea
             name="description"
@@ -364,6 +383,7 @@ const ScheduleRequest = () => {
           <p>
             <strong>Time:</strong> {pickupDetails.time}
           </p>
+          <h1 className="text-2xl">Cost: <span className="font-bold">${cost.toFixed(2)}</span></h1>
           <div className="flex justify-between">
             <button
               className="py-2 px-4 bg-gray-500 text-white rounded-lg"
