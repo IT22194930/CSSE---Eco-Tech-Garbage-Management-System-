@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
     phone: { type: String },
     photoUrl: { type: String },
     qrCodeUrl: { type: String },
-    balance: { type: Number }
+    balance: { type: Number, default: 0.0 }
 }, { timestamps: true });
 
 const User = mongoose.model('User', userSchema);
