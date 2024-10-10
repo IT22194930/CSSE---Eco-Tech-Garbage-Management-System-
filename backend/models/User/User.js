@@ -7,7 +7,8 @@ const userSchema = new mongoose.Schema({
     address: { type: String },
     phone: { type: String },
     photoUrl: { type: String },
-    qrCodeUrl: { type: String }
+    qrCodeUrl: { type: String },
+    balance: { type: Number }
 }, { timestamps: true });
 
 const User = mongoose.model('User', userSchema);

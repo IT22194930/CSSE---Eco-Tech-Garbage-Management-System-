@@ -20,11 +20,20 @@ const GarbageRequest = () => {
   useEffect(() => {
     const fetchRequests = async () => {
       try {
-        const pendingResponse = await axiosSecure.get(`api/garbageRequests/user/${userId}/pending`);
+        const pendingResponse = await axiosSecure.get(
+          `api/garbageRequests/user/${userId}/pending`
+        );
         setPendingRequests(pendingResponse.data);
-        const acceptedResponse = await axiosSecure.get(`api/garbageRequests/user/${userId}/accepted`);
-        const rejectedResponse = await axiosSecure.get(`api/garbageRequests/user/${userId}/rejected`);
-        const allPreviousRequests = [...acceptedResponse.data, ...rejectedResponse.data];
+        const acceptedResponse = await axiosSecure.get(
+          `api/garbageRequests/user/${userId}/accepted`
+        );
+        const rejectedResponse = await axiosSecure.get(
+          `api/garbageRequests/user/${userId}/rejected`
+        );
+        const allPreviousRequests = [
+          ...acceptedResponse.data,
+          ...rejectedResponse.data,
+        ];
         setPreviousRequests(allPreviousRequests);
       } catch (error) {
         console.error("Error fetching requests:", error);
@@ -41,10 +50,15 @@ const GarbageRequest = () => {
 
   const handleUpdateRequest = async (updatedRequest) => {
     try {
-      await axiosSecure.put(`api/garbageRequests/${updatedRequest._id}`, updatedRequest); // Update the request on the server
+      await axiosSecure.put(
+        `api/garbageRequests/${updatedRequest._id}`,
+        updatedRequest
+      ); // Update the request on the server
       // Update the local state after successful update
       setPendingRequests((prevRequests) =>
-        prevRequests.map((request) => (request._id === updatedRequest._id ? updatedRequest : request))
+        prevRequests.map((request) =>
+          request._id === updatedRequest._id ? updatedRequest : request
+        )
       );
     } catch (error) {
       console.error("Error updating request:", error);
@@ -52,7 +66,9 @@ const GarbageRequest = () => {
   };
 
   const handleDeleteRequest = async (requestId) => {
-    const confirmed = window.confirm("Are you sure you want to delete this request?");
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this request?"
+    );
     if (confirmed) {
       try {
         await axiosSecure.delete(`api/garbageRequests/${requestId}`); // Delete the request on the server
@@ -67,8 +83,10 @@ const GarbageRequest = () => {
   };
 
   const filteredRequests = previousRequests.filter((request) => {
-    if (filter === "accepted") return request.status.toLowerCase() === "accepted";
-    if (filter === "rejected") return request.status.toLowerCase() === "rejected";
+    if (filter === "accepted")
+      return request.status.toLowerCase() === "accepted";
+    if (filter === "rejected")
+      return request.status.toLowerCase() === "rejected";
     return true; // For "all", return all requests
   });
 
@@ -92,13 +110,21 @@ const GarbageRequest = () => {
         {/* Tabs for Requests */}
         <div className="flex justify-center mb-4">
           <button
-            className={`p-2 mx-2 ${activeTab === "pending" ? "bg-secondary text-white" : "bg-gray-200"} rounded-xl`}
+            className={`p-2 mx-2 ${
+              activeTab === "pending"
+                ? "bg-secondary text-white"
+                : "bg-gray-200"
+            } rounded-xl`}
             onClick={() => setActiveTab("pending")}
           >
             Pending Requests
           </button>
           <button
-            className={`p-2 mx-2 ${activeTab === "previous" ? "bg-secondary text-white" : "bg-gray-200"} rounded-xl`}
+            className={`p-2 mx-2 ${
+              activeTab === "previous"
+                ? "bg-secondary text-white"
+                : "bg-gray-200"
+            } rounded-xl`}
             onClick={() => setActiveTab("previous")}
           >
             Previous Requests
@@ -112,12 +138,26 @@ const GarbageRequest = () => {
             {pendingRequests.length > 0 ? (
               <ul>
                 {pendingRequests.map((request) => (
-                  <li key={request._id} className="mb-2 p-2 border rounded-lg flex justify-between items-center">
-                    <div>
-                      <p><strong>Type:</strong> {request.type}</p>
-                      <p><strong>Quantity:</strong> {request.quantity}</p>
-                      <p><strong>Description:</strong> {request.description}</p>
-                      <p><strong>Status:</strong> {request.status}</p>
+                  <li
+                    key={request._id}
+                    className="mb-2 p-2 border rounded-lg flex justify-between items-center"
+                  >
+                    <div className="flex justify-around">
+                      <div>
+                        <p>
+                          <strong>Type:</strong> {request.type}
+                        </p>
+                        <p>
+                          <strong>Quantity:</strong> {request.quantity}
+                        </p>
+                        <p>
+                          <strong>Description:</strong> {request.description}
+                        </p>
+                        <p>
+                          <strong>Status:</strong> {request.status}
+                        </p>
+                      </div>
+                      <p>Cost: Rs. <strong>{request.cost}</strong></p>
                     </div>
                     <div className="flex items-center">
                       <button
@@ -160,10 +200,18 @@ const GarbageRequest = () => {
               <ul>
                 {filteredRequests.map((request) => (
                   <li key={request._id} className="mb-2 p-2 border rounded-lg">
-                    <p><strong>Type:</strong> {request.type}</p>
-                    <p><strong>Quantity:</strong> {request.quantity}</p>
-                    <p><strong>Description:</strong> {request.description}</p>
-                    <p><strong>Status:</strong> {request.status}</p>
+                    <p>
+                      <strong>Type:</strong> {request.type}
+                    </p>
+                    <p>
+                      <strong>Quantity:</strong> {request.quantity}
+                    </p>
+                    <p>
+                      <strong>Description:</strong> {request.description}
+                    </p>
+                    <p>
+                      <strong>Status:</strong> {request.status}
+                    </p>
                   </li>
                 ))}
               </ul>
