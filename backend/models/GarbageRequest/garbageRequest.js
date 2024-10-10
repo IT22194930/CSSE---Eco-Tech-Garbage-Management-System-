@@ -54,10 +54,29 @@ const garbageRequestSchema = new mongoose.Schema({
     enum: ["Pending", "Accepted", "Rejected"],
     default: "Pending",
   },
+  cost: {
+    type: Number,
+    default: 0,
+  },
+  recyclableQuantity: {
+    type: Number,
+    default: 0,
+  },
+  cashbackPrice: {
+    type: Number,
+    default: 0,
+  },
+  totalCost: {
+    type: Number,
+    default: 0,
+  },
   createdAt: {
     type: Date,
     default: Date.now,
   },
+  feedback: {
+    type: String
+  }
 });
 
 const GarbageRequest = mongoose.model("GarbageRequest", garbageRequestSchema);

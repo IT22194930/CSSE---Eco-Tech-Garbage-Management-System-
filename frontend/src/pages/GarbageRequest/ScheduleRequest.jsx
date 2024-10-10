@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import useUser from "../../hooks/useUser";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import { useNavigate } from "react-router-dom";
 
 const ScheduleRequest = () => {
   const { currentUser } = useUser();
   const userId = currentUser?._id; // Ensure userId is safely accessed
   const axiosSecure = useAxiosSecure();
+  const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState(0);
   const [requestInfo, setRequestInfo] = useState({
@@ -91,6 +93,7 @@ const ScheduleRequest = () => {
           time: "",
         });
         setActiveTab(0); // Reset to the first tab
+        navigate('/garbageRequest')
       } else {
         console.error("Response not OK:", response);
         alert("Failed to save request. Please try again.");
@@ -106,7 +109,7 @@ const ScheduleRequest = () => {
   };
 
   return (
-    <div className="mt-28 p-6 bg-white rounded-lg shadow-md">
+    <div className="max-w-4xl mx-auto mt-28 p-6 bg-white rounded-lg shadow-md">
       <div className="flex justify-around mb-4">
         <button
           className={`py-2 px-4 rounded-lg ${
@@ -167,6 +170,7 @@ const ScheduleRequest = () => {
             <option value="Hazardous Waste">Hazardous Waste</option>
             <option value="Other Special Waste">Other Special Waste</option>
           </select>
+          <div className="flex gap-4">
           <input
             type="number"
             name="quantity"
@@ -176,6 +180,8 @@ const ScheduleRequest = () => {
             className="w-full border border-gray-300 rounded-lg p-2"
             required
           />
+          <p className="font-bold my-auto">kg</p>
+          </div>
           <textarea
             name="description"
             value={requestInfo.description}
@@ -186,7 +192,7 @@ const ScheduleRequest = () => {
           <div className="flex justify-between">
             <button
               className="py-2 px-4 bg-red-500 text-white rounded-lg"
-              onClick={() => setActiveTab(0)}
+              onClick={() => navigate("/garbageRequest")}
             >
               Cancel
             </button>
@@ -229,24 +235,58 @@ const ScheduleRequest = () => {
             className="w-full border border-gray-300 rounded-lg p-2"
             required
           />
-          <input
-            type="text"
+          <select
             name="district"
             value={pickupDetails.district}
-            placeholder="District"
             onChange={handleChangePickupDetails}
             className="w-full border border-gray-300 rounded-lg p-2"
             required
-          />
-          <input
-            type="text"
+          >
+            <option value="">Select District</option>
+            <option value="Ampara">Ampara</option>
+            <option value="Anuradhapura">Anuradhapura</option>
+            <option value="Badulla">Badulla</option>
+            <option value="Batticaloa">Batticaloa</option>
+            <option value="Colombo">Colombo</option>
+            <option value="Galle">Galle</option>
+            <option value="Gampaha">Gampaha</option>
+            <option value="Hambantota">Hambantota</option>
+            <option value="Jaffna">Jaffna</option>
+            <option value="Kalutara">Kalutara</option>
+            <option value="Kandy">Kandy</option>
+            <option value="Kegalle">Kegalle</option>
+            <option value="Kilinochchi">Kilinochchi</option>
+            <option value="Kurunegala">Kurunegala</option>
+            <option value="Mannar">Mannar</option>
+            <option value="Matale">Matale</option>
+            <option value="Matara">Matara</option>
+            <option value="Monaragala">Monaragala</option>
+            <option value="Mullaitivu">Mullaitivu</option>
+            <option value="Nuwara Eliya">Nuwara Eliya</option>
+            <option value="Polonnaruwa">Polonnaruwa</option>
+            <option value="Puttalam">Puttalam</option>
+            <option value="Ratnapura">Ratnapura</option>
+            <option value="Trincomalee">Trincomalee</option>
+            <option value="Vavuniya">Vavuniya</option>
+          </select>
+          <select
             name="province"
             value={pickupDetails.province}
-            placeholder="Province"
             onChange={handleChangePickupDetails}
             className="w-full border border-gray-300 rounded-lg p-2"
             required
-          />
+          >
+            <option value="">Select Province</option>
+            <option value="Central">Central</option>
+            <option value="Eastern">Eastern</option>
+            <option value="Northern">Northern</option>
+            <option value="North Central">North Central</option>
+            <option value="North Western">North Western</option>
+            <option value="Sabaragamuwa">Sabaragamuwa</option>
+            <option value="Southern">Southern</option>
+            <option value="Uva">Uva</option>
+            <option value="Western">Western</option>
+          </select>
           <input
             type="text"
             name="postalCode"

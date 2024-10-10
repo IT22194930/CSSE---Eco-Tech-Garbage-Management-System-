@@ -68,6 +68,10 @@ app.use(
   require("./routes/GarbageRequests/GarbageRequestsRoutes.js")
 );
 
+app.use(
+  "/api/garbageTypes", require("./routes/GarbageTypes/garbageTypesRoutes.js")
+)
+
 app.post("/api/set-token", (req, res) => {
   const user = req.body;
   const token = jwt.sign(user, process.env.ACCESS_SECRET, {
