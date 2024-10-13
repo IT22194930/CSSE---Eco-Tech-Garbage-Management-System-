@@ -35,6 +35,7 @@ const Register = () => {
     gender: "",
     phone: "",
     address: "",
+    userType: ""
   });
   const [uploading, setUploading] = useState(false);
 
@@ -79,6 +80,7 @@ const Register = () => {
     signUp(data.email, data.password)
       .then((result) => {
         const user = result.user;
+        const userType = decideUserType(data.city);
         if (user) {
           return updateUser(data.name, data.photoUrl).then(() => {
             const userImp = {
@@ -88,7 +90,8 @@ const Register = () => {
               role: "user",
               gender: data.gender,
               phone: data.phone,
-              address: data.address,
+              address: `${data.addressLine1}, ${data.addressLine2}, ${data.city}`,
+              userType: userType
             };
 
             if (userImp.email && user.displayName) {
@@ -140,6 +143,15 @@ const Register = () => {
     const inputValue = e.target.value.replace(/[^a-zA-Z0-9\s,\/.]/g, "");
     setFormData({ ...formData, address: inputValue });
   };
+
+  const decideUserType = (city) => {
+    if (city == "Colombo-Greater") {
+      return 'flat';
+    }
+    if (city == "Colombo-Lower" || city == "Gampaha" || city == "Kalutara") {
+      return 'noneFlat';
+    }
+  }
 
   return (
     <div className="flex justify-center items-center pt-14 bg-white dark:bg-gray-900 -mt-14">
@@ -321,22 +333,64 @@ const Register = () => {
 
           <div className="mb-4">
             <label
-              htmlFor="address"
+              htmlFor="addressLine1"
               className="block text-gray-700 font-bold mb-2"
             >
               <HiOutlineLocationMarker className="inline-block mr-2 mb-1 text-lg" />
-              Address
+              Address Line 1
             </label>
-            <textarea
-              placeholder="Enter your address"
-              value={formData.address}
+            <input
+              placeholder="Enter your address line 1"
+              value={formData.addressLine1}
               onInput={handleAddressChange}
-              {...register("address", { required: true })}
-              rows="3" // Set the number of rows to 3
+              {...register("addressLine1", { required: true })}
               className="w-full border-gray-300 border rounded-md py-2 px-4 focus:outline-none focus:ring focus:border-blue-300"
             />
-            {errors.address && (
-              <p className="text-red-500 text-sm">Address is required</p>
+            {errors.addressLine1 && (
+              <p className="text-red-500 text-sm">Address Line 1 is required</p>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="addressLine2"
+              className="block text-gray-700 font-bold mb-2"
+            >
+              <HiOutlineLocationMarker className="inline-block mr-2 mb-1 text-lg" />
+              Address Line 2
+            </label>
+            <input
+              placeholder="Enter your address line 1"
+              value={formData.addressLine2}
+              onInput={handleAddressChange}
+              {...register("addressLine2", { required: true })}
+              className="w-full border-gray-300 border rounded-md py-2 px-4 focus:outline-none focus:ring focus:border-blue-300"
+            />
+            {errors.addressLine2 && (
+              <p className="text-red-500 text-sm">Address Line 2 is required</p>
+            )}
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="city"
+              className="block text-gray-700 font-bold mb-2"
+            >
+              <AiOutlineUser className="inline-block mr-2 mb-1 text-lg" />
+              City
+            </label>
+            <select
+              {...register("city", { required: true })}
+              className="w-full border border-gray-300 rounded-md py-2 px-4 focus:outline-none focus:ring focus:border-blue-300"
+            >
+              <option value="">Select City</option>
+              <option value="Colombo-Greater">Colombo 1-15</option>
+              <option value="Colombo-Lower">Colombo Other areas</option>
+              <option value="Gampaha">Gampaha</option>
+              <option value="Kalutara">Kalutara</option>
+            </select>
+            {errors.city && (
+              <p className="text-red-500 text-sm">City is required</p>
             )}
           </div>
 

@@ -10,36 +10,8 @@ const garbageRequestSchema = new mongoose.Schema({
     type: String, // Type of garbage (e.g., bulk, e-waste, etc.)
     required: true,
   },
-  quantity: {
-    type: Number, // Quantity of garbage
-    required: true,
-  },
   description: {
     type: String,
-  },
-  addressLine1: {
-    type: String,
-    required: true,
-  },
-  addressLine2: {
-    type: String,
-    required: false,
-  },
-  city: {
-    type: String,
-    required: true,
-  },
-  district: {
-    type: String,
-    required: true,
-  },
-  province: {
-    type: String,
-    required: true,
-  },
-  postalCode: {
-    type: String,
-    required: true,
   },
   date: {
     type: Date, // Date of request (or when the garbage will be picked up)
@@ -53,10 +25,6 @@ const garbageRequestSchema = new mongoose.Schema({
     type: String,
     enum: ["Pending", "Accepted", "Rejected"],
     default: "Pending",
-  },
-  cost: {
-    type: Number,
-    default: 0,
   },
   recyclableQuantity: {
     type: Number,
