@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const port = process.env.PORT || 3000;
 const QRCode = require('qrcode');
-
+const { feeCalculationScheduler } = require("./schedulers/feeCalculationScheduler")
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -72,7 +72,7 @@ app.use(
   "/api/garbageTypes", require("./routes/GarbageTypes/garbageTypesRoutes.js")
 )
 app.use(
-  "/api/payments", require("./routes/Payment/PaymentRoutes.js")
+  "/api/payments", require("./routes/Payment/paymentRoutes.js")
 )
 app.post("/api/set-token", (req, res) => {
   const user = req.body;
@@ -184,6 +184,9 @@ app.get("/admin-stats", verifyJWT, verifyAdmin, async (req, res) => {
 app.get("/", (req, res) => {
   res.send("Hello Developers!");
 });
+
+//Schedule monthly fee calculation
+feeCalculationScheduler();
 
 // Start server
 app.listen(port, () => {

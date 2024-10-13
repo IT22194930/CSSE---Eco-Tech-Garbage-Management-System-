@@ -1,6 +1,5 @@
 const User = require("../../models/User/User");
-const TransactionDetail = require("../../models/User/TransactionDetail");
-
+const TransactionLog = require("../../models/User/TransactionLog");
 
 class PaymentController {
     static instance;
@@ -42,7 +41,8 @@ class PaymentController {
     async processPayment(req, res) {
         const { userId, amount, storageCond, qualityStatus } = req.body;
 
-        
+
+        res.status(200).json({});
     }
 
 }
