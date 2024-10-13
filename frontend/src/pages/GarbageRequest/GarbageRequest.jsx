@@ -15,8 +15,9 @@ const GarbageRequest = () => {
   const [acceptedRequests, setAcceptedRequests] = useState([]);
   const [rejectedRequests, setRejectedRequests] = useState([]);
   const [filter, setFilter] = useState("all");
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
-  const [selectedRequest, setSelectedRequest] = useState(null); // State for selected request
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [feedbacks, setFeedbacks] = useState({}); // State to store feedbacks
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -45,7 +46,7 @@ const GarbageRequest = () => {
 
   const handleEditClick = (request) => {
     setSelectedRequest(request);
-    setIsModalOpen(true); // Open the modal
+    setIsModalOpen(true);
   };
 
   const handleUpdateRequest = async (updatedRequest) => {
@@ -53,8 +54,7 @@ const GarbageRequest = () => {
       await axiosSecure.put(
         `api/garbageRequests/${updatedRequest._id}`,
         updatedRequest
-      ); // Update the request on the server
-      // Update the local state after successful update
+      );
       setPendingRequests((prevRequests) =>
         prevRequests.map((request) =>
           request._id === updatedRequest._id ? updatedRequest : request
@@ -71,14 +71,38 @@ const GarbageRequest = () => {
     );
     if (confirmed) {
       try {
-        await axiosSecure.delete(`api/garbageRequests/${requestId}`); // Delete the request on the server
-        // Update the local state after successful deletion
+        await axiosSecure.delete(`api/garbageRequests/${requestId}`);
         setPendingRequests((prevRequests) =>
           prevRequests.filter((request) => request._id !== requestId)
         );
       } catch (error) {
         console.error("Error deleting request:", error);
       }
+    }
+  };
+
+  const handleFeedbackChange = (requestId, value) => {
+    setFeedbacks({ ...feedbacks, [requestId]: value });
+  };
+
+  const handleSendFeedback = async (requestId) => {
+    const feedback = feedbacks[requestId];
+    if (!feedback) return;
+
+    try {
+      const updatedRequest = {
+        feedback, // Add feedback to the request object
+      };
+      await axiosSecure.put(`api/garbageRequests/${requestId}`, updatedRequest);
+      // Optionally update the UI or fetch the updated requests again
+      setAcceptedRequests((prevRequests) =>
+        prevRequests.map((request) =>
+          request._id === requestId ? { ...request, feedback } : request
+        )
+      );
+      setFeedbacks((prevFeedbacks) => ({ ...prevFeedbacks, [requestId]: "" })); // Clear feedback input
+    } catch (error) {
+      console.error("Error sending feedback:", error);
     }
   };
 
@@ -91,7 +115,7 @@ const GarbageRequest = () => {
       return requests.filter(
         (request) => request.status.toLowerCase() === "rejected"
       );
-    return requests; // For "all", return all requests
+    return requests;
   };
 
   if (!currentUser) {
@@ -118,7 +142,6 @@ const GarbageRequest = () => {
           Special Waste Collection Request
         </h1>
 
-        {/* Link to Schedule a new request */}
         <div className="flex justify-center mt-6 mb-4">
           <Link to="/scheduleRequest">
             <button className="bg-secondary rounded-xl p-5 text-white px-20 hover:scale-105 duration-300">
@@ -127,7 +150,6 @@ const GarbageRequest = () => {
           </Link>
         </div>
 
-        {/* Tabs for Requests */}
         <div className="flex justify-center mb-4">
           <button
             className={`p-2 mx-2 ${
@@ -151,7 +173,6 @@ const GarbageRequest = () => {
           </button>
         </div>
 
-        {/* Display Requests based on active tab */}
         {activeTab === "pending" && (
           <div>
             <h2 className="text-2xl font-semibold mb-4">Pending Requests</h2>
@@ -189,13 +210,13 @@ const GarbageRequest = () => {
                     <div className="flex items-center">
                       <button
                         className="ml-2 text-blue-500"
-                        onClick={() => handleEditClick(request)} // Open the edit modal
+                        onClick={() => handleEditClick(request)}
                       >
                         <FaRegEdit size={20} />
                       </button>
                       <button
                         className="ml-2 text-red-500"
-                        onClick={() => handleDeleteRequest(request._id)} // Handle delete request
+                        onClick={() => handleDeleteRequest(request._id)}
                       >
                         <FaTrashAlt size={20} />
                       </button>
@@ -223,7 +244,6 @@ const GarbageRequest = () => {
                 <option value="rejected">Rejected</option>
               </select>
             </h2>
-            {/* Display both accepted and rejected requests */}
             {filteredRequests([...acceptedRequests, ...rejectedRequests])
               .length > 0 ? (
               <ul>
@@ -231,28 +251,58 @@ const GarbageRequest = () => {
                   ...acceptedRequests,
                   ...rejectedRequests,
                 ]).map((request) => (
-                  <li key={request._id} className="mb-2 p-2 border rounded-lg">
-                    <p>
-                      <strong>Type:</strong> {request.type}
-                    </p>
-                    <p>
-                      <strong>Description:</strong> {request.description}
-                    </p>
-                    <p>
-                      <strong>Status:</strong> {request.status}
-                    </p>
-                    <p>
-                      <strong>Pickup Date: </strong>
-                      {new Date(request.date).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </p>
-                    <p>
-                      <strong>Pickup Time: </strong>
-                      {request.time}
-                    </p>
+                  <li
+                    key={request._id}
+                    className="mb-2 p-2 border rounded-lg flex justify-between items-center"
+                  >
+                    <div>
+                      <p>
+                        <strong>Type:</strong> {request.type}
+                      </p>
+                      <p>
+                        <strong>Description:</strong> {request.description}
+                      </p>
+                      <p>
+                        <strong>Status:</strong> {request.status}
+                      </p>
+                      <p>
+                        <strong>Pickup Date: </strong>
+                        {new Date(request.date).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </p>
+                      <p>
+                        <strong>Pickup Time: </strong>
+                        {request.time}
+                      </p>
+                      {request.feedback && (
+                        <p>
+                          <strong>Feedback: </strong>
+                          {request.feedback}
+                        </p>
+                      )}
+                      {request.status === "Accepted" && (
+                        <div>
+                          <input
+                            type="text"
+                            placeholder="Leave your feedback"
+                            value={feedbacks[request._id] || ""}
+                            onChange={(e) =>
+                              handleFeedbackChange(request._id, e.target.value)
+                            }
+                            className="mt-2 p-2 border rounded-lg"
+                          />
+                          <button
+                            className="ml-2 bg-secondary text-white p-2 rounded-lg"
+                            onClick={() => handleSendFeedback(request._id)}
+                          >
+                            Send Feedback
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -263,13 +313,15 @@ const GarbageRequest = () => {
         )}
       </div>
 
-      {/* Render the edit modal */}
-      <EditRequestModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        request={selectedRequest}
-        onUpdate={handleUpdateRequest}
-      />
+      {/* Modal for editing a request */}
+      {isModalOpen && (
+        <EditRequestModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onUpdateRequest={handleUpdateRequest}
+          request={selectedRequest}
+        />
+      )}
     </>
   );
 };
