@@ -5,7 +5,7 @@ const {
     testRequest,
     getTotalDueAmount,
     processPayment
-} = require("../../controllers/Payment/PaymentController");
+} = require("../../controllers/Payment/paymentController");
 
 router.get("/totalDueAmount/:userId", getTotalDueAmount);
 router.post("/processPayment", processPayment);

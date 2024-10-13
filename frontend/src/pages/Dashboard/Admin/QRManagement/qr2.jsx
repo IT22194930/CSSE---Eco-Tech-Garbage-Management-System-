@@ -57,6 +57,8 @@ function App() {
       const data = await response.json();
 
       setUserDetails({ name: data.name, email: data.email, phone: data.phone });
+
+      // Fetch garbage requests
       const garbageRequestsResponse = await axiosSecure.get(
         `api/garbageRequests/user?userId=${data._id}`
       );
@@ -67,6 +69,7 @@ function App() {
         }))
       );
 
+      // Fetch total due amount
       const totalDueResponse = await axiosSecure.get(
         `/api/payments/totalDueAmount/${data._id}`
       );
@@ -127,64 +130,16 @@ function App() {
   const handlePaymentSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axiosSecure.post(
-        `/api/payments/totalDueAmount/:userId?userId=${userDetails._id}`,
-        {
-          userId: userDetails._id,
-          amount: paymentDetails.amount,
-          transactionType: paymentDetails.transactionType,
-        }
-      );
+      await axiosSecure.post("/api/payments", {
+        userId: userDetails._id,
+        amount: paymentDetails.amount,
+        transactionType: paymentDetails.transactionType,
+      });
       toast.success("Payment processed successfully!");
     } catch (error) {
       console.error("Error processing payment:", error);
       toast.error("Payment failed");
     }
-  };
-
-  // Confirm action on a garbage request
-  const confirmAction = (requestId, action) => {
-    setSelectedRequestId(requestId);
-    setSelectedAction(action);
-    setIsSmallModalOpen(true);
-  };
-
-  // Handle status update for garbage requests
-  // Handle status update for garbage requests
-  const handleUpdateStatus = async () => {
-    if (!selectedRequestId || !selectedAction) return;
-    try {
-      await axiosSecure.put(`/api/garbageRequests/${selectedRequestId}`, {
-        status: selectedAction,
-      });
-      setGarbageRequests((prevRequests) =>
-        prevRequests.map((request) =>
-          request._id === selectedRequestId
-            ? {
-                ...request,
-                status: selectedAction,
-                isInEditMode: false, // Set isInEditMode back to false after action
-              }
-            : request
-        )
-      );
-      toast.success(`Status updated to ${selectedAction}`);
-      setIsSmallModalOpen(false);
-    } catch (error) {
-      console.error("Error updating status:", error);
-      toast.error("Failed to update status");
-    }
-  };
-
-  // Toggle edit mode for garbage requests
-  const toggleEditMode = (requestId) => {
-    setGarbageRequests((prevRequests) =>
-      prevRequests.map((request) =>
-        request._id === requestId
-          ? { ...request, isInEditMode: !request.isInEditMode }
-          : request
-      )
-    );
   };
 
   const sliderSettings = {
@@ -256,7 +211,7 @@ function App() {
       <LargeModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        title="User Details"
+        title="User Details and Payment"
       >
         {loading ? (
           <p className="text-lg text-gray-600">Loading user details...</p>
@@ -271,7 +226,11 @@ function App() {
             <p className="mb-4">
               <strong>Phone:</strong> {userDetails.phone}
             </p>
+            <p className="mb-4">
+              <strong>Total Due Amount:</strong> {totalDueAmount}
+            </p>
 
+            {/* Payment Form */}
             <form onSubmit={handlePaymentSubmit}>
               <div className="mb-4">
                 <label
@@ -306,7 +265,8 @@ function App() {
                   required
                 >
                   <option value="">Select Transaction Type</option>
-
+                  <option value="credit">Credit</option>
+                  <option value="debit">Debit</option>
                   <option value="transfer">Cash Back</option>
                 </select>
               </div>
@@ -317,77 +277,6 @@ function App() {
                 Process Payment
               </button>
             </form>
-
-            {garbageRequests.length > 0 ? (
-              <div className="mt-6">
-                <h3 className="text-xl font-semibold mb-4 text-gray-700">
-                  Garbage Requests
-                </h3>
-                <Slider {...sliderSettings}>
-                  {garbageRequests.map((request) => (
-                    <div
-                      key={request._id}
-                      className="p-4 bg-gray-100 rounded-lg shadow-sm border border-gray-300"
-                    >
-                      <p className="mb-2">
-                        <strong>Type:</strong> {request.type}
-                      </p>
-                      <p className="mb-2">
-                        <strong>Address:</strong> {request.addressdivne1},{" "}
-                        {request.city}, {request.district}
-                      </p>
-                      <p className="mb-2">
-                        <strong>Description:</strong> {request.description}
-                      </p>
-                      <p className="mb-2">
-                        <strong>Status:</strong>{" "}
-                        <span
-                          className={`font-semibold ${
-                            request.status === "pending"
-                              ? "text-yellow-500"
-                              : request.status === "Accepted"
-                              ? "text-green-500"
-                              : "text-red-500"
-                          }`}
-                        >
-                          {request.status}
-                        </span>
-                      </p>
-
-                      {!request.isInEditMode ? (
-                        <button
-                          onClick={() => toggleEditMode(request._id)}
-                          className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
-                        >
-                          Edit
-                        </button>
-                      ) : (
-                        <div className="mt-4 flex space-x-4">
-                          <button
-                            onClick={() =>
-                              confirmAction(request._id, "Accepted")
-                            }
-                            className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg"
-                          >
-                            Accept
-                          </button>
-                          <button
-                            onClick={() =>
-                              confirmAction(request._id, "Rejected")
-                            }
-                            className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg"
-                          >
-                            Reject
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </Slider>
-              </div>
-            ) : (
-              <p>No garbage requests available.</p>
-            )}
           </div>
         )}
       </LargeModal>
@@ -395,25 +284,13 @@ function App() {
       <SmallModal
         isOpen={isSmallModalOpen}
         onClose={() => setIsSmallModalOpen(false)}
-        title={`Confirm ${selectedAction}`}
+        title="Action Confirmation"
+        onConfirm={() => handleConfirmAction(selectedRequestId)}
       >
-        <div className="text-center">
-          <p>Are you sure you want to {selectedAction} this request?</p>
-          <div className="mt-6 flex justify-center space-x-4">
-            <button
-              onClick={handleUpdateStatus}
-              className="px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg"
-            >
-              Confirm
-            </button>
-            <button
-              onClick={() => setIsSmallModalOpen(false)}
-              className="px-6 py-2 bg-gray-400 hover:bg-gray-500 text-white rounded-lg"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
+        <p>
+          Are you sure you want to <strong>{selectedAction}</strong> this
+          request?
+        </p>
       </SmallModal>
 
       <ToastContainer />

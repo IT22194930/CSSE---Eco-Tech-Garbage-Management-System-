@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom';
 import CardType from './CardType';
 import { useLocation } from 'react-router-dom';
 import useUser from "../../hooks/useUser";
+import visa from '../../assets/gallery/cards/visa.png';
+import master from '../../assets/gallery/cards/mastercard.png';
+import amex from '../../assets/gallery/cards/amex.png';
 
 const CardPayment = () => {
   const { currentUser } = useUser();
@@ -13,6 +16,7 @@ const CardPayment = () => {
   const [cvv, setCvv] = useState('');
   const location = useLocation();
   const { amount } = location.state || {};
+
   // Function to detect card type based on card number
   const detectCardType = (number) => {
     const visaRegex = /^4[0-9]{0,}$/; // Visa starts with 4
@@ -65,6 +69,20 @@ const CardPayment = () => {
     setCvv(input);
   };
 
+  // Function to render the card type logo
+  const renderCardTypeLogo = () => {
+    switch (cardType) {
+      case 'visa':
+        return <img src={visa} alt="Visa" className="w-10 h-10" />;
+      case 'mastercard':
+        return <img src={master} alt="MasterCard" className="w-10 h-10" />;
+      case 'amex':
+        return <img src={amex} alt="AmericanExpress" className="w-10 h-10" />;
+      default:
+        return <div className="w-10 h-10 bg-gray-200 rounded"></div>; // Empty placeholder
+    }
+  };
+
   return (
     <div className="min-h-screen bg-green-200 p-6 flex justify-center items-center">
       <div className="max-w-lg w-full bg-white rounded-lg shadow-lg p-6">
@@ -80,7 +98,8 @@ const CardPayment = () => {
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
           <div className="flex items-center">
-            <CardType type={cardType}/> {/* Card type image */}
+            {/* <CardType type={cardType}/> Card type image */}
+            {renderCardTypeLogo()} {/* Card type image */}
             <input 
               type="text" 
               value={cardNumber}
