@@ -8,26 +8,26 @@ import Login from "../pages/user/Login";
 import Register from "../pages/user/Register";
 import DashboardLayout from "../layout/DashboardLayout";
 import Dashboard from "../pages/Dashboard/Dashboard";
-import FarmerHome from "../pages/Dashboard/Farmer/FarmerHome";
+import UserHome from "../pages/Dashboard/User/UserHome";
 import AdminHome from "../pages/Dashboard/Admin/AdminHome";
 import ManageUsers from "../pages/Dashboard/Admin/ManageUsers";
 import UpdateUser from "../pages/Dashboard/Admin/UpdateUser";
-import PlantManagement from "../pages/Dashboard/Admin/PlantManagement";
-import MyCrops from "../pages/Dashboard/Farmer/MyCrops/MyCrops";
-import FertilizerManagementDashboard from "../pages/Dashboard/Admin/FertilizerManagementDashboard";
-import Location from "../pages/Dashboard/Farmer/LocationManagement/Location";
-import Diseases from "../pages/Dashboard/Admin/PlantManagement/Diseases";
-import UserDiseases from "../pages/Dashboard/Farmer/Plant/Diseases";
-import Crops from "../pages/Dashboard/Farmer/LocationManagement/Crop";
+import QRManagement from "../pages/Dashboard/Admin/QRManagement";
+import LocationManagementDashboard from "../pages/Dashboard/Admin/LocationManagementDashboard";
 import Profile from "../pages/Dashboard/Profile/Profile";
-import UserPlant from "../pages/Dashboard/Farmer/Plant/Plant";
 import GarbageRequest from "../pages/GarbageRequest/GarbageRequest";
 import ScheduleRequest from "../pages/GarbageRequest/ScheduleRequest";
+
+import ManageCollectors from "../pages/Dashboard/Admin/ManageCollectors";
+import UpdateCollector from "../pages/Dashboard/Admin/UpdateCollector";
+import SpecialRequests from "../pages/Dashboard/Admin/SpecialRequests";
+
 import PaymentHome from "../pages/Payment/PaymentHome";
 import Payment from "../pages/Payment/Payment";
 import PaymentHistory from "../pages/Payment/PaymentHistory";
 import MakePayment from "../pages/Payment/MakePayment";
 import CardPayment from "../pages/Payment/CardPayment";
+
 
 export const router = createBrowserRouter([
   {
@@ -105,34 +105,14 @@ export const router = createBrowserRouter([
         element: <Profile />,
       },
 
-      // farmer routes
+      // user routes
       {
-        path: "farmer-home",
-        element: <FarmerHome />,
-      },
-      {
-        path: "my-crops",
-        element: <MyCrops />,
+        path: "user-home",
+        element: <UserHome />,
       },
       {
         path: "location",
         element: <Location />,
-      },
-      {
-        path: "location/crops/:locationId", // Route for crops
-        element: <Crops />,
-        loader: ({ params }) =>
-          fetch(`http://localhost:3000/locations/${params.locationId}/crops`),
-      },
-      {
-        path: "user-plant",
-        element: <UserPlant />,
-      },
-      {
-        path: "user-plant/diseases/:plantId", // Route for plant diseases
-        element: <UserDiseases />,
-        loader: ({ params }) =>
-          fetch(`http://localhost:3000/plants/${params.plantId}/diseases`),
       },
       
       // admin routes
@@ -145,27 +125,34 @@ export const router = createBrowserRouter([
         element: <ManageUsers />,
       },
       {
+        path: "manage-collectors",
+        element: <ManageCollectors />
+      },
+      {
         path: "update-user/:id",
         element: <UpdateUser />,
         loader: ({ params }) =>
           fetch(`http://localhost:3000/users/${params.id}`),
       },
-
-      // plant management
       {
-        path: "manage-plant",
-        element: <PlantManagement />,
-      },
-      {
-        path: "manage-plant/diseases/:plantId", // Route for plant diseases
-        element: <Diseases />,
+        path: "update-collector/:id",
+        element: <UpdateCollector />,
         loader: ({ params }) =>
-          fetch(`http://localhost:3000/plants/${params.plantId}/diseases`),
+          fetch(`http://localhost:3000/users/${params.id}`),
       },
-      //fertilizer management
       {
-        path: "manage-fertilizers",
-        element: <FertilizerManagementDashboard />,
+        path: "special-requests",
+        element: <SpecialRequests />
+      },
+
+      // qr management
+      {
+        path: "qr-scan",
+        element: <QRManagement />,
+      },
+      {
+        path: "manage-locations",
+        element: <LocationManagementDashboard />,
       },
     ],
   },
