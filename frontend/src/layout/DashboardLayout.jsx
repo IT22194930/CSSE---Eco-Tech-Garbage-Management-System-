@@ -9,6 +9,7 @@ import { GiFertilizerBag, GiField } from "react-icons/gi";
 import { MdPayments } from "react-icons/md";
 import { BsQrCodeScan } from "react-icons/bs";
 import { RiDashboardFill } from "react-icons/ri";
+import { CiFileOn } from "react-icons/ci";
 import Swal from "sweetalert2";
 import Scroll from "../hooks/useScroll";
 import Loader from "../components/Loader/Loader";
@@ -20,9 +21,19 @@ const adminNavItems = [
     label: "Dashboard",
   },
   {
+    to: "/dashboard/special-requests",
+    icon: <CiFileOn className="text-2xl" />,
+    label: "Special Requests",
+  },
+  {
     to: "/dashboard/manage-users",
     icon: <FaUsers className="text-2xl" />,
     label: "Manage Users",
+  },
+  {
+    to: "/dashboard/manage-collectors",
+    icon: <FaUsers className="text-2xl" />,
+    label: "Manage Collectors",
   },
   {
     to: "/dashboard/manage-fertilizers",
