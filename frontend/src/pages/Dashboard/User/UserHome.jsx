@@ -21,7 +21,7 @@ const UserHome = () => {
       if (result.isConfirmed) {
         const link = document.createElement('a');
         link.href = currentUser?.qrCodeUrl;
-        link.download = 'qr-code.png'; // Name of the downloaded file
+        link.download = `qr-code-of-${currentUser.name}`; // Name of the downloaded file
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
