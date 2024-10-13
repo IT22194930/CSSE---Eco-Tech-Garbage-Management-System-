@@ -1,5 +1,5 @@
 const User = require("../../models/User/User");
-const TransactionDetail = require("../../models/User/TrasactionDetail");
+const TransactionDetail = require("../../models/User/TransactionDetail");
 
 
 class PaymentController {

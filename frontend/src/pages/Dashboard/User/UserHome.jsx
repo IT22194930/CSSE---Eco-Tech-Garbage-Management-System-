@@ -2,7 +2,7 @@ import React from 'react';
 import useUser from '../../../hooks/useUser';
 import { Link } from 'react-router-dom';
 
-const FarmerHome = () => {
+const UserHome = () => {
   const { currentUser } = useUser();
 
   const handleShareQRCode = async () => {
@@ -58,4 +58,4 @@ const FarmerHome = () => {
   );
 };
 
-export default FarmerHome;
+export default UserHome;

@@ -5,8 +5,7 @@ import useUser from "../hooks/useUser";
 import logo from "../assets/logo.png";
 import { BiHomeAlt, BiLogInCircle } from "react-icons/bi";
 import { FaUsers, FaUserAlt } from "react-icons/fa";
-import { GiFertilizerBag, GiField } from "react-icons/gi";
-import { MdPayments } from "react-icons/md";
+import { IoLocation } from "react-icons/io5";
 import { BsQrCodeScan } from "react-icons/bs";
 import { RiDashboardFill } from "react-icons/ri";
 import { CiFileOn } from "react-icons/ci";
@@ -36,37 +35,14 @@ const adminNavItems = [
     label: "Manage Collectors",
   },
   {
-    to: "/dashboard/manage-fertilizers",
-    icon: <GiFertilizerBag className="text-2xl" />,
-    label: "Fertilizer Management",
+    to: "/dashboard/manage-locations",
+    icon: <IoLocation className="text-2xl" />,
+    label: "Location Management",
   },
   {
-    to: "/dashboard/manage-plant",
+    to: "/dashboard/qr-scan",
     icon: <BsQrCodeScan className="text-2xl" />,
     label: "QR Code Scanner",
-  },
-];
-
-const farmerNavItems = [
-  {
-    to: "/dashboard/farmer-home",
-    icon: <RiDashboardFill className="text-2xl" />,
-    label: "Dashboard",
-  },
-  {
-    to: "/dashboard/location",
-    icon: <GiField className="text-2xl" />,
-    label: "My Locations",
-  },
-  {
-    to: "/dashboard/user-plant",
-    icon: <BsQrCodeScan className="text-2xl" />,
-    label: "Plants",
-  },
-  {
-    to: "/dashboard/payments",
-    icon: <MdPayments className="text-2xl" />,
-    label: "Payments",
   },
 ];
 
@@ -153,41 +129,6 @@ const DashboardLayout = () => {
             </p>
             {role === "admin" &&
               adminNavItems.map((menuItem, index) => (
-                <li key={index} className="mb-2">
-                  <NavLink
-                    to={menuItem.to}
-                    className={({ isActive }) =>
-                      `flex ${
-                        isActive ? "bg-secondary text-white" : "text-[#413F44]"
-                      } duration-150 rounded-md p-2 cursor-pointer hover:scale-105 hover:shadow-md font-bold text-sm items-center gap-x-4`
-                    }
-                  >
-                    {menuItem.icon}
-                    <span
-                      className={`${
-                        !open && "hidden"
-                      } origin-left duration-200`}
-                    >
-                      {menuItem.label}
-                    </span>
-                  </NavLink>
-                </li>
-              ))}
-          </ul>
-        )}
-
-        {/* farmer role */}
-        {role === "user" && (
-          <ul className="pt-6">
-            <p
-              className={`uppercase ml-3 text-gray-500 mb-3 ${
-                !open && "hidden"
-              }`}
-            >
-              <small>Menu</small>
-            </p>
-            {role === "user" &&
-              farmerNavItems.map((menuItem, index) => (
                 <li key={index} className="mb-2">
                   <NavLink
                     to={menuItem.to}

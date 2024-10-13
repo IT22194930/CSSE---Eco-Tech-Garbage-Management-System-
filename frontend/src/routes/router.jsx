@@ -8,19 +8,13 @@ import Login from "../pages/user/Login";
 import Register from "../pages/user/Register";
 import DashboardLayout from "../layout/DashboardLayout";
 import Dashboard from "../pages/Dashboard/Dashboard";
-import FarmerHome from "../pages/Dashboard/Farmer/FarmerHome";
+import UserHome from "../pages/Dashboard/User/UserHome";
 import AdminHome from "../pages/Dashboard/Admin/AdminHome";
 import ManageUsers from "../pages/Dashboard/Admin/ManageUsers";
 import UpdateUser from "../pages/Dashboard/Admin/UpdateUser";
-import PlantManagement from "../pages/Dashboard/Admin/PlantManagement";
-import MyCrops from "../pages/Dashboard/Farmer/MyCrops/MyCrops";
-import FertilizerManagementDashboard from "../pages/Dashboard/Admin/FertilizerManagementDashboard";
-import Location from "../pages/Dashboard/Farmer/LocationManagement/Location";
-import Diseases from "../pages/Dashboard/Admin/PlantManagement/Diseases";
-import UserDiseases from "../pages/Dashboard/Farmer/Plant/Diseases";
-import Crops from "../pages/Dashboard/Farmer/LocationManagement/Crop";
+import QRManagement from "../pages/Dashboard/Admin/QRManagement";
+import LocationManagementDashboard from "../pages/Dashboard/Admin/LocationManagementDashboard";
 import Profile from "../pages/Dashboard/Profile/Profile";
-import UserPlant from "../pages/Dashboard/Farmer/Plant/Plant";
 import GarbageRequest from "../pages/GarbageRequest/GarbageRequest";
 import ScheduleRequest from "../pages/GarbageRequest/ScheduleRequest";
 
@@ -111,34 +105,14 @@ export const router = createBrowserRouter([
         element: <Profile />,
       },
 
-      // farmer routes
+      // user routes
       {
-        path: "farmer-home",
-        element: <FarmerHome />,
-      },
-      {
-        path: "my-crops",
-        element: <MyCrops />,
+        path: "user-home",
+        element: <UserHome />,
       },
       {
         path: "location",
         element: <Location />,
-      },
-      {
-        path: "location/crops/:locationId", // Route for crops
-        element: <Crops />,
-        loader: ({ params }) =>
-          fetch(`http://localhost:3000/locations/${params.locationId}/crops`),
-      },
-      {
-        path: "user-plant",
-        element: <UserPlant />,
-      },
-      {
-        path: "user-plant/diseases/:plantId", // Route for plant diseases
-        element: <UserDiseases />,
-        loader: ({ params }) =>
-          fetch(`http://localhost:3000/plants/${params.plantId}/diseases`),
       },
       
       // admin routes
@@ -171,21 +145,14 @@ export const router = createBrowserRouter([
         element: <SpecialRequests />
       },
 
-      // plant management
+      // qr management
       {
-        path: "manage-plant",
-        element: <PlantManagement />,
+        path: "qr-scan",
+        element: <QRManagement />,
       },
       {
-        path: "manage-plant/diseases/:plantId", // Route for plant diseases
-        element: <Diseases />,
-        loader: ({ params }) =>
-          fetch(`http://localhost:3000/plants/${params.plantId}/diseases`),
-      },
-      //fertilizer management
-      {
-        path: "manage-fertilizers",
-        element: <FertilizerManagementDashboard />,
+        path: "manage-locations",
+        element: <LocationManagementDashboard />,
       },
     ],
   },

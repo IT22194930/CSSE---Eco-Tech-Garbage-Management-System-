@@ -1,7 +1,7 @@
 import React from "react";
 import HeroContainer from "./Hero/HeroContainer";
 import Gallery from "./Gallery/Gallery";
-import CostCalculatorSection from "./Cost Calculator/CostCalculatorSection";
+import GarbageRequestsSection from "./Schedule Garbage Request/GarbageRequestsSection";
 import Scroll from "../../hooks/useScroll";
 
 const Home = () => {
@@ -11,7 +11,7 @@ const Home = () => {
       <HeroContainer />
 
       <div className="max-w-screen-xl mx-auto">
-        <CostCalculatorSection />
+        <GarbageRequestsSection />
       </div>
 
       <div className="max-w-screen-xl mx-auto">
