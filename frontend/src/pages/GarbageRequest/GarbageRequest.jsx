@@ -26,18 +26,26 @@ const GarbageRequest = () => {
           `api/garbageRequests/user/${userId}/pending`
         );
         setPendingRequests(pendingResponse.data);
+      } catch (error) {
+        console.error("Error fetching pending requests:", error);
+      }
 
+      try {
         const acceptedResponse = await axiosSecure.get(
           `api/garbageRequests/user/${userId}/accepted`
         );
         setAcceptedRequests(acceptedResponse.data);
+      } catch (error) {
+        console.error("Error fetching accepted requests:", error);
+      }
 
+      try {
         const rejectedResponse = await axiosSecure.get(
           `api/garbageRequests/user/${userId}/rejected`
         );
         setRejectedRequests(rejectedResponse.data);
       } catch (error) {
-        console.error("Error fetching requests:", error);
+        console.error("Error fetching declined requests:", error);
       }
     };
 
@@ -175,7 +183,9 @@ const GarbageRequest = () => {
 
         {activeTab === "pending" && (
           <div>
-            <h2 className="text-2xl font-semibold mb-4 dark:text-white">Pending Requests</h2>
+            <h2 className="text-2xl font-semibold mb-4 dark:text-white">
+              Pending Requests
+            </h2>
             {pendingRequests.length > 0 ? (
               <ul>
                 {pendingRequests.map((request) => (
@@ -318,7 +328,7 @@ const GarbageRequest = () => {
         <EditRequestModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          onUpdateRequest={handleUpdateRequest}
+          onUpdate={handleUpdateRequest}
           request={selectedRequest}
         />
       )}
