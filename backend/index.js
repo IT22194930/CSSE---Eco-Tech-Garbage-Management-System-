@@ -71,7 +71,9 @@ app.use(
 app.use(
   "/api/garbageTypes", require("./routes/GarbageTypes/garbageTypesRoutes.js")
 )
-
+app.use(
+  "/api/payments", require("./routes/Payment/PaymentRoutes.js")
+)
 app.post("/api/set-token", (req, res) => {
   const user = req.body;
   const token = jwt.sign(user, process.env.ACCESS_SECRET, {

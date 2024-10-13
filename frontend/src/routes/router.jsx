@@ -23,6 +23,11 @@ import Profile from "../pages/Dashboard/Profile/Profile";
 import UserPlant from "../pages/Dashboard/Farmer/Plant/Plant";
 import GarbageRequest from "../pages/GarbageRequest/GarbageRequest";
 import ScheduleRequest from "../pages/GarbageRequest/ScheduleRequest";
+import PaymentHome from "../pages/Payment/PaymentHome";
+import Payment from "../pages/Payment/Payment";
+import PaymentHistory from "../pages/Payment/PaymentHistory";
+import MakePayment from "../pages/Payment/MakePayment";
+import CardPayment from "../pages/Payment/CardPayment";
 
 export const router = createBrowserRouter([
   {
@@ -61,6 +66,30 @@ export const router = createBrowserRouter([
         path: "scheduleRequest",
         element: <ScheduleRequest />,
       },
+      {
+        path: "/payments",
+        element: <Payment />,
+        children: [
+          {
+            path: "/payments/",
+            element: <PaymentHome />,
+          },
+          {
+            path: "/payments/make-payment",
+            element: <MakePayment />,
+          },
+          {
+            path: "/payments/payment-history",
+            element: <PaymentHistory />,
+          },
+          {
+            path: "/payments/card-payment",
+            element: <CardPayment />,
+          },
+        ]
+      },
+     
+     
     ],
   },
   {
@@ -105,7 +134,7 @@ export const router = createBrowserRouter([
         loader: ({ params }) =>
           fetch(`http://localhost:3000/plants/${params.plantId}/diseases`),
       },
-
+      
       // admin routes
       {
         path: "admin-home",

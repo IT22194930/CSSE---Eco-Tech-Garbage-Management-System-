@@ -12,6 +12,7 @@ import ThemeToggle from "../ThemeToggle/ThemeToggle";
 
 const navLinks = [
   { name: "Home", route: "/" },
+  { name: "Payments", route: "/payments" },
   { name: "About Us", route: "/aboutUs" },
   { name: "Products", route: "/products" },
   { name: "Services", route: "/services" },
