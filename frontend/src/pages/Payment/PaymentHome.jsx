@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 
 const PaymentHome = () => {
+  const [amount, setAmount] = useState(0);
     const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-green-200 p-6 flex justify-center items-center">
       <div className="max-w-lg w-full bg-white rounded-lg shadow-lg overflow-hidden">
         
-       
+      
 
         {/* Image Section */}
         <div className="flex justify-center py-4 bg-green-100">
@@ -46,13 +47,13 @@ const PaymentHome = () => {
         {/* Buttons Section */}
         <div className="p-4 space-y-4">
           <button 
-            onClick={() => navigate(`/dashboard/make-payment`)}
+            onClick={() => navigate(`/payments/make-payment`)}
             className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600">
             Make Payments
           </button>
           
           <button 
-            onClick={() => navigate(`/dashboard/payment-history`)}
+            onClick={() => navigate(`payments/payment-history`)}
             className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600">
             View Payment History
           </button>
