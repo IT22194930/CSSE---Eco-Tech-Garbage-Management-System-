@@ -12,31 +12,19 @@ const ScheduleRequest = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [requestInfo, setRequestInfo] = useState({
     type: "",
-    quantity: "",
     description: "",
   });
   const [pickupDetails, setPickupDetails] = useState({
-    addressLine1: "",
-    addressLine2: "",
-    city: "",
-    district: "",
-    province: "",
-    postalCode: "",
     date: "",
     time: "",
   });
 
   const validateTab0 = () => {
-    return requestInfo.type !== "" && requestInfo.quantity !== "";
+    return requestInfo.type !== "" && requestInfo.description !== "";
   };
 
   const validateTab1 = () => {
     return (
-      pickupDetails.addressLine1 !== "" &&
-      pickupDetails.city !== "" &&
-      pickupDetails.district !== "" &&
-      pickupDetails.province !== "" &&
-      pickupDetails.postalCode !== "" &&
       pickupDetails.date !== "" &&
       pickupDetails.time !== ""
     );
@@ -71,7 +59,6 @@ const ScheduleRequest = () => {
       userId,
       ...requestInfo,
       ...pickupDetails,
-      cost: cost.toFixed(2)
     };
 
     try {
@@ -82,14 +69,8 @@ const ScheduleRequest = () => {
 
       if (response.status === 200 || response.status === 201) {
         alert("Request saved successfully!");
-        setRequestInfo({ type: "", quantity: "", description: "" });
+        setRequestInfo({ type: "", description: "" });
         setPickupDetails({
-          addressLine1: "",
-          addressLine2: "",
-          city: "",
-          district: "",
-          province: "",
-          postalCode: "",
           date: "",
           time: "",
         });
@@ -122,9 +103,9 @@ const ScheduleRequest = () => {
     fetchTypes();
   }, [axiosSecure]);
 
-  const selectedGarbageType = garbageTypes.find(type => type.type === requestInfo.type);
-  const unitPrice = selectedGarbageType ? selectedGarbageType.unitPrice : 0;
-  const cost = unitPrice * requestInfo.quantity;
+  const selectedGarbageType = garbageTypes.find(
+    (type) => type.type === requestInfo.type
+  );
 
   return (
     <div className="max-w-4xl mx-auto mt-28 p-6 bg-white rounded-lg shadow-md">
@@ -189,24 +170,14 @@ const ScheduleRequest = () => {
               </option>
             ))}
           </select>
-          <div className="flex gap-4">
-            <input
-              type="number"
-              name="quantity"
-              value={requestInfo.quantity}
-              placeholder="Quantity"
-              onChange={handleChangeRequestInfo}
-              className="w-full border border-gray-300 rounded-lg p-2"
-              required
-            />
-            <p className="font-bold my-auto">kg</p>
-          </div>
+
           <textarea
             name="description"
             value={requestInfo.description}
             placeholder="Description"
             onChange={handleChangeRequestInfo}
             className="w-full border border-gray-300 rounded-lg p-2"
+            required
           />
           <div className="flex justify-between">
             <button
@@ -226,95 +197,11 @@ const ScheduleRequest = () => {
       )}
       {/* Tab 1 - Pickup Details */}
       {activeTab === 1 && (
-        <div className="space-y-4">
+        <div className="space-y-4 mt-4">
           <h2 className="text-xl font-semibold">Pickup Details</h2>
-          <input
-            type="text"
-            name="addressLine1"
-            value={pickupDetails.addressLine1}
-            placeholder="Address Line 1"
-            onChange={handleChangePickupDetails}
-            className="w-full border border-gray-300 rounded-lg p-2"
-            required
-          />
-          <input
-            type="text"
-            name="addressLine2"
-            value={pickupDetails.addressLine2}
-            placeholder="Address Line 2"
-            onChange={handleChangePickupDetails}
-            className="w-full border border-gray-300 rounded-lg p-2"
-          />
-          <input
-            type="text"
-            name="city"
-            value={pickupDetails.city}
-            placeholder="City"
-            onChange={handleChangePickupDetails}
-            className="w-full border border-gray-300 rounded-lg p-2"
-            required
-          />
-          <select
-            name="district"
-            value={pickupDetails.district}
-            onChange={handleChangePickupDetails}
-            className="w-full border border-gray-300 rounded-lg p-2"
-            required
-          >
-            <option value="">Select District</option>
-            <option value="Ampara">Ampara</option>
-            <option value="Anuradhapura">Anuradhapura</option>
-            <option value="Badulla">Badulla</option>
-            <option value="Batticaloa">Batticaloa</option>
-            <option value="Colombo">Colombo</option>
-            <option value="Galle">Galle</option>
-            <option value="Gampaha">Gampaha</option>
-            <option value="Hambantota">Hambantota</option>
-            <option value="Jaffna">Jaffna</option>
-            <option value="Kalutara">Kalutara</option>
-            <option value="Kandy">Kandy</option>
-            <option value="Kegalle">Kegalle</option>
-            <option value="Kilinochchi">Kilinochchi</option>
-            <option value="Kurunegala">Kurunegala</option>
-            <option value="Mannar">Mannar</option>
-            <option value="Matale">Matale</option>
-            <option value="Matara">Matara</option>
-            <option value="Monaragala">Monaragala</option>
-            <option value="Mullaitivu">Mullaitivu</option>
-            <option value="Nuwara Eliya">Nuwara Eliya</option>
-            <option value="Polonnaruwa">Polonnaruwa</option>
-            <option value="Puttalam">Puttalam</option>
-            <option value="Ratnapura">Ratnapura</option>
-            <option value="Trincomalee">Trincomalee</option>
-            <option value="Vavuniya">Vavuniya</option>
-          </select>
-          <select
-            name="province"
-            value={pickupDetails.province}
-            onChange={handleChangePickupDetails}
-            className="w-full border border-gray-300 rounded-lg p-2"
-            required
-          >
-            <option value="">Select Province</option>
-            <option value="Central">Central</option>
-            <option value="Eastern">Eastern</option>
-            <option value="Northern">Northern</option>
-            <option value="North Central">North Central</option>
-            <option value="North Western">North Western</option>
-            <option value="Sabaragamuwa">Sabaragamuwa</option>
-            <option value="Southern">Southern</option>
-            <option value="Uva">Uva</option>
-            <option value="Western">Western</option>
-          </select>
-          <input
-            type="text"
-            name="postalCode"
-            value={pickupDetails.postalCode}
-            placeholder="Postal Code"
-            onChange={handleChangePickupDetails}
-            className="w-full border border-gray-300 rounded-lg p-2"
-            required
-          />
+          <label htmlFor="date" className="block text-gray-700 font-bold mb-2">
+            Pickup Date
+          </label>
           <input
             type="date"
             name="date"
@@ -323,6 +210,10 @@ const ScheduleRequest = () => {
             className="w-full border border-gray-300 rounded-lg p-2"
             required
           />
+
+          <label htmlFor="date" className="block text-gray-700 font-bold mb-2">
+            Pickup Time
+          </label>
           <input
             type="time"
             name="time"
@@ -356,26 +247,7 @@ const ScheduleRequest = () => {
             <strong>Type:</strong> {requestInfo.type}
           </p>
           <p>
-            <strong>Quantity:</strong> {requestInfo.quantity}
-          </p>
-          <p>
             <strong>Description:</strong> {requestInfo.description}
-          </p>
-          <p>
-            <strong>Address:</strong> {pickupDetails.addressLine1},{" "}
-            {pickupDetails.addressLine2}
-          </p>
-          <p>
-            <strong>City:</strong> {pickupDetails.city}
-          </p>
-          <p>
-            <strong>District:</strong> {pickupDetails.district}
-          </p>
-          <p>
-            <strong>Province:</strong> {pickupDetails.province}
-          </p>
-          <p>
-            <strong>Postal Code:</strong> {pickupDetails.postalCode}
           </p>
           <p>
             <strong>Date:</strong> {pickupDetails.date}
@@ -383,7 +255,6 @@ const ScheduleRequest = () => {
           <p>
             <strong>Time:</strong> {pickupDetails.time}
           </p>
-          <h1 className="text-2xl">Cost: <span className="font-bold">${cost.toFixed(2)}</span></h1>
           <div className="flex justify-between">
             <button
               className="py-2 px-4 bg-gray-500 text-white rounded-lg"

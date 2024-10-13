@@ -3,7 +3,7 @@ import Scroll from "../../hooks/useScroll";
 import useUser from "../../hooks/useUser";
 import { Link } from "react-router-dom";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
-import EditRequestModal from "./EditRequestModal"; // Import the EditRequestModal
+import EditRequestModal from "./EditRequestModal";
 import { FaRegEdit, FaTrashAlt } from "react-icons/fa";
 
 const GarbageRequest = () => {
@@ -12,7 +12,8 @@ const GarbageRequest = () => {
   const axiosSecure = useAxiosSecure();
   const [activeTab, setActiveTab] = useState("pending");
   const [pendingRequests, setPendingRequests] = useState([]);
-  const [previousRequests, setPreviousRequests] = useState([]);
+  const [acceptedRequests, setAcceptedRequests] = useState([]);
+  const [rejectedRequests, setRejectedRequests] = useState([]);
   const [filter, setFilter] = useState("all");
   const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
   const [selectedRequest, setSelectedRequest] = useState(null); // State for selected request
@@ -24,17 +25,16 @@ const GarbageRequest = () => {
           `api/garbageRequests/user/${userId}/pending`
         );
         setPendingRequests(pendingResponse.data);
+
         const acceptedResponse = await axiosSecure.get(
           `api/garbageRequests/user/${userId}/accepted`
         );
+        setAcceptedRequests(acceptedResponse.data);
+
         const rejectedResponse = await axiosSecure.get(
           `api/garbageRequests/user/${userId}/rejected`
         );
-        const allPreviousRequests = [
-          ...acceptedResponse.data,
-          ...rejectedResponse.data,
-        ];
-        setPreviousRequests(allPreviousRequests);
+        setRejectedRequests(rejectedResponse.data);
       } catch (error) {
         console.error("Error fetching requests:", error);
       }
@@ -44,7 +44,7 @@ const GarbageRequest = () => {
   }, [userId, axiosSecure]);
 
   const handleEditClick = (request) => {
-    setSelectedRequest(request); // Set the selected request for editing
+    setSelectedRequest(request);
     setIsModalOpen(true); // Open the modal
   };
 
@@ -82,13 +82,33 @@ const GarbageRequest = () => {
     }
   };
 
-  const filteredRequests = previousRequests.filter((request) => {
+  const filteredRequests = (requests) => {
     if (filter === "accepted")
-      return request.status.toLowerCase() === "accepted";
+      return requests.filter(
+        (request) => request.status.toLowerCase() === "accepted"
+      );
     if (filter === "rejected")
-      return request.status.toLowerCase() === "rejected";
-    return true; // For "all", return all requests
-  });
+      return requests.filter(
+        (request) => request.status.toLowerCase() === "rejected"
+      );
+    return requests; // For "all", return all requests
+  };
+
+  if (!currentUser) {
+    return (
+      <div className="mt-20 mx-auto max-w-4xl p-6 bg-white dark:bg-slate-900 dark:shadow-slate-500 shadow-lg rounded-lg text-center">
+        <Scroll />
+        <h1 className="text-4xl font-bold mb-6 text-gray-800 dark:text-white">
+          You have to login first
+        </h1>
+        <Link to="/login">
+          <button className="bg-secondary rounded-xl p-5 text-white px-20 hover:scale-105 duration-300">
+            Go to Login
+          </button>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -142,23 +162,30 @@ const GarbageRequest = () => {
                     key={request._id}
                     className="mb-2 p-2 border rounded-lg flex justify-between items-center"
                   >
-                    <div className="flex justify-around">
-                      <div>
-                        <p>
-                          <strong>Type:</strong> {request.type}
-                        </p>
-                        <p>
-                          <strong>Quantity:</strong> {request.quantity}
-                        </p>
-                        <p>
-                          <strong>Description:</strong> {request.description}
-                        </p>
-                        <p>
-                          <strong>Status:</strong> {request.status}
-                        </p>
-                      </div>
-                      <p>Cost: Rs. <strong>{request.cost}</strong></p>
+                    <div>
+                      <p>
+                        <strong>Type:</strong> {request.type}
+                      </p>
+                      <p>
+                        <strong>Description:</strong> {request.description}
+                      </p>
+                      <p>
+                        <strong>Status:</strong> {request.status}
+                      </p>
+                      <p>
+                        <strong>Pickup Date: </strong>
+                        {new Date(request.date).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </p>
+                      <p>
+                        <strong>Pickup Time: </strong>
+                        {request.time}
+                      </p>
                     </div>
+
                     <div className="flex items-center">
                       <button
                         className="ml-2 text-blue-500"
@@ -196,21 +223,35 @@ const GarbageRequest = () => {
                 <option value="rejected">Rejected</option>
               </select>
             </h2>
-            {filteredRequests.length > 0 ? (
+            {/* Display both accepted and rejected requests */}
+            {filteredRequests([...acceptedRequests, ...rejectedRequests])
+              .length > 0 ? (
               <ul>
-                {filteredRequests.map((request) => (
+                {filteredRequests([
+                  ...acceptedRequests,
+                  ...rejectedRequests,
+                ]).map((request) => (
                   <li key={request._id} className="mb-2 p-2 border rounded-lg">
                     <p>
                       <strong>Type:</strong> {request.type}
-                    </p>
-                    <p>
-                      <strong>Quantity:</strong> {request.quantity}
                     </p>
                     <p>
                       <strong>Description:</strong> {request.description}
                     </p>
                     <p>
                       <strong>Status:</strong> {request.status}
+                    </p>
+                    <p>
+                      <strong>Pickup Date: </strong>
+                      {new Date(request.date).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </p>
+                    <p>
+                      <strong>Pickup Time: </strong>
+                      {request.time}
                     </p>
                   </li>
                 ))}
