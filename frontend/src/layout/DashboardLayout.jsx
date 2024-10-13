@@ -64,9 +64,9 @@ const farmerNavItems = [
     label: "Plants",
   },
   {
-    to: "/dashboard/my-payments",
+    to: "/dashboard/payments",
     icon: <MdPayments className="text-2xl" />,
-    label: "Payment History",
+    label: "Payments",
   },
 ];
 
