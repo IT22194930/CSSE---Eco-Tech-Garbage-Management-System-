@@ -1,9 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { FaBars, FaTimes } from "react-icons/fa"; // Import the sun and moon icons
-import { LuSun } from "react-icons/lu";
-import farmerImg from "../../assets/farmer.jpg";
+import { FaBars, FaTimes } from "react-icons/fa";
+import userImg from "../../assets/farmer.jpg";
 import { motion } from "framer-motion";
 import { AuthContext } from "../../utilities/providers/AuthProvider";
 import Swal from "sweetalert2";
@@ -246,7 +245,7 @@ const NavBar = () => {
                   <li>
                     <Link to={`/dashboard/user-profile`}>
                       <img
-                        src={currentUser?.photoUrl || farmerImg}
+                        src={currentUser?.photoUrl || userImg}
                         alt="User Avatar"
                         className="w-10 h-10 rounded-full object-cover"
                       />
