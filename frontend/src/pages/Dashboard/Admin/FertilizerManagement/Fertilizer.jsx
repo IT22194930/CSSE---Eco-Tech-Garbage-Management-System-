@@ -1,333 +1,182 @@
 import React, { useEffect, useState } from "react";
-import useAxiosFetch from "../../../../hooks/useAxiosFetch";
+import tt from "@tomtom-international/web-sdk-maps";
+import "@tomtom-international/web-sdk-maps/dist/maps.css";
 import useAxiosSecure from "../../../../hooks/useAxiosSecure";
-import { useNavigate } from "react-router-dom";
-import Modal from "../../../../components/Modal/LargeModal";
-import SearchBar from"../../../../components/Search/SearchBar";
-import { ToastContainer, toast } from "react-toastify";
-import { MdDelete } from "react-icons/md";
-import * as XLSX from "xlsx";
-import { writeFile } from "xlsx";
-import { FaEdit, FaFilePdf, FaFileExcel } from "react-icons/fa";
-import { HiRefresh } from "react-icons/hi";
-import FertilizerForm from "./FertilizerForm";
-import FertilizerReport from "./FertilizerReport";
-import { BlobProvider } from "@react-pdf/renderer";
-import Pagination from "../../../../components/Pagination/Pagination"; // Import the Pagination component
 
-
-function Fertilizer() {
-  const axiosFetch = useAxiosFetch();
+const TrackingMap = ({ userId }) => {
+  const [marker, setMarker] = useState(null);
+  const [map, setMap] = useState(null);
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
+  const [error, setError] = useState(null);
+  const [routeLine, setRouteLine] = useState(null);
   const axiosSecure = useAxiosSecure();
-  const navigate = useNavigate();
-  const [fertilizer, setFertilizer] = useState([]);
-  const [addModalOpen, setAddModalOpen] = useState(false);
-  const [editModalOpen, setEditModalOpen] = useState(false);
-  const [dataList, setDataList] = useState([]);
-  const [selectedFertilizer, setSelectedFertilizer] = useState(null);
-  const [filteredDataList, setFilteredDataList] = useState([]);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [deleteId, setDeleteId] = useState(null);
 
-   // Pagination state
-   const [currentPage, setCurrentPage] = useState(1);
-   const [fertilizersPerPage] = useState(3); // Adjust as needed
+  // Destination coordinates (example purposes)
+  const destination = { lat: 34.0522, lng: -118.2437 }; // Los Angeles
 
+  // Fetch user's garbage request by userId
   useEffect(() => {
-    fetchFertilizers();
-  }, []);
+    const fetchGarbageRequest = async () => {
+      console.log("Fetching garbage request for user ID:", userId);
 
-  const fetchFertilizers = async () => {
-    try {
-      const response = await axiosFetch.get("/Fertilizer/");
-      // Verify the data structure
-      if (Array.isArray(response.data)) {
-        setDataList(response.data);
-        setFilteredDataList(response.data);
-      } else {
-        console.error("Unexpected data format:", response.data);
-        toast.error("Unexpected data format from server.");
+      try {
+        // Adjust the endpoint to fetch the garbage request for the specific userId
+        const response = await axiosSecure.get(
+          `/api/garbageRequests?userId=${userId}`
+        );
+
+        // Ensure the response contains data
+        if (response.data.length > 0) {
+          const { latitude: lat, longitude: lng } = response.data[0]; // Assuming we get an array of requests
+
+          // Log the latitude and longitude to the console
+          console.log(`User Latitude: ${lat}, User Longitude: ${lng}`);
+
+          setLatitude(lat);
+          setLongitude(lng);
+
+          if (map) {
+            // Update marker position or add a new one if it doesn't exist
+            if (!marker) {
+              console.log("Creating a new marker on the map");
+              const newMarker = new tt.Marker()
+                .setLngLat([lng, lat])
+                .addTo(map);
+              setMarker(newMarker);
+            } else {
+              console.log("Updating marker position on the map");
+              marker.setLngLat([lng, lat]);
+            }
+
+            // Center the map to the new location
+            console.log("Centering map to:", { lng, lat });
+            map.setCenter([lng, lat]);
+
+            // Request route from current location to destination
+            console.log(
+              "Requesting route from:",
+              { lat, lng },
+              "to destination:",
+              destination
+            );
+            getRoute(lat, lng, destination.lat, destination.lng);
+          }
+        } else {
+          console.error("No garbage requests found for this user.");
+          setError("No garbage requests found for this user.");
+        }
+      } catch (error) {
+        console.error("Error fetching garbage request:", error);
+        setError("Unable to fetch location for the provided user.");
       }
-    } catch (err) {
-      console.error("Error fetching fertilizers:", err);
-      toast.error("Failed to fetch fertilizers.");
+    };
+
+    if (userId) {
+      fetchGarbageRequest();
     }
-  };
+  }, [userId, map, marker, axiosSecure]);
 
-  const handleSearch = (query) => {
-    const filteredList = dataList.filter((fertilizer) => {
-      const fullName = `${fertilizer.productName} ${fertilizer.category}`;
-      return fullName.toLowerCase().includes(query.toLowerCase());
-    });
-    setFilteredDataList(filteredList);
-  };
+  // Initialize the map after component has mounted
+  useEffect(() => {
+    if (!map) {
+      const container = document.getElementById("map");
+      if (container) {
+        console.log("Initializing map...");
+        const initialMap = tt.map({
+          key: "zpWMpFIL0L2YfyAwnfXY3PTNQezdw9RV", // Insert your TomTom API key here
+          container: container,
+          center: [0, 0], // Initial center of the map (you can change this if needed)
+          zoom: 15,
+        });
+        setMap(initialMap);
 
-  const generateExcelFile = () => {
-    const rearrangedDataList = dataList.map((fertilizer) => ({
-      Product_Name: fertilizer.productName,
-      Category: fertilizer.category,
-      Description: fertilizer.description,
-      Quantity: fertilizer.quantity,
-      Price: fertilizer.price,
-    }));
-  
-    const ws = XLSX.utils.json_to_sheet(rearrangedDataList);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Fertilizer Report");
-    writeFile(wb, "fertilizer_report.xlsx");
-  };
-  
-
-
-  const handleRefreshClick = () => {
-    fetchFertilizers();
-  };
-  const handleButtonClick = () => {
-    generateExcelFile();
-  };
-
-  const handleAddModalOpen = () => setAddModalOpen(true);
-  const handleAddModalClose = () => setAddModalOpen(false);
-
-  const handleEditModalOpen = (fertilizer) => {
-    setSelectedFertilizer(fertilizer);
-    setEditModalOpen(true);
-  };
-  const handleEditModalClose = () => setEditModalOpen(false);
-
-  const handleDelete = async (id) => {
-    try {
-      await axiosSecure.delete(`/Fertilizer/delete/${id}`);
-      toast.success("Successfully Deleted!");
-      fetchFertilizers(); // Ensure data is refreshed after deletion
-      handleCloseDeleteModal();
-    } catch (err) {
-      console.error("Error deleting fertilizer:", err);
-      toast.error("Failed to delete fertilizer.");
+        return () => {
+          console.log("Cleaning up map...");
+          initialMap.remove(); // Clean up the map on unmount
+        };
+      } else {
+        console.error("Map container not found!");
+      }
     }
-  };
+  }, [map]);
 
-  const handleAddSubmit = async (formData) => {
-    try {
-      await axiosSecure.post("/Fertilizer/add", formData);
-      toast.success("Fertilizer Added!");
-      handleAddModalClose();
-      fetchFertilizers(); // Refresh data after adding a fertilizer
-    } catch (err) {
-      console.error("Error adding fertilizer:", err);
-      toast.error("Failed to add fertilizer.");
-    }
-  };
+  // Function to get the route
+  const getRoute = (startLat, startLng, endLat, endLng) => {
+    const url = `https://api.tomtom.com/routing/1/calculateRoute/${startLat},${startLng}:${endLat},${endLng}/json?key=zpWMpFIL0L2YfyAwnfXY3PTNQezdw9RV`;
 
-  const handleEditSubmit = async (formData) => {
-    try {
-      await axiosSecure.put(`/Fertilizer/update/${formData._id}`, formData);
-      toast.success("Fertilizer Updated!");
-      handleEditModalClose();
-      fetchFertilizers(); // Refresh data after editing a fertilizer
-    } catch (err) {
-      console.error("Error updating fertilizer:", err);
-      toast.error("Failed to update fertilizer.");
-    }
-  };
+    console.log("Fetching route from TomTom API with URL:", url);
 
-  const handleShowDeleteModal = (id) => {
-    setDeleteId(id);
-    setShowDeleteModal(true);
-  };
-  const handleCloseDeleteModal = () => {
-    setShowDeleteModal(false);
-    setDeleteId(null);
-  };
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.routes.length > 0) {
+          const route = data.routes[0];
+          const geoJson = route.legs[0].points.map((point) => [
+            point.longitude,
+            point.latitude,
+          ]);
 
-  // Pagination calculations
-  const indexOfLastFertilizer = currentPage * fertilizersPerPage;
-  const indexOfFirstFertilizer = indexOfLastFertilizer - fertilizersPerPage;
-  const currentFertilizers = filteredDataList.slice(
-    indexOfFirstFertilizer,
-    indexOfLastFertilizer
-  );
-  const totalPages = Math.ceil(filteredDataList.length / fertilizersPerPage);
+          console.log("Route fetched successfully:", geoJson);
+
+          // Remove existing routeLine if it exists
+          if (routeLine) {
+            console.log("Removing existing route line from the map");
+            map.removeLayer("route");
+            map.removeSource("route");
+          }
+
+          // Create a LineString to represent the route
+          const lineLayer = {
+            id: "route",
+            type: "line",
+            source: {
+              type: "geojson",
+              data: {
+                type: "Feature",
+                geometry: {
+                  type: "LineString",
+                  coordinates: geoJson,
+                },
+              },
+            },
+            layout: {
+              "line-cap": "round",
+              "line-join": "round",
+            },
+            paint: {
+              "line-color": "#888",
+              "line-width": 6,
+            },
+          };
+
+          console.log("Adding route line to the map");
+          map.addSource("route", lineLayer.source);
+          map.addLayer(lineLayer);
+          setRouteLine(lineLayer);
+        } else {
+          console.error("No routes found");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching route:", error);
+      });
+  };
 
   return (
-    <div className="mt-10 p-4 bg-gray-50">
-      <div className="bg-white shadow-md rounded-lg p-6">
-        <div className="flex justify-between items-center mb-4">
-          <div>
-            <h2 className="text-xl font-semibold text-gray-700">
-              Fertilizer Details
-            </h2>
-            <h6 className="text-sm text-gray-500">Manage fertilizer details</h6>
-          </div>
-          <div className="flex space-x-4">
-            <BlobProvider
-              document={<FertilizerReport dataList={dataList} />}
-              fileName="FertilizerReport.pdf"
-            >
-              {({ url, blob }) => (
-                <li className="flex items-center">
-                  <a href={url} target="_blank" className="flex items-center">
-                    <FaFilePdf className="text-3xl text-red-600" />
-                  </a>
-                </li>
-              )}
-            </BlobProvider>
-            <li className="flex items-center">
-              <a
-                href="#"
-                onClick={handleButtonClick}
-                className="flex items-center"
-              >
-                <FaFileExcel className="text-3xl text-green-600" />
-              </a>
-            </li>
-
-            <button
-              className="text-blue-500 hover:underline"
-              onClick={handleRefreshClick}
-            >
-              <HiRefresh className="text-3xl" />
-            </button>
-            <button
-              className="bg-secondary hover:scale-105 text-white py-2 px-4 rounded-lg"
-              onClick={handleAddModalOpen}
-            >
-              Add Fertilizer
-            </button>
-          </div>
-        </div>
-
-        {/* Add Fertilizer Modal */}
-        <Modal
-          isOpen={addModalOpen}
-          onClose={handleAddModalClose}
-          title="Add Fertilizer"
-        >
-          <FertilizerForm handleSubmit={handleAddSubmit} />
-        </Modal>
-
-        {/* Edit Fertilizer Modal */}
-        <Modal
-          isOpen={editModalOpen}
-          onClose={handleEditModalClose}
-          title="Edit Fertilizer"
-        >
-          <FertilizerForm
-            handleSubmit={handleEditSubmit}
-            initialData={selectedFertilizer}
-          />
-        </Modal>
-
-        {/* Delete Confirmation Modal */}
-        <Modal
-          isOpen={showDeleteModal}
-          onClose={handleCloseDeleteModal}
-          title="Confirm Delete"
-        >
-          <p>Are you sure you want to delete this record?</p>
-          <div className="mt-6 flex justify-end">
-            <button
-              className="px-4 py-2 mr-4 bg-gray-300 rounded hover:bg-gray-400"
-              onClick={handleCloseDeleteModal}
-            >
-              Cancel
-            </button>
-            <button
-              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-              onClick={() => handleDelete(deleteId)}
-            >
-              Delete
-            </button>
-          </div>
-        </Modal>
-
-        <SearchBar onSearch={handleSearch} />
-
-        <table className="w-full mt-6 bg-white shadow-md rounded-lg overflow-hidden">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="p-4 text-left">Image</th>
-              <th className="p-4 text-left">Product Name</th>
-              <th className="p-4 text-left">Category</th>
-              <th className="p-4 text-left">Description</th>
-              <th className="p-4 text-left">Quantity (kg)</th>
-              <th className="p-4 text-left">Price (Rs)</th>
-              <th className="p-4 text-left">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentFertilizers.length ? (
-              currentFertilizers.map((fertilizer) => (
-                <tr key={fertilizer._id} className="border-b">
-                  <td className="p-4">
-                    {fertilizer.imageUrl && (
-                      <img
-                        src={fertilizer.imageUrl}
-                        alt="Fertilizer"
-                        className="w-12 h-12 object-cover rounded-lg"
-                      />
-                    )}
-                  </td>
-                  <td className="p-4">{fertilizer.productName}</td>
-                  <td className="p-4">{fertilizer.category}</td>
-                  <td className="p-4">{fertilizer.description}</td>
-                  <td className="p-4">{fertilizer.quantity}</td>
-                  <td className="p-4">{fertilizer.price}</td>
-
-                  <td className="p-4">
-                  <div className="flex space-x-2">
-                        <button
-                          className="text-3xl text-blue-600 hover:text-blue-800"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleEditModalOpen(fertilizer);
-                          }}
-                        >
-                          <FaEdit />
-                        </button>
-                        <button
-                          className="text-3xl text-red-600 hover:text-red-800"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleShowDeleteModal(fertilizer._id);
-                          }}
-                        >
-                          <MdDelete />
-                        </button>
-                      </div>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="5" className="p-4 text-center text-gray-500">
-                  No Data
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
-        />
-      </div>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
+    <div>
+      <h3>Vehicle Tracking Map</h3>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      <div
+        id="map"
+        style={{
+          width: "100%",
+          height: "500px",
+          position: "relative",
+        }}
+      ></div>
     </div>
   );
-}
+};
 
-export default Fertilizer;
+export default TrackingMap;
