@@ -5,7 +5,8 @@ import { useNavigate } from "react-router-dom";
 
 const ScheduleRequest = () => {
   const { currentUser } = useUser();
-  const userId = currentUser?._id; // Ensure userId is safely accessed
+  const userId = currentUser?._id;
+  const username = currentUser?.name;
   const axiosSecure = useAxiosSecure();
   const navigate = useNavigate();
   const [garbageTypes, setGarbageTypes] = useState([]);
@@ -57,6 +58,7 @@ const ScheduleRequest = () => {
   const handleConfirm = async () => {
     const requestData = {
       userId,
+      username : username,
       ...requestInfo,
       ...pickupDetails,
     };
@@ -108,7 +110,7 @@ const ScheduleRequest = () => {
   );
 
   return (
-    <div className="max-w-4xl mx-auto mt-28 p-6 bg-white rounded-lg shadow-md">
+    <div className="max-w-4xl mx-auto mt-28 p-6 bg-white dark:bg-slate-700 rounded-lg shadow-md">
       <div className="flex justify-around mb-4">
         <button
           className={`py-2 px-4 rounded-lg ${
@@ -155,12 +157,12 @@ const ScheduleRequest = () => {
       {/*  Tab 0 - Request Information */}
       {activeTab === 0 && (
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Request Information</h2>
+          <h2 className="text-xl font-semibold dark:text-white">Request Information</h2>
           <select
             name="type"
             value={requestInfo.type}
             onChange={handleChangeRequestInfo}
-            className="w-full border border-gray-300 rounded-lg p-2"
+            className="w-full border border-gray-300 rounded-lg p-2 dark:bg-slate-600  dark:text-white"
             required
           >
             <option value="">Select Type</option>
@@ -176,7 +178,7 @@ const ScheduleRequest = () => {
             value={requestInfo.description}
             placeholder="Description"
             onChange={handleChangeRequestInfo}
-            className="w-full border border-gray-300 rounded-lg p-2"
+            className="w-full border border-gray-300 rounded-lg p-2 dark:bg-slate-600  dark:text-white"
             required
           />
           <div className="flex justify-between">
@@ -187,7 +189,7 @@ const ScheduleRequest = () => {
               Cancel
             </button>
             <button
-              className="py-2 px-4 bg-blue-500 text-white rounded-lg"
+              className="py-2 px-4 bg-blue-500 text-white rounded-lg hover:scale-105 duration-300"
               onClick={handleNext}
             >
               Next
@@ -197,8 +199,8 @@ const ScheduleRequest = () => {
       )}
       {/* Tab 1 - Pickup Details */}
       {activeTab === 1 && (
-        <div className="space-y-4 mt-4">
-          <h2 className="text-xl font-semibold">Pickup Details</h2>
+        <div className="space-y-2 mt-4">
+          <h2 className="text-xl font-semibold dark:text-white mt-3">Pickup Details</h2>
           <label htmlFor="date" className="block text-gray-700 font-bold mb-2">
             Pickup Date
           </label>
@@ -207,7 +209,7 @@ const ScheduleRequest = () => {
             name="date"
             value={pickupDetails.date}
             onChange={handleChangePickupDetails}
-            className="w-full border border-gray-300 rounded-lg p-2"
+            className="w-full border border-gray-300 rounded-lg p-2 dark:bg-slate-600  dark:text-white"
             required
           />
 
@@ -219,18 +221,18 @@ const ScheduleRequest = () => {
             name="time"
             value={pickupDetails.time}
             onChange={handleChangePickupDetails}
-            className="w-full border border-gray-300 rounded-lg p-2"
+            className="w-full border border-gray-300 rounded-lg p-2 dark:bg-slate-600  dark:text-white"
             required
           />
           <div className="flex justify-between">
             <button
-              className="py-2 px-4 bg-gray-500 text-white rounded-lg"
+              className="py-2 px-4 bg-gray-500 text-white rounded-lg hover:bg-slate-400 duration-300"
               onClick={handlePrevious}
             >
               Previous
             </button>
             <button
-              className="py-2 px-4 bg-blue-500 text-white rounded-lg"
+              className="py-2 px-4 bg-blue-500 text-white rounded-lg hover:scale-105 duration-300"
               onClick={handleNext}
             >
               Next
@@ -242,28 +244,28 @@ const ScheduleRequest = () => {
       {/* Tab 2 - Review & Confirm */}
       {activeTab === 2 && (
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold">Review & Confirm</h2>
-          <p>
+          <h2 className="text-xl font-semibold dark:text-white">Review & Confirm</h2>
+          <p className="dark:text-white">
             <strong>Type:</strong> {requestInfo.type}
           </p>
-          <p>
+          <p className="dark:text-white">
             <strong>Description:</strong> {requestInfo.description}
           </p>
-          <p>
+          <p className="dark:text-white">
             <strong>Date:</strong> {pickupDetails.date}
           </p>
-          <p>
+          <p className="dark:text-white">
             <strong>Time:</strong> {pickupDetails.time}
           </p>
           <div className="flex justify-between">
             <button
-              className="py-2 px-4 bg-gray-500 text-white rounded-lg"
+              className="py-2 px-4 bg-gray-500 text-white rounded-lg hover:bg-slate-400 duration-300"
               onClick={handlePrevious}
             >
               Previous
             </button>
             <button
-              className="py-2 px-4 bg-green-500 text-white rounded-lg"
+              className="py-2 px-4 bg-secondary text-white rounded-lg hover:scale-105 duration-300"
               onClick={handleConfirm}
             >
               Confirm

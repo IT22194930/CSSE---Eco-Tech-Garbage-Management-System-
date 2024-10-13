@@ -175,7 +175,7 @@ const GarbageRequest = () => {
 
         {activeTab === "pending" && (
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Pending Requests</h2>
+            <h2 className="text-2xl font-semibold mb-4 dark:text-white">Pending Requests</h2>
             {pendingRequests.length > 0 ? (
               <ul>
                 {pendingRequests.map((request) => (
@@ -225,17 +225,17 @@ const GarbageRequest = () => {
                 ))}
               </ul>
             ) : (
-              <p>No pending requests found.</p>
+              <p className="dark:text-white">No pending requests found.</p>
             )}
           </div>
         )}
 
         {activeTab === "previous" && (
           <div>
-            <h2 className="text-2xl font-semibold mb-4 flex items-center justify-between">
+            <h2 className="text-2xl font-semibold mb-4 flex items-center justify-between dark:text-white">
               Previous Requests
               <select
-                className="ml-4 p-2 border rounded-lg text-lg"
+                className="ml-4 p-2 border rounded-lg text-lg dark:text-black"
                 value={filter}
                 onChange={(e) => setFilter(e.target.value)}
               >
@@ -307,7 +307,7 @@ const GarbageRequest = () => {
                 ))}
               </ul>
             ) : (
-              <p>No previous requests found.</p>
+              <p className="dark:text-white">No previous requests found.</p>
             )}
           </div>
         )}
