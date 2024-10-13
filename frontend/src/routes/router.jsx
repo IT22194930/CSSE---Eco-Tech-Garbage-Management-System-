@@ -23,6 +23,9 @@ import Profile from "../pages/Dashboard/Profile/Profile";
 import UserPlant from "../pages/Dashboard/Farmer/Plant/Plant";
 import GarbageRequest from "../pages/GarbageRequest/GarbageRequest";
 import ScheduleRequest from "../pages/GarbageRequest/ScheduleRequest";
+import ManageCollectors from "../pages/Dashboard/Admin/ManageCollectors";
+import UpdateCollector from "../pages/Dashboard/Admin/UpdateCollector";
+import SpecialRequests from "../pages/Dashboard/Admin/SpecialRequests";
 
 export const router = createBrowserRouter([
   {
@@ -116,10 +119,24 @@ export const router = createBrowserRouter([
         element: <ManageUsers />,
       },
       {
+        path: "manage-collectors",
+        element: <ManageCollectors />
+      },
+      {
         path: "update-user/:id",
         element: <UpdateUser />,
         loader: ({ params }) =>
           fetch(`http://localhost:3000/users/${params.id}`),
+      },
+      {
+        path: "update-collector/:id",
+        element: <UpdateCollector />,
+        loader: ({ params }) =>
+          fetch(`http://localhost:3000/users/${params.id}`),
+      },
+      {
+        path: "special-requests",
+        element: <SpecialRequests />
       },
 
       // plant management
