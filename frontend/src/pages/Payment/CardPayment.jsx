@@ -3,15 +3,16 @@ import { MdOutlineArrowBackIosNew } from "react-icons/md";
 import { Link } from 'react-router-dom';
 import CardType from './CardType';
 import { useLocation } from 'react-router-dom';
+import useUser from "../../hooks/useUser";
 
 const CardPayment = () => {
+  const { currentUser } = useUser();
   const [cardNumber, setCardNumber] = useState('');
   const [cardType, setCardType] = useState('');
   const [expiryDate, setExpiryDate] = useState('');
   const [cvv, setCvv] = useState('');
   const location = useLocation();
   const { amount } = location.state || {};
-
   // Function to detect card type based on card number
   const detectCardType = (number) => {
     const visaRegex = /^4[0-9]{0,}$/; // Visa starts with 4
@@ -36,6 +37,7 @@ const CardPayment = () => {
 
   // Handle card number input change and card type detection
   const handleCardNumberChange = (e) => {
+    console.log(currentUser?._id);
     let number = e.target.value.replace(/\D/g, ''); // Remove non-digit characters
     const formattedNumber = formatCardNumber(number); // Format card number
     setCardNumber(formattedNumber);
