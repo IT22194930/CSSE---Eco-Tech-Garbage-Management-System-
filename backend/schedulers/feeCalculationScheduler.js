@@ -10,7 +10,6 @@ const feeCalculationScheduler = () => {
     });
 };
 
-// module.exports = { feeCalculationScheduler };
 
 
 const calculateMonthlyFees = async () => {
@@ -19,10 +18,6 @@ const calculateMonthlyFees = async () => {
 
         if (users.length > 0) {
             for (const user of users) {
-                console.log(user);
-                console.log('============================================');
-                console.log('============================================');
-                console.log()
                 // Calculate the fee for the user
                 const fee = 1000;
 
