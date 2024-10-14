@@ -34,12 +34,12 @@ class PaymentController {
                 .status(401)
                 .json({ message: "Invalid USer ID." });
             }
-            res.status(200).json({
+            return res.status(200).json({
                 balance: user.balance,
                 isOverDue: user.balance > 10000
             });
           } catch (error) {
-            res.status(500).json({ error: true, message: error.message });
+            return res.status(500).json({ error: true, message: error.message });
           }
     }
 
@@ -65,20 +65,15 @@ class PaymentController {
 
     async createPaymentIntent(req, res) {
         try {
+            const { userId, amount, currency } = req.body;
 
-            const { amount, currency } = req.body;
+            const clientSecret = await paymentGateway.createPaymentIntent(userId, amount, currency);
 
-            const clientSecret = paymentGateway.createPaymentIntent(amount, currency);
-
-            res.json({ clientSecret });
-
-            res.status(200).json({ success: true });
+            return res.status(200).json({  clientSecret:clientSecret });
         } catch (error) {
             console.error('Payment error:', error);
-            res.status(500).json({ success: false, error: error.message });
+            return res.status(500).json({ success: false, error: error.message });
         }
-
-        res.status(200).json({});
     }
 
     async updateUserAccountBalance(req, res) {
@@ -89,9 +84,9 @@ class PaymentController {
             }
 
             await transactionService.updateAccountBalance(userId, amount, transactionType);
-            res.status(200).json("Account balance updated..");
+            return res.status(200).json("Account balance updated..");
         } catch (error) {
-            res.status(500).json({ error: true, message: error.message });
+            return res.status(500).json({ error: true, message: error.message });
         }
     }
 

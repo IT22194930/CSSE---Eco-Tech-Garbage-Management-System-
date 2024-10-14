@@ -17,9 +17,9 @@ class PaymentGateway {
         return PaymentGateway.instance;
     }
 
-    createPaymentIntent(amount, currency) {
+    createPaymentIntent(userId, amount, currency) {
         // Generate a simple mock clientSecret
-        const clientSecret = 'mock_garbage_management_system' + Math.random().toString(36).substr(2, 10);
+        const clientSecret = 'mock_garbage_management_system' + Math.random().toString(36).substr(2, 10) +'_'+userId;
 
         // Store the client secret with its associated payment data
         const paymentDetail = {

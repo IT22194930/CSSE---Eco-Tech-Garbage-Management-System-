@@ -56,10 +56,7 @@ const PaymentHome = () => {
                     <p className="text-sm text-gray-700">
                         The total overdue charges including the fine is found below,
                     </p>
-                    <p className="text-2xl text-red-600 font-bold">Total Overdue Amount: Rs. 12420.00</p>
-                    <button className="mt-4 bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600">
-                        More Details!!
-                    </button>
+                    <p className="text-2xl text-red-600 font-bold">Total Overdue Amount: Rs. {amount.toFixed(2)}</p>
                 </div>}
 
                 {/* Buttons Section */}

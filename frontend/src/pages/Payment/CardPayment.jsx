@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { MdOutlineArrowBackIosNew } from "react-icons/md";
 import { Link } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
@@ -6,7 +6,7 @@ import useUser from "../../hooks/useUser";
 import visa from '../../assets/gallery/cards/visa.png';
 import master from '../../assets/gallery/cards/mastercard.png';
 import amex from '../../assets/gallery/cards/amex.png';
-import axios from 'axios';
+import axios, {HttpStatusCode} from 'axios';
 
 const CardPayment = () => {
   const { currentUser } = useUser();
@@ -18,6 +18,33 @@ const CardPayment = () => {
   const [cvv, setCvv] = useState('');
   const location = useLocation();
   const { amount } = location.state || {};
+  const [clientSecret, setClientSecret] = useState();
+
+  useEffect(() => {
+    const createPaymentIntent = async () => {
+      if (currentUser && amount) {
+        try {
+          const response = await axios.post(`http://localhost:3000/api/payments/createPaymentIntent`, {
+            userId: currentUser._id,
+            amount: Number(amount),
+            currency: 'LKR'
+          },
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              });
+          if (response.status === HttpStatusCode.Ok) {
+            setClientSecret(response.data.clientSecret);
+          }
+        } catch (error) {
+          console.error('Error in create payment intent:', error);
+        }
+      }
+    };
+
+    createPaymentIntent();
+  }, [amount, currentUser]);
 
   // Function to detect card type based on card number
   const detectCardType = (number) => {
@@ -178,7 +205,10 @@ const CardPayment = () => {
                 type="submit"
                 className="w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300"
             >
-              Pay - Rs. {amount}
+              { amount && <div>
+                Pay -> Rs. {Number(amount).toFixed(2)}
+              </div>
+              }
             </button>
           </form>
         </div>

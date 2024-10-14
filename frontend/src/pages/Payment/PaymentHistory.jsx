@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { MdOutlineArrowBackIosNew } from "react-icons/md";
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import axios, {HttpStatusCode} from "axios";
 import useUser from "../../hooks/useUser.jsx";
 
@@ -12,21 +12,9 @@ const PaymentHistory = () => {
     const fetchTransactionLog = async () => {
       if (currentUser) {
         try {
-          setTransactionLog([{
-            transactionType: "Cash Back",
-            amount: -100,
-            date : "2024/10/12",
-            description: ""
-          },
-            {
-              transactionType: "Payment",
-              amount: 1300,
-              date : "2024/10/12",
-              description: ""
-            }])
           const response = await axios.get(`http://localhost:3000/api/payments/transactionLog/${currentUser._id}`);
           if (response.status === HttpStatusCode.Ok) {
-            console.log(response.data)
+            setTransactionLog(response.data.transactionLog)
           }
         } catch (error) {
           console.error('Payment error:', error);
@@ -75,7 +63,7 @@ const PaymentHistory = () => {
           {transactionLog.map((transaction, index) => (
               <div key={index} className="bg-yellow-100 p-4 rounded-md shadow-md mb-4">
                 <p className={"font-bold"+ (transaction.amount > 0 ? " text-red-600" : " text-green-600") }>{transaction.transactionType}</p>
-                <p>{transaction.amount}</p>
+                <p>Rs. {transaction.amount.toFixed(2)}</p>
                 <p>{transaction.date}</p>
                 <p>{transaction?.description}</p>
               </div>
