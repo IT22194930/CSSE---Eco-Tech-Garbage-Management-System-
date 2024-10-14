@@ -1,14 +1,47 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { MdOutlineArrowBackIosNew } from "react-icons/md";
 import { Link, useNavigate } from 'react-router-dom';
+import axios, {HttpStatusCode} from "axios";
+import useUser from "../../hooks/useUser.jsx";
 
 const PaymentHistory = () => {
+  const { currentUser } = useUser();
+  const [transactionLog, setTransactionLog] = useState([]);
+
+  useEffect(() => {
+    const fetchTransactionLog = async () => {
+      if (currentUser) {
+        try {
+          setTransactionLog([{
+            transactionType: "Cash Back",
+            amount: -100,
+            date : "2024/10/12",
+            description: ""
+          },
+            {
+              transactionType: "Payment",
+              amount: 1300,
+              date : "2024/10/12",
+              description: ""
+            }])
+          const response = await axios.get(`http://localhost:3000/api/payments/transactionLog/${currentUser._id}`);
+          if (response.status === HttpStatusCode.Ok) {
+            console.log(response.data)
+          }
+        } catch (error) {
+          console.error('Payment error:', error);
+        }
+      }
+    };
+
+    fetchTransactionLog();
+  }, [currentUser]);
   return (
     <div className="min-h-screen bg-green-200 p-6 flex justify-center items-center">
       <div className="max-w-lg w-full bg-white rounded-lg shadow-lg overflow-hidden">
         
        
-        <Link to="/dashboard/payments">
+        <Link to="/payments">
           <MdOutlineArrowBackIosNew className="text-3xl mb-4" />
         </Link>
 
@@ -39,49 +72,14 @@ const PaymentHistory = () => {
 
         {/* Payment Cards Section */}
         <div className="p-4 space-y-4">
-          {/* Payment Completed Card */}
-          <div className="bg-yellow-100 p-4 rounded-md shadow-md">
-            <p className="font-bold text-green-600">Payment Completed</p>
-            <p>Payment Date: 15/04/2024</p>
-            <p>Amount: Rs. 5400.00</p>
-            <p>Payment Mode: Credit Card</p>
-            <button className="mt-2 bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600">
-              View Details
-            </button>
-          </div>
-
-          {/* Payment Rejected Card */}
-          <div className="bg-yellow-100 p-4 rounded-md shadow-md">
-            <p className="font-bold text-red-600">Payment Rejected</p>
-            <p>Payment Date: 13/04/2024</p>
-            <p>Amount: Rs. 5400.00</p>
-            <p>Payment Mode: Debit Card</p>
-            <button className="mt-2 bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600">
-              View Details
-            </button>
-          </div>
-
-          {/* Payment Completed Card */}
-          <div className="bg-yellow-100 p-4 rounded-md shadow-md">
-            <p className="font-bold text-green-600">Payment Completed</p>
-            <p>Payment Date: 15/03/2024</p>
-            <p>Amount: Rs. 5400.00</p>
-            <p>Payment Mode: Debit Card</p>
-            <button className="mt-2 bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600">
-              View Details
-            </button>
-          </div>
-
-          {/* Payment Completed Card */}
-          <div className="bg-yellow-100 p-4 rounded-md shadow-md">
-            <p className="font-bold text-green-600">Payment Completed</p>
-            <p>Payment Date: 12/02/2024</p>
-            <p>Amount: Rs. 11610.00</p>
-            <p>Payment Mode: Bank Transfer</p>
-            <button className="mt-2 bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600">
-              View Details
-            </button>
-          </div>
+          {transactionLog.map((transaction, index) => (
+              <div key={index} className="bg-yellow-100 p-4 rounded-md shadow-md mb-4">
+                <p className={"font-bold"+ (transaction.amount > 0 ? " text-red-600" : " text-green-600") }>{transaction.transactionType}</p>
+                <p>{transaction.amount}</p>
+                <p>{transaction.date}</p>
+                <p>{transaction?.description}</p>
+              </div>
+          ))}
         </div>
 
         {/* Go Back Button */}

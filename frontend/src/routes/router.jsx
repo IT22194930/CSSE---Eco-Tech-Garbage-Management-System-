@@ -63,6 +63,10 @@ export const router = createBrowserRouter([
         element: <GarbageRequest />,
       },
       {
+        path: "qr-scan",
+        element: <QRManagement />,
+      },
+      {
         path: "scheduleRequest",
         element: <ScheduleRequest />,
       },
