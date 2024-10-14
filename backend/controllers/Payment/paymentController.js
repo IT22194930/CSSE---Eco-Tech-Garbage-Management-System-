@@ -1,8 +1,10 @@
 const User = require("../../models/User/User");
 const TransactionLog = require("../../models/User/TransactionLog");
 const PaymentGateway = require("../../services/PaymentGateway");
+const UserTransactionService =  require("../../services/UserTransactionService")
 
 const paymentGateway = PaymentGateway.getInstance();
+const transactionService = UserTransactionService.getInstance();
 
 class PaymentController {
     static instance;
@@ -77,6 +79,20 @@ class PaymentController {
         }
 
         res.status(200).json({});
+    }
+
+    async updateUserAccountBalance(req, res) {
+        try {
+            const { userId, amount, transactionType } = req.body;
+            if (!userId) {
+                return res.status(400).json({ message: "User ID is required" });
+            }
+
+            await transactionService.updateAccountBalance(userId, amount, transactionType);
+            res.status(200).json("Account balance updated..");
+        } catch (error) {
+            res.status(500).json({ error: true, message: error.message });
+        }
     }
 
 }
