@@ -21,6 +21,10 @@ const ScheduleRequest = () => {
   });
 
   const validateTab0 = () => {
+    // If the type is "Normal Waste", description is not required
+    if (requestInfo.type === "Normal Waste") {
+      return requestInfo.type !== "";
+    }
     return requestInfo.type !== "" && requestInfo.description !== "";
   };
 
