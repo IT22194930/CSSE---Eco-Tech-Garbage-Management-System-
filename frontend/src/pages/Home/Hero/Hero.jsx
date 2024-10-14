@@ -6,7 +6,7 @@ import { Link, NavLink } from "react-router-dom";
 const Hero = () => {
   return (
     <div
-      className="min-h-screen bg-cover"
+      className="min-h-screen bg-cover bg-center"
       style={{ backgroundImage: `url(${bgImg})` }}
     >
       <div className="min-h-screen flex justify-start pl-11 items-center text-white bg-black bg-opacity-50">
