@@ -197,7 +197,7 @@ function App() {
   };
 
   return (
-    <div className="p-6 bg-gradient-to-b from-blue-50 to-white min-h-screen flex flex-col items-center">
+    <div className="p-6 bg-gradient-to-b from-blue-50 to-white mt-20 min-h-screen flex flex-col items-center">
       <Scroll/>
       <h1 className="text-3xl sm:text-4xl font-bold mb-8 text-gray-800 text-center">
         QR Code Scanner
