@@ -2,12 +2,11 @@
 const express = require("express");
 const router = express.Router();
 const {
-    testRequest,
     getTotalDueAmount,
-    processPayment
+    createPaymentIntent,
 } = require("../../controllers/Payment/paymentController");
 
 router.get("/totalDueAmount/:userId", getTotalDueAmount);
-router.post("/processPayment", processPayment);
+router.post("/createPaymentIntent", createPaymentIntent);
 
 module.exports = router;

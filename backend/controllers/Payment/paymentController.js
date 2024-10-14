@@ -1,5 +1,8 @@
 const User = require("../../models/User/User");
 const TransactionLog = require("../../models/User/TransactionLog");
+const PaymentGateway = require("../../services/PaymentGateway");
+
+const paymentGateway = PaymentGateway.getInstance();
 
 class PaymentController {
     static instance;
@@ -38,9 +41,21 @@ class PaymentController {
           }
     }
 
-    async processPayment(req, res) {
-        const { userId, amount, storageCond, qualityStatus } = req.body;
+    async createPaymentIntent(req, res) {
 
+        try {
+
+            const { amount, currency } = req.body;
+
+            const clientSecret = paymentGateway.createPaymentIntent(amount, currency);
+
+            res.json({ clientSecret });
+
+            res.status(200).json({ success: true });
+        } catch (error) {
+            console.error('Payment error:', error);
+            res.status(500).json({ success: false, error: error.message });
+        }
 
         res.status(200).json({});
     }

@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { MdOutlineArrowBackIosNew } from "react-icons/md";
 import { Link } from 'react-router-dom';
-import CardType from './CardType';
 import { useLocation } from 'react-router-dom';
 import useUser from "../../hooks/useUser";
 import visa from '../../assets/gallery/cards/visa.png';
 import master from '../../assets/gallery/cards/mastercard.png';
 import amex from '../../assets/gallery/cards/amex.png';
+import axios from 'axios';
 
 const CardPayment = () => {
   const { currentUser } = useUser();
   const [cardNumber, setCardNumber] = useState('');
+  const [formattedCardNumber, setFormattedCardNumber] = useState('');
   const [cardType, setCardType] = useState('');
   const [expiryDate, setExpiryDate] = useState('');
+  const [cardHolderName, setCardHolderName] = useState('');
   const [cvv, setCvv] = useState('');
   const location = useLocation();
   const { amount } = location.state || {};
@@ -41,14 +43,13 @@ const CardPayment = () => {
 
   // Handle card number input change and card type detection
   const handleCardNumberChange = (e) => {
-    console.log(currentUser?._id);
     let number = e.target.value.replace(/\D/g, ''); // Remove non-digit characters
     const formattedNumber = formatCardNumber(number); // Format card number
-    setCardNumber(formattedNumber);
+    setFormattedCardNumber(formattedNumber);
+    setCardNumber(number);
 
     const detectedCardType = detectCardType(number);
     setCardType(detectedCardType);
-    
   };
 
   // Handle expiration date input (MM/YY)
@@ -60,6 +61,11 @@ const CardPayment = () => {
       }
       setExpiryDate(input);
     }
+  };
+
+  const handleCardHolderNameChange = (e) => {
+    const input = e.target.value;
+    setCardHolderName(input);
   };
 
   // Handle CVV input (3 or 4 digits based on card type)
@@ -83,81 +89,100 @@ const CardPayment = () => {
     }
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post('http://localhost:3000/api/payments/processPayment', {
+        amount: Number(amount) ,
+        paymentMethodId: paymentMethod.id,
+      });
+
+      if (response.data.success) {
+        alert('Payment successful!');
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      alert('Payment failed');
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-green-200 p-6 flex justify-center items-center">
-      <div className="max-w-lg w-full bg-white rounded-lg shadow-lg p-6">
+      <div className="min-h-screen bg-green-200 p-6 flex justify-center items-center">
+        <div className="max-w-lg w-full bg-white rounded-lg shadow-lg p-6">
+          <Link to="../../payments/make-payment">
+            <MdOutlineArrowBackIosNew className="text-3xl mb-4" />
+          </Link>
 
-        <Link to="../../payments/make-payment">
-          <MdOutlineArrowBackIosNew className="text-3xl mb-4" />
-        </Link>
+          {/* Header Section */}
+          <h2 className="text-center text-2xl font-bold mb-4">Card Payment</h2>
 
-        {/* Header Section */}
-        <h2 className="text-center text-2xl font-bold mb-4">Card Payment</h2>
+          <form onSubmit={handleSubmit}> {/* Add form tag */}
+            {/* Card Number Input with Card Type Image */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
+              <div className="flex items-center">
+                {renderCardTypeLogo()} {/* Card type image */}
+                <input
+                    type="text"
+                    value={formattedCardNumber}
+                    onChange={handleCardNumberChange}
+                    maxLength="19" // Maximum length including spaces (16 digits + 3 spaces)
+                    className="w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400 ml-4"
+                    placeholder="Enter card number"
+                />
+              </div>
+            </div>
 
-        {/* Card Number Input with Card Type Image */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
-          <div className="flex items-center">
-            {/* <CardType type={cardType}/> Card type image */}
-            {renderCardTypeLogo()} {/* Card type image */}
-            <input 
-              type="text" 
-              value={cardNumber}
-              onChange={handleCardNumberChange}
-              maxLength="19" // Maximum length including spaces (16 digits + 3 spaces)
-              className="w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400 ml-4"
-              placeholder="Enter card number"
-            />
-          </div>
+            {/* Name on Card */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-2">Name on Card</label>
+              <input
+                  type="text"
+                  onChange={handleCardHolderNameChange}
+                  value={cardHolderName}
+                  className="w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
+                  placeholder="Enter name as on card"
+              />
+            </div>
+
+            {/* Expiration Date and CVV */}
+            <div className="mb-4 flex space-x-4">
+              <div className="w-1/2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Expiration Date</label>
+                <input
+                    type="text"
+                    value={expiryDate}
+                    onChange={handleExpiryDateChange}
+                    maxLength="5" // MM/YY format has a max length of 5
+                    className="w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
+                    placeholder="MM/YY"
+                />
+              </div>
+              {/* CVV */}
+              <div className="w-1/2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">CVV</label>
+                <input
+                    type="password"
+                    value={cvv}
+                    onChange={handleCvvChange}
+                    maxLength={cardType === 'amex' ? 4 : 3} // Max length depends on card type
+                    className="w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
+                    placeholder="CVV"
+                />
+              </div>
+            </div>
+
+            {/* Submit Button */}
+            <button
+                type="submit"
+                className="w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300"
+            >
+              Pay - Rs. {amount}
+            </button>
+          </form>
         </div>
-
-        {/* Name on Card */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Name on Card</label>
-          <input 
-            type="text" 
-            className="w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
-            placeholder="Enter name as on card"
-          />
-        </div>
-
-        {/* Expiration Date and CVV */}
-        <div className="mb-4 flex space-x-4">
-          <div className="w-1/2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Expiration Date</label>
-            <input 
-              type="text" 
-              value={expiryDate}
-              onChange={handleExpiryDateChange}
-              maxLength="5" // MM/YY format has a max length of 5
-              className="w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
-              placeholder="MM/YY"
-            />
-          </div>
-          {/* CVV */}
-          <div className="w-1/2">
-            <label className="block text-sm font-medium text-gray-700 mb-2">CVV</label>
-            <input 
-              type="password" 
-              value={cvv}
-              onChange={handleCvvChange}
-              maxLength={cardType === 'amex' ? 4 : 3} // Max length depends on card type
-              className="w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
-              placeholder="CVV"
-            />
-          </div>
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-2">Total Amount : <b>{amount}</b></label>
-          
-        </div>
-
-        {/* Submit Button */}
-        <button className="w-full bg-green-500 text-white py-2 rounded-lg font-semibold hover:bg-green-600">
-          Pay Now
-        </button>
       </div>
-    </div>
   );
 };
 
