@@ -12,6 +12,9 @@ import { CiFileOn } from "react-icons/ci";
 import Swal from "sweetalert2";
 import Scroll from "../hooks/useScroll";
 import Loader from "../components/Loader/Loader";
+import { MdFeedback, MdRequestQuote } from "react-icons/md";
+import { GiPikeman } from "react-icons/gi";
+import { AiFillSchedule } from "react-icons/ai";
 
 const adminNavItems = [
   {
@@ -21,8 +24,13 @@ const adminNavItems = [
   },
   {
     to: "/dashboard/special-requests",
-    icon: <CiFileOn className="text-2xl" />,
+    icon: <MdRequestQuote className="text-2xl" />,
     label: "Special Requests",
+  },
+  {
+    to: "/dashboard/feedbacks",
+    icon: <MdFeedback className="text-2xl" />,
+    label: "Customer Feedbacks",
   },
   {
     to: "/dashboard/manage-users",
@@ -31,8 +39,13 @@ const adminNavItems = [
   },
   {
     to: "/dashboard/manage-collectors",
-    icon: <FaUsers className="text-2xl" />,
+    icon: <GiPikeman className="text-2xl" />,
     label: "Manage Collectors",
+  },
+  {
+    to: "/dashboard/schedules",
+    icon: <AiFillSchedule className="text-2xl" />,
+    label: "Schedules",
   },
   {
     to: "/dashboard/manage-locations",
