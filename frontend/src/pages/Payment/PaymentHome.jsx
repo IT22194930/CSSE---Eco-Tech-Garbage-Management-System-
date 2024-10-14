@@ -53,7 +53,7 @@ const PaymentHome = () => {
           </button>
           
           <button 
-            onClick={() => navigate(`payments/payment-history`)}
+            onClick={() => navigate(`/payments/payment-history`)}
             className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600">
             View Payment History
           </button>
