@@ -34,15 +34,34 @@ class PaymentController {
             }
             res.status(200).json({
                 balance: user.balance,
-                overdueStatus: user.balance > 10000
+                isOverDue: user.balance > 10000
             });
           } catch (error) {
             res.status(500).json({ error: true, message: error.message });
           }
     }
 
-    async createPaymentIntent(req, res) {
+    async getTransactionLog (req, res) {
+        try {
+            const userId = req.params.userId;
+            console.log(req.params);
+            if (!userId) {
+                return res.status(400).json({ message: "User ID is required" });
+            }
+            const transactionLogList = await TransactionLog.find({ userId: userId });
+            if (transactionLogList.length > 0) {
+                return res
+                    .status(200)
+                    .json({ transactionLog: transactionLogList });
+            }
+            return  res.status(200).json({transactionLog: []});
 
+        } catch (error) {
+            return res.status(500).json({ error: true, message: error.message });
+        }
+    }
+
+    async createPaymentIntent(req, res) {
         try {
 
             const { amount, currency } = req.body;
