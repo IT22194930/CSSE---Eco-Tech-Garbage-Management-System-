@@ -13,7 +13,6 @@ const navLinks = [
   { name: "Home", route: "/" },
   { name: "Payments", route: "/payments" },
   { name: "About Us", route: "/aboutUs" },
-  { name: "Products", route: "/products" },
   { name: "Services", route: "/services" },
   { name: "Contact Us", route: "/contact" },
 ];
@@ -265,63 +264,82 @@ const NavBar = () => {
                     </NavLink>
                   </li>
                 )}
-
-                {/* Theme Toggle */}
-                <li>
-                  <ThemeToggle
-                    isDarkMode={isDarkMode}
-                    setIsDarkMode={setIsDarkMode}
-                  />
-                </li>
               </ul>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Mobile menu */}
-        {/* Mobile menu */}
-        {isMobileMenuOpen && (
-          <div className="block md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-gradient-to-r from-secondary to-white border-2 shadow-2xl rounded-b-xl text-center">
-              {navLinks.map((link) => (
-                <NavLink
-                  key={link.route}
-                  to={link.route}
-                  className="text-gray-700 block px-3 py-2 rounded-md text-base font-medium hover:bg-secondary hover:text-white"
-                >
-                  {link.name}
-                </NavLink>
-              ))}
-              {/* Dashboard link for logged-in users */}
-              {user && (
-                <NavLink
-                  to="/dashboard"
-                  className="text-gray-700 block px-3 py-2 rounded-md text-base font-medium hover:bg-gray-700 hover:text-white"
-                >
-                  Dashboard
-                </NavLink>
+      {/* mobile nav */}
+      <div
+        className={`${
+          isMobileMenuOpen ? "block" : "hidden"
+        } px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-gradient-to-r from-secondary to-white border-2 shadow-2xl rounded-b-xl text-center`}
+      >
+        <ul className="space-y-4">
+          {navLinks.map((link) => (
+            <li key={link.route}>
+              <NavLink
+                to={link.route}
+                onClick={toggleMobileMenu}
+                className="block font-bold text-black dark:text-white hover:text-secondary"
+              >
+                {link.name}
+              </NavLink>
+            </li>
+          ))}
+
+          {/* based on user status */}
+          {!user ? (
+            <>
+              {isLogin ? (
+                <li>
+                  <NavLink
+                    to="/register"
+                    onClick={toggleMobileMenu}
+                    className="block font-bold text-black dark:text-white hover:text-secondary"
+                  >
+                    Register
+                  </NavLink>
+                </li>
+              ) : (
+                <li>
+                  <NavLink
+                    to="/login"
+                    onClick={toggleMobileMenu}
+                    className="block font-bold text-black dark:text-white hover:text-secondary"
+                  >
+                    Login
+                  </NavLink>
+                </li>
+              )}
+            </>
+          ) : (
+            <>
+              {/* Admin-specific QR Scan button */}
+              {currentUser?.role === "admin" && (
+                <li>
+                  <NavLink
+                    to="/qr-scan"
+                    onClick={toggleMobileMenu}
+                    className="block font-bold py-1 text-black rounded-xl hover:text-secondary"
+                  >
+                    QR Scan
+                  </NavLink>
+                </li>
               )}
 
-              {/* Logout for logged-in users */}
-              {user && (
-                <NavLink
+              <li>
+                <button
                   onClick={handleLogout}
-                  className="text-gray-700 block px-3 py-2 rounded-md text-base font-medium hover:bg-secondary hover:text-white"
+                  className="font-bold px-3 py-2 bg-secondary text-white rounded-xl"
                 >
                   Logout
-                </NavLink>
-              )}
-
-              {/* Theme Toggle without circle */}
-              <div className="px-3 py-2">
-                <ThemeToggle
-                  isDarkMode={isDarkMode}
-                  setIsDarkMode={setIsDarkMode}
-                />
-              </div>
-            </div>
-          </div>
-        )}
+                </button>
+              </li>
+            </>
+          )}
+        </ul>
       </div>
     </motion.nav>
   );
