@@ -71,6 +71,10 @@ export const router = createBrowserRouter([
         element: <ScheduleRequest />,
       },
       {
+        path: "user-profile",
+        element: <Profile />,
+      },
+      {
         path: "/payments",
         element: <Payment />,
         children: [

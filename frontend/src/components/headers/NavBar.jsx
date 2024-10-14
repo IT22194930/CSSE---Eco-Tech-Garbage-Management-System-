@@ -7,7 +7,6 @@ import { motion } from "framer-motion";
 import { AuthContext } from "../../utilities/providers/AuthProvider";
 import Swal from "sweetalert2";
 import useUser from "../../hooks/useUser";
-import ThemeToggle from "../ThemeToggle/ThemeToggle";
 
 const navLinks = [
   { name: "Home", route: "/" },
@@ -124,35 +123,43 @@ const NavBar = () => {
     >
       <div className="lg:w-[95%] mx-auto sm:px-6 lg:px-6">
         <div className="px-4 py-4 flex items-center justify-between">
-          {/* logo */}
           <div
             onClick={() => navigate("/")}
-            className="flex-shrink-0 cursor-pointer pl-7 md:p-0 flex items-center"
+            className="flex-shrink-0 cursor-pointer md:p-0 flex items-center"
           >
-            <div>
+            {/* mobile menu icons */}
+            <div className="md:hidden flex items-center">
+              <button
+                type="button"
+                onClick={toggleMobileMenu}
+                className="text-secondary hover:text-white focus:outline-none"
+              >
+                {isMobileMenuOpen ? (
+                  <FaTimes className="h-6 w-6 hover:text-white" /> // Show close icon when menu is open
+                ) : (
+                  <FaBars className="h-6 w-6 hover:text-white" /> // Show menu icon when menu is closed
+                )}
+              </button>
+            </div>
+            <div className="pl-5">
               <h1 className="text-2xl font-bold inline-flex gap-3 items-center">
                 EcoTech <img src="/logo.png" alt="" className="w-8 h-8" />
               </h1>
               <p className="font-bold text-[13px] tracking-[6px]">
                 Clean Green Efficient
               </p>
-            </div>
+            </div>            
           </div>
 
-          {/* mobile menu icons */}
-          <div className="md:hidden flex items-center">
-            <button
-              type="button"
-              onClick={toggleMobileMenu}
-              className="text-secondary hover:text-white focus:outline-none"
-            >
-              {isMobileMenuOpen ? (
-                <FaTimes className="h-6 w-6 hover:text-white" /> // Show close icon when menu is open
-              ) : (
-                <FaBars className="h-6 w-6 hover:text-white" /> // Show hamburger icon when menu is closed
-              )}
-            </button>
-          </div>
+          <div className="md:hidden">
+                <Link to={`/user-profile`}>
+                  <img
+                    src={currentUser?.photoUrl || userImg}
+                    alt="User Avatar"
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                </Link>
+              </div>
 
           {/* Navigational links */}
           <div className="hidden md:block">
@@ -274,7 +281,7 @@ const NavBar = () => {
       <div
         className={`${
           isMobileMenuOpen ? "block" : "hidden"
-        } px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-gradient-to-r from-secondary to-white border-2 shadow-2xl rounded-b-xl text-center`}
+        } px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white/90 border-2 shadow-2xl rounded-b-xl text-center`}
       >
         <ul className="space-y-4">
           {navLinks.map((link) => (
