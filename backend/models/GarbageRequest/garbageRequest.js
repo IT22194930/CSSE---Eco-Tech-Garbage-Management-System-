@@ -6,6 +6,10 @@ const garbageRequestSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  username: {
+    type: String,
+    required: true,
+  },
   type: {
     type: String, // Type of garbage (e.g., bulk, e-waste, etc.)
     required: true,
