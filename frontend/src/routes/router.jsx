@@ -27,6 +27,8 @@ import Payment from "../pages/Payment/Payment";
 import PaymentHistory from "../pages/Payment/PaymentHistory";
 import MakePayment from "../pages/Payment/MakePayment";
 import CardPayment from "../pages/Payment/CardPayment";
+import Feedbacks from "../pages/Dashboard/Admin/Feedback";
+import Schedules from "../pages/Dashboard/Admin/Schedules";
 
 
 export const router = createBrowserRouter([
@@ -131,6 +133,14 @@ export const router = createBrowserRouter([
       {
         path: "manage-collectors",
         element: <ManageCollectors />
+      },
+      {
+        path: "feedbacks",
+        element: <Feedbacks />
+      },
+      {
+        path: "schedules",
+        element: <Schedules />
       },
       {
         path: "update-user/:id",

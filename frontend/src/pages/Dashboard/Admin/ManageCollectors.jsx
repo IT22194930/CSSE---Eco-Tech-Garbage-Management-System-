@@ -54,16 +54,15 @@ const ManageCollectors = () => {
     });
   };
 
-//   Filter users by search query and role
-  const filteredUsers = users.filter((user) => {
-    const matchesSearch = user?.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesRole = roleFilter ? user?.role === roleFilter : true; // Check if role matches or no role is selected
-    return matchesSearch && matchesRole;
+//   Filter collectors by search query and role
+  const filteredCollectors = collectors.filter((collector) => {
+    const matchesSearch = collector?.name.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesSearch;
   });
 
   return (
     <div className="px-4 sm:px-0">
-      <h1 className="text-center text-4xl font-bold my-7 dark:text-white">
+      <h1 className="text-center text-4xl font-bold my-7">
         Manage <span className="text-secondary">Collectors</span>
       </h1>
 
@@ -74,7 +73,7 @@ const ManageCollectors = () => {
           placeholder="Search collectors by name"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-4 py-2 border rounded-md dark:bg-gray-700 dark:text-white"
+          className="w-full px-4 py-2 border rounded-md"
         />
       </div>
 
@@ -82,50 +81,50 @@ const ManageCollectors = () => {
         <div className="flex flex-col">
           <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
             <div className="overflow-hidden">
-              {collectors.length === 0 ? (
-                <p className="text-center text-gray-500 dark:text-gray-300">
+              {filteredCollectors.length === 0 ? (
+                <p className="text-center text-gray-500">
                   No collectors found
                 </p>
               ) : (
                 <table className="min-w-full text-left text-sm font-light">
-                  <thead className="border-b font-medium dark:border-neutral-500 hidden md:table-header-group">
+                  <thead className="border-b font-medium hidden md:table-header-group">
                     <tr>
-                      <th scope="col" className="px-4 py-4 dark:text-white">
+                      <th scope="col" className="px-4 py-4">
                         #
                       </th>
-                      <th scope="col" className="px-4 py-4 dark:text-white">
+                      <th scope="col" className="px-4 py-4">
                         PHOTO
                       </th>
-                      <th scope="col" className="px-4 py-4 dark:text-white">
+                      <th scope="col" className="px-4 py-4">
                         NAME
                       </th>
-                      <th scope="col" className="px-4 py-4 dark:text-white">
+                      <th scope="col" className="px-4 py-4">
                         UPDATE
                       </th>
-                      <th scope="col" className="px-4 py-4 dark:text-white">
+                      <th scope="col" className="px-4 py-4">
                         DELETE
                       </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {collectors.map((user, idx) => (
+                    {filteredCollectors.map((collector, idx) => (
                       <tr
-                        key={user._id}
-                        className="border-b transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-neutral-500 dark:hover:bg-neutral-600"
+                        key={collector._id}
+                        className="border-b transition duration-300 ease-in-out hover:bg-neutral-100"
                       >
-                        <td className="whitespace-nowrap px-4 py-4 font-medium dark:text-white">
+                        <td className="whitespace-nowrap px-4 py-4 font-medium">
                           {idx + 1}
                         </td>
                         <td className="whitespace-nowrap px-4 py-4">
                           <img
-                            src={user?.photoUrl}
+                            src={collector?.photoUrl}
                             alt=""
                             className="h-[35px] w-[35px] object-cover rounded-full"
                           />
                         </td>
-                        <td className="whitespace-nowrap px-4 py-4 dark:text-white">
-                          {user?.name}{" "}
-                          {currentUser?._id === user._id && (
+                        <td className="whitespace-nowrap px-4 py-4">
+                          {collector?.name}{" "}
+                          {currentUser?._id === collector._id && (
                             <span className="ml-2 px-2 py-1 text-xs font-semibold text-white bg-blue-500 rounded-md">
                               You
                             </span>
@@ -134,7 +133,7 @@ const ManageCollectors = () => {
                         <td className="whitespace-nowrap px-4 py-4">
                           <span
                             onClick={() =>
-                              navigate(`/dashboard/update-collector/${user._id}`)
+                              navigate(`/dashboard/update-collector/${collector._id}`)
                             }
                             className="inline-flex items-center gap-2 cursor-pointer bg-green-500 py-1 rounded-md px-2 text-white"
                           >
@@ -143,7 +142,7 @@ const ManageCollectors = () => {
                         </td>
                         <td className="whitespace-nowrap px-4 py-4">
                           <span
-                            onClick={() => handleDelete(user._id)}
+                            onClick={() => handleDelete(collector._id)}
                             className="inline-flex items-center gap-2 cursor-pointer bg-red-600 py-1 rounded-md px-2 text-white"
                           >
                             Delete <MdDelete className="text-white" />
