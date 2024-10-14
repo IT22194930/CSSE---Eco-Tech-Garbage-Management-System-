@@ -1,8 +1,7 @@
-import { Outlet } from "react-router-dom"
+import {Outlet} from "react-router-dom"
 
-const Payment = () =>{
+const Payment = () => {
 
-    
 
     return (
         <Outlet/>

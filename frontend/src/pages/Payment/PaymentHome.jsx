@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import axios, {HttpStatusCode} from 'axios';
 import useUser from '../../hooks/useUser.jsx';
 
 const PaymentHome = () => {
     const [amount, setAmount] = useState(0);
     const navigate = useNavigate();
-    const { currentUser } = useUser();
-    const [ isOverDue, setIsOverDue ] = useState(false);
+    const {currentUser} = useUser();
+    const [isOverDue, setIsOverDue] = useState(false);
 
     useEffect(() => {
         const fetchDueAmount = async () => {
@@ -47,7 +47,7 @@ const PaymentHome = () => {
                 </div>}
 
                 {/* Payment Overdue Section */}
-                { isOverDue && <div className="bg-red-200 text-center py-4 px-4">
+                {isOverDue && <div className="bg-red-200 text-center py-4 px-4">
                     <p className="text-xl font-bold text-red-600">Payment Overdue!!</p>
                     <p className="text-sm text-gray-700">
                         Dear customer, unfortunately one or more of your payments are overdue,
@@ -75,7 +75,8 @@ const PaymentHome = () => {
                         View Payment History
                     </button>
 
-                    <button className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600">
+                    <button
+                        className="w-full bg-orange-500 text-white py-3 rounded-lg font-semibold hover:bg-orange-600">
                         Cash Back Program
                     </button>
                 </div>
