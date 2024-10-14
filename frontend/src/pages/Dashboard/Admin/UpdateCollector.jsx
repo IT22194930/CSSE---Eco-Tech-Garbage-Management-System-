@@ -116,7 +116,7 @@ const UpdateCollector = () => {
 
       <section>
         <div className="px-4 pb-16 mx-auto sm:px-6 lg:px-8">
-          <div className="p-8 bg-white dark:bg-slate-700 rounded-lg shadow-lg lg:p-12  dark:text-white">
+          <div className="p-8 bg-white rounded-lg shadow-lg lg:p-12">
             <form className="space-y-4" onSubmit={handleFormSubmit}>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div>
@@ -165,7 +165,7 @@ const UpdateCollector = () => {
                       Name
                     </label>
                     <input
-                      className="w-full p-3 mt-1 text-sm border rounded-lg outline-none border-secondary dark:bg-slate-800"
+                      className="w-full p-3 mt-1 text-sm border rounded-lg outline-none border-secondary"
                       placeholder="Your Name"
                       type="text"
                       required
@@ -180,7 +180,7 @@ const UpdateCollector = () => {
                       Email
                     </label>
                     <input
-                      className="w-full p-3 mt-3 text-sm border rounded-lg outline-none border-secondary dark:bg-slate-800"
+                      className="w-full p-3 mt-3 text-sm border rounded-lg outline-none border-secondary"
                       placeholder="Email Address"
                       type="email"
                       required
@@ -197,7 +197,7 @@ const UpdateCollector = () => {
                     Phone
                   </label>
                   <input
-                    className="w-full p-3 mt-3 text-sm border rounded-lg outline-none border-secondary dark:bg-slate-800"
+                    className="w-full p-3 mt-3 text-sm border rounded-lg outline-none border-secondary"
                     placeholder="Phone Number"
                     type="tel"
                     required
@@ -212,7 +212,7 @@ const UpdateCollector = () => {
                     Address
                   </label>
                   <input
-                    className="w-full p-3 mt-3 text-sm border rounded-lg outline-none border-secondary dark:bg-slate-800"
+                    className="w-full p-3 mt-3 text-sm border rounded-lg outline-none border-secondary"
                     placeholder="Address"
                     type="text"
                     id="address"

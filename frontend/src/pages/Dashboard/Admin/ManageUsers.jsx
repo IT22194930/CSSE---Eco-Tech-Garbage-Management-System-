@@ -6,6 +6,12 @@ import { useNavigate } from "react-router-dom";
 import { GrUpdate } from "react-icons/gr";
 import { MdDelete } from "react-icons/md";
 import Swal from "sweetalert2";
+import UserReport from "./Reports/UserReports";
+import { BlobProvider } from "@react-pdf/renderer";
+import { FaFileExcel, FaFilePdf } from "react-icons/fa";
+import { HiRefresh } from "react-icons/hi";
+import * as XLSX from "xlsx";
+import { writeFile } from "xlsx";
 
 const ManageUsers = () => {
   const axiosFetch = useAxiosFetch();
@@ -15,6 +21,7 @@ const ManageUsers = () => {
   const [users, setUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
   const [roleFilter, setRoleFilter] = useState(""); // State for role filter
+  const [dataList, setDataList] = useState([]);
 
   useEffect(() => {
     axiosFetch
@@ -23,6 +30,7 @@ const ManageUsers = () => {
         // Sorting users by name in alphabetical order
         const sortedUsers = res.data.sort((a, b) => a.name.localeCompare(b.name));
         setUsers(sortedUsers);
+        setDataList(sortedUsers);
       })
       .catch((err) => console.log(err));
   }, []);
@@ -54,6 +62,27 @@ const ManageUsers = () => {
     });
   };
 
+  const generateExcelFile = () => {
+    const rearrangedDataList = dataList.map((user) => ({
+      Name: user.name,
+      Email: user.email,
+      Role: user.role,
+      Address: user.address,
+      Telephone: user.phone,
+      Latitude: user.latitude,
+      Longitude: user.longitude
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(rearrangedDataList);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Users Report");
+    writeFile(wb, "users_report.xlsx");
+  };
+
+  const handleButtonClick = () => {
+    generateExcelFile();
+  };
+
   // Filter users by search query and role
   const filteredUsers = users.filter((user) => {
     const matchesSearch = user?.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -63,7 +92,7 @@ const ManageUsers = () => {
 
   return (
     <div className="px-4 sm:px-0">
-      <h1 className="text-center text-4xl font-bold my-7 dark:text-white">
+      <h1 className="text-center text-4xl font-bold my-7">
         Manage <span className="text-secondary">Users</span>
       </h1>
 
@@ -74,18 +103,47 @@ const ManageUsers = () => {
           placeholder="Search users by name"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-4 py-2 border rounded-md dark:bg-gray-700 dark:text-white"
+          className="w-full px-4 py-2 border rounded-md"
         />
 
         <select
           value={roleFilter}
           onChange={(e) => setRoleFilter(e.target.value)}
-          className="px-4 py-2 border rounded-md dark:bg-gray-700 dark:text-white"
+          className="px-4 py-2 border rounded-md"
         >
           <option value="">All Roles</option>
           <option value="admin">Admin</option>
           <option value="user">User</option>
         </select>
+
+        <div
+            className="flex space-x-4"
+            data-aos="flip-up"
+            data-aos-duration="1000"
+          >
+            <BlobProvider
+              document={<UserReport dataList={dataList} />}
+              fileName="UserReportt.pdf"
+            >
+              {({ url }) => (
+                <li className="flex items-center">
+                  <a href={url} target="_blank" className="flex items-center">
+                    <FaFilePdf className="text-3xl text-red-600" />
+                  </a>
+                </li>
+              )}
+            </BlobProvider>
+            <li className="flex items-center">
+              <a
+                href="#"
+                onClick={handleButtonClick}
+                className="flex items-center"
+              >
+                <FaFileExcel className="text-3xl text-green-600" />
+              </a>
+            </li>
+            
+          </div>
       </div>
 
       <div className="overflow-x-auto">
@@ -93,29 +151,29 @@ const ManageUsers = () => {
           <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
             <div className="overflow-hidden">
               {filteredUsers.length === 0 ? (
-                <p className="text-center text-gray-500 dark:text-gray-300">
+                <p className="text-center text-gray-500">
                   No users found
                 </p>
               ) : (
                 <table className="min-w-full text-left text-sm font-light">
-                  <thead className="border-b font-medium dark:border-neutral-500 hidden md:table-header-group">
+                  <thead className="border-b font-medium hidden md:table-header-group">
                     <tr>
-                      <th scope="col" className="px-4 py-4 dark:text-white">
+                      <th scope="col" className="px-4 py-4">
                         #
                       </th>
-                      <th scope="col" className="px-4 py-4 dark:text-white">
+                      <th scope="col" className="px-4 py-4">
                         PHOTO
                       </th>
-                      <th scope="col" className="px-4 py-4 dark:text-white">
+                      <th scope="col" className="px-4 py-4">
                         NAME
                       </th>
-                      <th scope="col" className="px-4 py-4 dark:text-white">
+                      <th scope="col" className="px-4 py-4">
                         ROLE
                       </th>
-                      <th scope="col" className="px-4 py-4 dark:text-white">
+                      <th scope="col" className="px-4 py-4">
                         UPDATE
                       </th>
-                      <th scope="col" className="px-4 py-4 dark:text-white">
+                      <th scope="col" className="px-4 py-4">
                         DELETE
                       </th>
                     </tr>
@@ -124,9 +182,9 @@ const ManageUsers = () => {
                     {filteredUsers.map((user, idx) => (
                       <tr
                         key={user._id}
-                        className="border-b transition duration-300 ease-in-out hover:bg-neutral-100 dark:border-neutral-500 dark:hover:bg-neutral-600"
+                        className="border-b transition duration-300 ease-in-out hover:bg-neutral-100"
                       >
-                        <td className="whitespace-nowrap px-4 py-4 font-medium dark:text-white">
+                        <td className="whitespace-nowrap px-4 py-4 font-medium">
                           {idx + 1}
                         </td>
                         <td className="whitespace-nowrap px-4 py-4">
@@ -136,7 +194,7 @@ const ManageUsers = () => {
                             className="h-[35px] w-[35px] object-cover rounded-full"
                           />
                         </td>
-                        <td className="whitespace-nowrap px-4 py-4 dark:text-white">
+                        <td className="whitespace-nowrap px-4 py-4">
                           {user?.name}{" "}
                           {currentUser?._id === user._id && (
                             <span className="ml-2 px-2 py-1 text-xs font-semibold text-white bg-blue-500 rounded-md">
@@ -144,7 +202,7 @@ const ManageUsers = () => {
                             </span>
                           )}
                         </td>
-                        <td className="whitespace-nowrap px-4 py-4 dark:text-white">
+                        <td className="whitespace-nowrap px-4 py-4">
                           {user?.role}
                         </td>
                         <td className="whitespace-nowrap px-4 py-4">
@@ -177,7 +235,7 @@ const ManageUsers = () => {
                   {filteredUsers.map((user, idx) => (
                     <div key={user._id} className="border-b py-4 flex flex-col">
                       <div className="flex items-center justify-between">
-                        <span className="font-medium dark:text-white">#{idx + 1}</span>
+                        <span className="font-medium">#{idx + 1}</span>
                         <img
                           src={user?.photoUrl}
                           alt=""
@@ -185,7 +243,7 @@ const ManageUsers = () => {
                         />
                       </div>
                       <div className="flex justify-between mt-2">
-                        <span className="dark:text-white">{user?.name}</span>
+                        <span>{user?.name}</span>
                         {currentUser?._id === user._id && (
                           <span className="ml-2 px-2 py-1 text-xs font-semibold text-white bg-blue-500 rounded-md">
                             You
@@ -193,7 +251,7 @@ const ManageUsers = () => {
                         )}
                       </div>
                       <div className="flex justify-between mt-2">
-                        <span className="dark:text-white">{user?.role}</span>
+                        <span>{user?.role}</span>
                         <span
                           onClick={() =>
                             navigate(`/dashboard/update-user/${user._id}`)
