@@ -29,7 +29,7 @@ import MakePayment from "../pages/Payment/MakePayment";
 import CardPayment from "../pages/Payment/CardPayment";
 import Feedbacks from "../pages/Dashboard/Admin/Feedback";
 import Schedules from "../pages/Dashboard/Admin/Schedules";
-import PaymentDetails from "../pages/Dashboard/Admin/PaymentDetails";
+import Inquiry from "../pages/Dashboard/Admin/Inquiry";
 
 export const router = createBrowserRouter([
   {
@@ -161,11 +161,6 @@ export const router = createBrowserRouter([
         element: <SpecialRequests />,
       },
 
-      {
-        path: "payment-details",
-        element: <PaymentDetails />,
-      },
-
       // qr management
       {
         path: "qr-scan",
@@ -174,6 +169,10 @@ export const router = createBrowserRouter([
       {
         path: "manage-locations",
         element: <LocationManagementDashboard />,
+      },
+      {
+        path: "manage-inquiries",
+        element: <Inquiry />,
       },
     ],
   },
