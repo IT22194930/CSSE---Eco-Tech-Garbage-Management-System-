@@ -61,7 +61,7 @@ const Inquiries = () => {
           <thead>
             <tr>
               <th className="border border-gray-300 p-4">Inquiry ID</th>
-              <th className="border border-gray-300 p-4">User Name</th>
+
               <th className="border border-gray-300 p-4">Message</th>
               <th className="border border-gray-300 p-4">Status</th>
               <th className="border border-gray-300 p-4">Actions</th>
@@ -71,9 +71,7 @@ const Inquiries = () => {
             {inquiries.map((inquiry) => (
               <tr key={inquiry._id}>
                 <td className="border border-gray-300 p-4">{inquiry._id}</td>
-                <td className="border border-gray-300 p-4">
-                  {inquiry.userName}
-                </td>
+
                 <td className="border border-gray-300 p-4">
                   {inquiry.message}
                 </td>
