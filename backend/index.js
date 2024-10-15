@@ -10,7 +10,9 @@ const {
   feeCalculationScheduler,
 } = require("./schedulers/feeCalculationScheduler");
 // Middleware
-app.use(cors());
+app.use(cors({ methods: ['GET', 'POST', 'PUT', 'DELETE'], // explicitly allow POST requests
+  allowedHeaders: ['Content-Type', 'Authorization']}
+));
 app.use(express.json());
 
 // Connect to MongoDB using Mongoose

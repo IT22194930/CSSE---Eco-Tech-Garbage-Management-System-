@@ -17,9 +17,9 @@ class PaymentGateway {
         return PaymentGateway.instance;
     }
 
-    createPaymentIntent(amount, currency) {
+    createPaymentIntent(userId, amount, currency) {
         // Generate a simple mock clientSecret
-        const clientSecret = 'mock_garbage_management_system' + Math.random().toString(36).substr(2, 10);
+        const clientSecret = 'mock_garbage_management_system' + Math.random().toString(36).substr(2, 10) + '_' + userId;
 
         // Store the client secret with its associated payment data
         const paymentDetail = {
@@ -32,16 +32,17 @@ class PaymentGateway {
 
         return clientSecret;
     }
+
     confirmPayment(clientSecret, isValidCardDetail) {
         // Check if the clientSecret exists in the store
-        if (paymentIntentsStore[clientSecret]) {
+        if (this.paymentIntentsStore.get(clientSecret)) {
             if (isValidCardDetail) {
                 // Update the payment status to 'succeeded'
-                paymentIntentsStore[clientSecret].status = 'succeeded';
+                this.paymentIntentsStore.get(clientSecret).status = 'succeeded';
                 return 'succeeded';
             } else {
                 // Update the payment status to 'failed'
-                paymentIntentsStore[clientSecret].status = 'failed';
+                this.paymentIntentsStore.get(clientSecret).status = 'failed';
                 return 'failed';
             }
         } else {

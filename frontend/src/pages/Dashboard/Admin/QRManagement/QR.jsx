@@ -124,6 +124,30 @@ function App() {
     });
   };
 
+  // Handle payment submission
+  const handlePaymentSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await axiosSecure.post(
+        "/api/payments/updateAccountBalance",
+        {
+          userId: userDetails._id,
+          amount: Number(paymentDetails.amount) * -1,
+          transactionType: paymentDetails.transactionType,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      toast.success("Payment processed successfully!");
+    } catch (error) {
+      console.error("Error processing payment:", error);
+      toast.error("Payment failed");
+    }
+  };
+
   // Confirm action on a garbage request
   const confirmAction = (requestId, action) => {
     setSelectedRequestId(requestId);
