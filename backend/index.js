@@ -5,8 +5,10 @@ require("dotenv").config(); // Ensure dotenv is configured correctly
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const port = process.env.PORT || 3000;
-const QRCode = require('qrcode');
-const { feeCalculationScheduler } = require("./schedulers/feeCalculationScheduler")
+const QRCode = require("qrcode");
+const {
+  feeCalculationScheduler,
+} = require("./schedulers/feeCalculationScheduler");
 // Middleware
 app.use(cors({ methods: ['GET', 'POST', 'PUT', 'DELETE'], // explicitly allow POST requests
   allowedHeaders: ['Content-Type', 'Authorization']}
@@ -71,11 +73,12 @@ app.use(
 );
 
 app.use(
-  "/api/garbageTypes", require("./routes/GarbageTypes/garbageTypesRoutes.js")
-)
-app.use(
-  "/api/payments", require("./routes/Payment/paymentRoutes.js")
-)
+  "/api/garbageTypes",
+  require("./routes/GarbageTypes/garbageTypesRoutes.js")
+);
+app.use("/api/payments", require("./routes/Payment/paymentRoutes.js"));
+app.use("/api/inquiries", require("./routes/Inquiry/inquiryRoutes.js"));
+
 app.post("/api/set-token", (req, res) => {
   const user = req.body;
   const token = jwt.sign(user, process.env.ACCESS_SECRET, {

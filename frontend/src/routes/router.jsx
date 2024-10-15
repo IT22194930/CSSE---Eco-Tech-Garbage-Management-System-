@@ -29,7 +29,7 @@ import MakePayment from "../pages/Payment/MakePayment";
 import CardPayment from "../pages/Payment/CardPayment";
 import Feedbacks from "../pages/Dashboard/Admin/Feedback";
 import Schedules from "../pages/Dashboard/Admin/Schedules";
-
+import Inquiry from "../pages/Dashboard/Admin/Inquiry";
 
 export const router = createBrowserRouter([
   {
@@ -96,10 +96,8 @@ export const router = createBrowserRouter([
             path: "/payments/card-payment",
             element: <CardPayment />,
           },
-        ]
+        ],
       },
-     
-     
     ],
   },
   {
@@ -124,7 +122,7 @@ export const router = createBrowserRouter([
         path: "location",
         element: <Location />,
       },
-      
+
       // admin routes
       {
         path: "admin-home",
@@ -136,15 +134,15 @@ export const router = createBrowserRouter([
       },
       {
         path: "manage-collectors",
-        element: <ManageCollectors />
+        element: <ManageCollectors />,
       },
       {
         path: "feedbacks",
-        element: <Feedbacks />
+        element: <Feedbacks />,
       },
       {
         path: "schedules",
-        element: <Schedules />
+        element: <Schedules />,
       },
       {
         path: "update-user/:id",
@@ -160,7 +158,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "special-requests",
-        element: <SpecialRequests />
+        element: <SpecialRequests />,
       },
 
       // qr management
@@ -171,6 +169,10 @@ export const router = createBrowserRouter([
       {
         path: "manage-locations",
         element: <LocationManagementDashboard />,
+      },
+      {
+        path: "manage-inquiries",
+        element: <Inquiry />,
       },
     ],
   },
