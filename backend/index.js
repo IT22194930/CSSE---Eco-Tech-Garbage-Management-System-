@@ -10,9 +10,12 @@ const {
   feeCalculationScheduler,
 } = require("./schedulers/feeCalculationScheduler");
 // Middleware
-app.use(cors({ methods: ['GET', 'POST', 'PUT', 'DELETE'], // explicitly allow POST requests
-  allowedHeaders: ['Content-Type', 'Authorization']}
-));
+app.use(
+  cors({
+    methods: ["GET", "POST", "PUT", "DELETE"], // explicitly allow POST requests
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(express.json());
 
 // Connect to MongoDB using Mongoose
@@ -78,6 +81,7 @@ app.use(
 );
 app.use("/api/payments", require("./routes/Payment/paymentRoutes.js"));
 app.use("/api/inquiries", require("./routes/Inquiry/inquiryRoutes.js"));
+app.use("/api/collector", require("./routes/CollectorRoute/collectorRoute.js"));
 
 app.post("/api/set-token", (req, res) => {
   const user = req.body;
