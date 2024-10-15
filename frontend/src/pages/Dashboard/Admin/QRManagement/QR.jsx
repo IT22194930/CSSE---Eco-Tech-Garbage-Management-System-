@@ -129,12 +129,17 @@ function App() {
     e.preventDefault();
     try {
       await axiosSecure.post(
-        `/api/payments/totalDueAmount/:userId?userId=${userDetails._id}`,
+        '/api/payments/updateAccountBalance',
         {
           userId: userDetails._id,
-          amount: paymentDetails.amount,
+          amount: Number(paymentDetails.amount) * -1,
           transactionType: paymentDetails.transactionType,
-        }
+        },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
       );
       toast.success("Payment processed successfully!");
     } catch (error) {
