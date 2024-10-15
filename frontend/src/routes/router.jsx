@@ -30,6 +30,7 @@ import CardPayment from "../pages/Payment/CardPayment";
 import Feedbacks from "../pages/Dashboard/Admin/Feedback";
 import Schedules from "../pages/Dashboard/Admin/Schedules";
 import Inquiry from "../pages/Dashboard/Admin/Inquiry";
+import PaymentDetails from "../pages/Dashboard/Admin/PaymentDetails";
 
 export const router = createBrowserRouter([
   {
@@ -160,6 +161,12 @@ export const router = createBrowserRouter([
         path: "special-requests",
         element: <SpecialRequests />,
       },
+
+      {
+        path: "payment-details",
+        element: <PaymentDetails />,
+      },
+
 
       // qr management
       {

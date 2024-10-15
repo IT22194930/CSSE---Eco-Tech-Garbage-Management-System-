@@ -4,6 +4,11 @@ import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { useEffect, useState } from "react";
 import { MdDelete } from "react-icons/md";
 import Swal from "sweetalert2";
+import SpecialReqReport from "./Reports/SpecialReqReports";
+import { BlobProvider } from "@react-pdf/renderer";
+import { FaFileExcel, FaFilePdf } from "react-icons/fa";
+import * as XLSX from "xlsx";
+import { writeFile } from "xlsx";
 
 const SpecialRequests = () => {
   const axiosFetch = useAxiosFetch();
@@ -11,13 +16,16 @@ const SpecialRequests = () => {
   const navigate = useNavigate();
   const [specialRequests, setSpecialRequests] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [reqFilter ,setReqFilter] = useState("");
+  const [reqFilter, setReqFilter] = useState("");
+  const [dataList, setDataList] = useState([]);
 
   useEffect(() => {
     axiosFetch
       .get("/api/garbageRequests")
       .then((res) => {
-        const specialReq = res.data.filter((request) => request.type !== "Normal Waste");
+        const specialReq = res.data.filter(
+          (request) => request.type !== "Normal Waste"
+        );
         setSpecialRequests(specialReq);
       })
       .catch((err) => console.log(err));
@@ -27,9 +35,12 @@ const SpecialRequests = () => {
     const lowercasedQuery = searchQuery.toLowerCase();
     const matchesSearch =
       specialReq?.type?.toLowerCase().includes(lowercasedQuery) ||
-      specialReq?.username?.toLowerCase().includes(lowercasedQuery); // Include username search
+      specialReq?.username?.toLowerCase().includes(lowercasedQuery);
 
-    const matchesReq = reqFilter ? specialReq?.type === reqFilter : true;
+    const matchesReq = reqFilter
+      ? specialReq?.type?.toLowerCase() === reqFilter.toLowerCase()
+      : true; // Normalize both type and reqFilter to lowercase
+
     return matchesSearch && matchesReq;
   });
 
@@ -60,11 +71,43 @@ const SpecialRequests = () => {
     });
   };
 
+  const generateExcelFile = () => {
+    const filteredDataList = filteredSpecialReq.map((specialReq) => ({
+      Name: specialReq.username,
+      Type: specialReq.type,
+      Description: specialReq.description,
+      Date: new Date(specialReq.date).toLocaleDateString(),
+      Time: specialReq.time,
+      Status: specialReq.status,
+      RecyclableQuantity: specialReq.recyclableQuantity,
+      CashbackPrice: specialReq.cashbackPrice,
+      TotalCost: specialReq.totalCost,
+      CreatedAt: new Date(specialReq.createdAt).toLocaleString(),
+    }));
+  
+    if (filteredDataList.length === 0) {
+      Swal.fire({
+        title: "No Data",
+        text: "There are no records to export.",
+        icon: "info",
+      });
+      return;
+    }
+  
+    const ws = XLSX.utils.json_to_sheet(filteredDataList);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Special Requests Report");
+    writeFile(wb, "special_request_report.xlsx");
+  };
+  
+  const handleButtonClick = () => {
+    generateExcelFile();
+  };
+  
+
   return (
     <div className="px-4 sm:px-0">
-      <h1 className="text-center text-4xl font-bold my-7">
-        Special Requests
-      </h1>
+      <h1 className="text-center text-4xl font-bold my-7">Special Requests</h1>
 
       <div className="mb-4 flex gap-4">
         <input
@@ -74,11 +117,42 @@ const SpecialRequests = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full px-4 py-2 border rounded-md "
         />
+
+        <select
+          value={reqFilter}
+          onChange={(e) => setReqFilter(e.target.value)}
+          className="px-4 py-2 border rounded-md"
+        >
+          <option value="">All Types</option>
+          <option value="e waste">E Waste</option>
+          <option value="bulk">Bulk Waste</option>
+          <option value="hazardous waste">Hazardous Waste</option>
+          <option value="Other Special waste">Other Special Waste</option>
+        </select>
+
+        <BlobProvider
+          document={<SpecialReqReport dataList={filteredSpecialReq} />}
+          fileName="SpecialRequestsReport.pdf"
+        >
+          {({ url }) => (
+            <li className="flex items-center">
+              <a href={url} target="_blank" className="flex items-center">
+                <FaFilePdf className="text-3xl text-red-600" />
+              </a>
+            </li>
+          )}
+        </BlobProvider>
+
+        <li className="flex items-center">
+          <a href="#" onClick={handleButtonClick} className="flex items-center">
+            <FaFileExcel className="text-3xl text-green-600" />
+          </a>
+        </li>
       </div>
 
       <div className="overflow-x-auto">
         <div className="flex flex-col">
-          <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
+          <div className="inline-block min-w-full py-2 sm:px-6 lg:px-3">
             <div className="overflow-hidden">
               {filteredSpecialReq.length === 0 ? (
                 <p className="text-center text-gray-500">
@@ -88,7 +162,7 @@ const SpecialRequests = () => {
                 <table className="min-w-full text-left text-sm font-light">
                   <thead className="border-b font-medium hidden md:table-header-group">
                     <tr>
-                        <th scope="col" className="px-4 py-4">
+                      <th scope="col" className="px-4 py-4">
                         Name
                       </th>
                       <th scope="col" className="px-4 py-4 ">
