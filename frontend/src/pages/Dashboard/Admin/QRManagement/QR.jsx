@@ -11,6 +11,10 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Scroll from "../../../../hooks/useScroll";
+import ScanImg from "../../../../assets/gallery/scanning.jpg";
+import MapComponent from "./MapComponent";
+import InquiryForm from "./InquiryForm";
+import InquiryImg from "../../../../assets/gallery/inquiry.png";
 
 function App() {
   const [scanResult, setScanResult] = useState("");
@@ -22,7 +26,7 @@ function App() {
     email: "",
     phone: "",
   });
-  const [totalDueAmount, setTotalDueAmount] = useState(0); // Added for total amount
+
   const [paymentDetails, setPaymentDetails] = useState({
     amount: "",
     transactionType: "",
@@ -32,6 +36,7 @@ function App() {
   const [isSmallModalOpen, setIsSmallModalOpen] = useState(false);
   const [selectedRequestId, setSelectedRequestId] = useState(null);
   const [selectedAction, setSelectedAction] = useState(null);
+  const [isInquiryModalOpen, setIsInquiryModalOpen] = useState(false);
 
   const axiosSecure = useAxiosSecure();
 
@@ -67,11 +72,6 @@ function App() {
           isInEditMode: false, // Add the isInEditMode property for each request
         }))
       );
-
-      const totalDueResponse = await axiosSecure.get(
-        `/api/payments/totalDueAmount/${data._id}`
-      );
-      setTotalDueAmount(totalDueResponse.data.totalDueAmount);
 
       setIsModalOpen(true);
     } catch (error) {
@@ -129,17 +129,17 @@ function App() {
     e.preventDefault();
     try {
       await axiosSecure.post(
-        '/api/payments/updateAccountBalance',
+        "/api/payments/updateAccountBalance",
         {
           userId: userDetails._id,
           amount: Number(paymentDetails.amount) * -1,
           transactionType: paymentDetails.transactionType,
         },
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          }
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
       toast.success("Payment processed successfully!");
     } catch (error) {
@@ -201,12 +201,22 @@ function App() {
     slidesToScroll: 1,
   };
 
+  const handleInquiryClick = () => {
+    setIsInquiryModalOpen(true); // Open the InquiryForm modal
+  };
+
   return (
     <div className="bg-white pt-20 min-h-screen flex flex-col items-center">
-      <Scroll/>
+      <Scroll />
       <h1 className="text-3xl sm:text-4xl font-bold mb-8 text-gray-800 text-center">
         QR Code Scanner
       </h1>
+      <div className="absolute right-1 top-1" onClick={handleInquiryClick}>
+        <img src={InquiryImg} alt="Inquiry" style={{ cursor: "pointer" }} />
+      </div>
+      <div className="w-[30%] sm:max-w-md">
+        <img src={ScanImg}></img>
+      </div>
 
       <button
         onClick={toggleCamera}
@@ -278,52 +288,6 @@ function App() {
             <p className="mb-4">
               <strong>Phone:</strong> {userDetails.phone}
             </p>
-
-            <form onSubmit={handlePaymentSubmit}>
-              <div className="mb-4">
-                <label
-                  className="block text-gray-700 font-semibold mb-2"
-                  htmlFor="amount"
-                >
-                  Amount
-                </label>
-                <input
-                  type="number"
-                  id="amount"
-                  name="amount"
-                  value={paymentDetails.amount}
-                  onChange={handlePaymentInputChange}
-                  className="w-full px-4 py-2 border rounded-lg"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label
-                  className="block text-gray-700 font-semibold mb-2"
-                  htmlFor="transactionType"
-                >
-                  Transaction Type
-                </label>
-                <select
-                  id="transactionType"
-                  name="transactionType"
-                  value={paymentDetails.transactionType}
-                  onChange={handlePaymentInputChange}
-                  className="w-full px-4 py-2 border rounded-lg"
-                  required
-                >
-                  <option value="">Select Transaction Type</option>
-
-                  <option value="transfer">Cash Back</option>
-                </select>
-              </div>
-              <button
-                type="submit"
-                className="w-full bg-indigo-500 hover:bg-indigo-600 text-white py-2 rounded-lg"
-              >
-                Process Payment
-              </button>
-            </form>
 
             {garbageRequests.length > 0 ? (
               <div className="mt-6">
@@ -421,6 +385,14 @@ function App() {
             </button>
           </div>
         </div>
+      </SmallModal>
+
+      <SmallModal
+        isOpen={isInquiryModalOpen}
+        onClose={() => setIsInquiryModalOpen(false)}
+        title="Inquiry Form"
+      >
+        <InquiryForm onClose={() => setIsInquiryModalOpen(false)} />
       </SmallModal>
 
       <ToastContainer />
