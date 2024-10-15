@@ -123,10 +123,7 @@ const NavBar = () => {
     >
       <div className="lg:w-[95%] mx-auto sm:px-6 lg:px-6">
         <div className="px-4 py-4 flex items-center justify-between">
-          <div
-            onClick={() => navigate("/")}
-            className="flex-shrink-0 cursor-pointer md:p-0 flex items-center"
-          >
+          <div className="flex-shrink-0 cursor-pointer md:p-0 flex items-center">
             {/* mobile menu icons */}
             <div className="md:hidden flex items-center">
               <button
@@ -141,26 +138,27 @@ const NavBar = () => {
                 )}
               </button>
             </div>
-            <div className="pl-5">
+            <div onClick={() => navigate("/")} className="pl-5">
               <h1 className="text-2xl font-bold inline-flex gap-3 items-center">
                 EcoTech <img src="/logo.png" alt="" className="w-8 h-8" />
               </h1>
               <p className="font-bold text-[13px] tracking-[6px]">
                 Clean Green Efficient
               </p>
-            </div>            
+            </div>
           </div>
 
+          {user &&
           <div className="md:hidden">
-                <Link to={`/user-profile`}>
-                  <img
-                    src={currentUser?.photoUrl || userImg}
-                    alt="User Avatar"
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                </Link>
-              </div>
-
+            <Link to={`/user-profile`}>
+              <img
+                src={currentUser?.photoUrl || userImg}
+                alt="User Avatar"
+                className="w-10 h-10 rounded-full object-cover border-4 border-secondary"
+              />
+            </Link>
+          </div>
+}
           {/* Navigational links */}
           <div className="hidden md:block">
             <div className="flex">

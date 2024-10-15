@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import EditRequestModal from "./EditRequestModal";
 import { FaRegEdit, FaTrashAlt } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 const GarbageRequest = () => {
   const { currentUser } = useUser();
@@ -18,6 +19,7 @@ const GarbageRequest = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState(null);
   const [feedbacks, setFeedbacks] = useState({}); // State to store feedbacks
+  const [isOverDue, setIsOverDue] = useState(false);
 
   useEffect(() => {
     const fetchRequests = async () => {
@@ -74,19 +76,35 @@ const GarbageRequest = () => {
   };
 
   const handleDeleteRequest = async (requestId) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this request?"
-    );
-    if (confirmed) {
-      try {
-        await axiosSecure.delete(`api/garbageRequests/${requestId}`);
-        setPendingRequests((prevRequests) =>
-          prevRequests.filter((request) => request._id !== requestId)
-        );
-      } catch (error) {
-        console.error("Error deleting request:", error);
+    Swal.fire({
+      title: "Are you sure you want to delete this request?",
+      text: "",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Delete Request!",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axiosSecure.delete(
+            `api/garbageRequests/${requestId}`
+          );
+
+          if (response.status === 200 || response.status === 204) {
+            // Update UI after successful deletion
+            setPendingRequests((prevRequests) =>
+              prevRequests.filter((request) => request._id !== requestId)
+            );
+          } else {
+            // If response is not successful, handle it here
+            console.error("Failed to delete request");
+          }
+        } catch (error) {
+          console.error("Error deleting request:", error);
+        }
       }
-    }
+    });
   };
 
   const handleFeedbackChange = (requestId, value) => {
@@ -126,6 +144,28 @@ const GarbageRequest = () => {
     return requests;
   };
 
+  useEffect(() => {
+    const fetchDueAmount = async () => {
+      if (currentUser) {
+        try {
+          const response = await axiosSecure.s.get(
+            `api/payments/totalDueAmount/${currentUser._id}`
+          );
+          if (response.status === HttpStatusCode.Ok) {
+            setAmount(Number(response.data.balance));
+            setIsOverDue(response.data.isOverDue);
+          }
+        } catch (error) {
+          console.error("Payment error:", error);
+        }
+      }
+    };
+
+    fetchDueAmount();
+  }, [currentUser]);
+
+  console.log(isOverDue)
+
   if (!currentUser) {
     return (
       <div className="mt-20 mx-auto max-w-4xl p-6 bg-white dark:bg-slate-900 dark:shadow-slate-500 shadow-lg rounded-lg text-center">
@@ -150,13 +190,23 @@ const GarbageRequest = () => {
           Special Waste Collection Request
         </h1>
 
-        <div className="flex justify-center mt-6 mb-4">
-          <Link to="/scheduleRequest">
-            <button className="bg-secondary rounded-xl p-5 text-white px-20 hover:scale-105 duration-300">
-              Schedule New Request
-            </button>
-          </Link>
-        </div>
+        {isOverDue && (
+          <div className="flex justify-center mb-4">
+            <p className="text-red-500 text-lg">
+              You have overdue payment. Please pay before scheduling.
+            </p>
+          </div>
+        )}
+
+        {!isOverDue && (
+          <div className="flex justify-center mt-6 mb-4">
+            <Link to="/scheduleRequest">
+              <button className="bg-secondary rounded-xl p-5 text-white px-20 hover:scale-105 duration-300">
+                Schedule New Request
+              </button>
+            </Link>
+          </div>
+        )}
 
         <div className="flex justify-center mb-4">
           <button
@@ -263,9 +313,9 @@ const GarbageRequest = () => {
                 ]).map((request) => (
                   <li
                     key={request._id}
-                    className="mb-2 p-2 border rounded-lg flex justify-between items-center"
+                    className="relative mb-2 p-2 border rounded-lg flex justify-between items-center"
                   >
-                    <div>
+                    <div className="flex-1">
                       <p>
                         <strong>Type:</strong> {request.type}
                       </p>
@@ -284,13 +334,11 @@ const GarbageRequest = () => {
                         })}
                       </p>
                       <p>
-                        <strong>Pickup Time: </strong>
-                        {request.time}
+                        <strong>Pickup Time: </strong> {request.time}
                       </p>
                       {request.feedback && (
                         <p>
-                          <strong>Feedback: </strong>
-                          {request.feedback}
+                          <strong>Feedback: </strong> {request.feedback}
                         </p>
                       )}
                       {request.status === "Accepted" && (
@@ -311,6 +359,16 @@ const GarbageRequest = () => {
                             Send Feedback
                           </button>
                         </div>
+                      )}
+                    </div>
+
+                    {/* Status Circle */}
+                    <div className="absolute top-2 right-2">
+                      {request.status === "Accepted" && (
+                        <div className="w-4 h-4 bg-green-500 rounded-full"></div>
+                      )}
+                      {request.status === "Rejected" && (
+                        <div className="w-4 h-4 bg-red-500 rounded-full"></div>
                       )}
                     </div>
                   </li>
