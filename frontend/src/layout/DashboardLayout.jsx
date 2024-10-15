@@ -12,7 +12,7 @@ import { CiFileOn } from "react-icons/ci";
 import Swal from "sweetalert2";
 import Scroll from "../hooks/useScroll";
 import Loader from "../components/Loader/Loader";
-import { MdFeedback, MdRequestQuote } from "react-icons/md";
+import { MdFeedback, MdPayments, MdRequestQuote } from "react-icons/md";
 import { GiPikeman } from "react-icons/gi";
 import { AiFillSchedule } from "react-icons/ai";
 
@@ -46,6 +46,11 @@ const adminNavItems = [
     to: "/dashboard/schedules",
     icon: <AiFillSchedule className="text-2xl" />,
     label: "Schedules",
+  },
+  {
+    to: "/dashboard/payment-details",
+    icon: <MdPayments className="text-2xl" />,
+    label: "Payment Details",
   },
   {
     to: "/dashboard/manage-locations",

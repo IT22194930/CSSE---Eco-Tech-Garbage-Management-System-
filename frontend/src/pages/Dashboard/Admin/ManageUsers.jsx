@@ -19,8 +19,8 @@ const ManageUsers = () => {
   const navigate = useNavigate();
   const { currentUser } = useUser();
   const [users, setUsers] = useState([]);
-  const [searchQuery, setSearchQuery] = useState(""); // State for search query
-  const [roleFilter, setRoleFilter] = useState(""); // State for role filter
+  const [searchQuery, setSearchQuery] = useState("");
+  const [roleFilter, setRoleFilter] = useState("");
   const [dataList, setDataList] = useState([]);
 
   useEffect(() => {
@@ -28,7 +28,9 @@ const ManageUsers = () => {
       .get("/users")
       .then((res) => {
         // Sorting users by name in alphabetical order
-        const sortedUsers = res.data.sort((a, b) => a.name.localeCompare(b.name));
+        const sortedUsers = res.data.sort((a, b) =>
+          a.name.localeCompare(b.name)
+        );
         setUsers(sortedUsers);
         setDataList(sortedUsers);
       })
@@ -63,14 +65,19 @@ const ManageUsers = () => {
   };
 
   const generateExcelFile = () => {
-    const rearrangedDataList = dataList.map((user) => ({
+    const filteredDataList = dataList.filter((user) => {
+      const matchesRole = roleFilter ? user.role === roleFilter : true; // Check if role matches or no role is selected
+      return matchesRole;
+    });
+
+    const rearrangedDataList = filteredDataList.map((user) => ({
       Name: user.name,
       Email: user.email,
       Role: user.role,
       Address: user.address,
       Telephone: user.phone,
       Latitude: user.latitude,
-      Longitude: user.longitude
+      Longitude: user.longitude,
     }));
 
     const ws = XLSX.utils.json_to_sheet(rearrangedDataList);
@@ -85,7 +92,9 @@ const ManageUsers = () => {
 
   // Filter users by search query and role
   const filteredUsers = users.filter((user) => {
-    const matchesSearch = user?.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = user?.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
     const matchesRole = roleFilter ? user?.role === roleFilter : true; // Check if role matches or no role is selected
     return matchesSearch && matchesRole;
   });
@@ -117,33 +126,33 @@ const ManageUsers = () => {
         </select>
 
         <div
-            className="flex space-x-4"
-            data-aos="flip-up"
-            data-aos-duration="1000"
+          className="flex space-x-4"
+          data-aos="flip-up"
+          data-aos-duration="1000"
+        >
+          <BlobProvider
+            document={<UserReport dataList={filteredUsers} />}
+            fileName="UserReport.pdf"
           >
-            <BlobProvider
-              document={<UserReport dataList={dataList} />}
-              fileName="UserReportt.pdf"
+            {({ url }) => (
+              <li className="flex items-center">
+                <a href={url} target="_blank" className="flex items-center">
+                  <FaFilePdf className="text-3xl text-red-600" />
+                </a>
+              </li>
+            )}
+          </BlobProvider>
+
+          <li className="flex items-center">
+            <a
+              href="#"
+              onClick={handleButtonClick}
+              className="flex items-center"
             >
-              {({ url }) => (
-                <li className="flex items-center">
-                  <a href={url} target="_blank" className="flex items-center">
-                    <FaFilePdf className="text-3xl text-red-600" />
-                  </a>
-                </li>
-              )}
-            </BlobProvider>
-            <li className="flex items-center">
-              <a
-                href="#"
-                onClick={handleButtonClick}
-                className="flex items-center"
-              >
-                <FaFileExcel className="text-3xl text-green-600" />
-              </a>
-            </li>
-            
-          </div>
+              <FaFileExcel className="text-3xl text-green-600" />
+            </a>
+          </li>
+        </div>
       </div>
 
       <div className="overflow-x-auto">
@@ -151,9 +160,7 @@ const ManageUsers = () => {
           <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
             <div className="overflow-hidden">
               {filteredUsers.length === 0 ? (
-                <p className="text-center text-gray-500">
-                  No users found
-                </p>
+                <p className="text-center text-gray-500">No users found</p>
               ) : (
                 <table className="min-w-full text-left text-sm font-light">
                   <thead className="border-b font-medium hidden md:table-header-group">
@@ -227,49 +234,6 @@ const ManageUsers = () => {
                     ))}
                   </tbody>
                 </table>
-              )}
-              
-              {/* Responsive Table for Mobile */}
-              {filteredUsers.length > 0 && (
-                <div className="md:hidden">
-                  {filteredUsers.map((user, idx) => (
-                    <div key={user._id} className="border-b py-4 flex flex-col">
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium">#{idx + 1}</span>
-                        <img
-                          src={user?.photoUrl}
-                          alt=""
-                          className="h-[35px] w-[35px] rounded-full"
-                        />
-                      </div>
-                      <div className="flex justify-between mt-2">
-                        <span>{user?.name}</span>
-                        {currentUser?._id === user._id && (
-                          <span className="ml-2 px-2 py-1 text-xs font-semibold text-white bg-blue-500 rounded-md">
-                            You
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex justify-between mt-2">
-                        <span>{user?.role}</span>
-                        <span
-                          onClick={() =>
-                            navigate(`/dashboard/update-user/${user._id}`)
-                          }
-                          className="cursor-pointer bg-green-500 py-1 rounded-md px-2 text-white"
-                        >
-                          Update
-                        </span>
-                        <span
-                          onClick={() => handleDelete(user._id)}
-                          className="cursor-pointer bg-red-600 py-1 rounded-md px-2 text-white"
-                        >
-                          Delete
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
               )}
             </div>
           </div>
