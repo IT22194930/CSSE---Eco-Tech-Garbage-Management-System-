@@ -146,14 +146,14 @@ const CardPayment = () => {
 
 
     return (
-        <div className="min-h-screen bg-green-200 p-6 flex justify-center items-center">
+        <div className="min-h-screen p-6 flex justify-center items-center">
             <div className="max-w-lg w-full bg-white rounded-lg shadow-lg p-6">
                 <Link to="../../payments/make-payment">
                     <MdOutlineArrowBackIosNew className="text-3xl mb-4"/>
                 </Link>
 
                 {/* Header Section */}
-                <h2 className="text-center text-2xl font-bold mb-4">Card Payment</h2>
+                <h2 className="text-center text-2xl font-bold mb-8">Card Payment</h2>
 
                 <form onSubmit={handleSubmit}> {/* Add form tag */}
                     {/* Card Number Input with Card Type Image */}
@@ -185,7 +185,7 @@ const CardPayment = () => {
                     </div>
 
                     {/* Expiration Date and CVV */}
-                    <div className="mb-4 flex space-x-4">
+                    <div className="mb-10 flex space-x-4">
                         <div className="w-1/2">
                             <label className="block text-sm font-medium text-gray-700 mb-2">Expiration Date</label>
                             <input
@@ -214,10 +214,10 @@ const CardPayment = () => {
                     {/* Submit Button */}
                     <button
                         type="submit"
-                        className="w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300"
+                        className="w-full bg-secondary rounded-xl p-4 text-white px-20 hover:scale-105 duration-300"
                     >
                         {amount && <div>
-                            Pay -> Rs. {Number(amount).toFixed(2)}
+                            Pay Rs. {Number(amount).toFixed(2)}
                         </div>
                         }
                     </button>
