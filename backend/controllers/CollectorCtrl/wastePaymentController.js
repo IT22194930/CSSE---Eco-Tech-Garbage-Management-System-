@@ -47,7 +47,7 @@ class WastePaymentController {
   async addAdditionalPrice(req, res) {
     try {
       const { userId, amount } = req.body;
-      const transactionType = "Additional Fee"; // Hardcoded as Additional Fee for this method
+      const transactionType = "Special Waste Fee"; // Hardcoded as Additional Fee for this method
 
       if (!userId) {
         return res.status(400).json({ message: "User ID is required" });
