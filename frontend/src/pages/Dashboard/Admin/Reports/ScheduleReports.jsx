@@ -111,7 +111,7 @@ const Footer = () => (
   </Text>
 );
 
-const CollectorReport = ({ dataList }) => {
+const ReqReport = ({ dataList }) => {
   const reportDateTime = new Date().toLocaleString("en-US", {
     timeZone: "Asia/Colombo",
   });
@@ -126,20 +126,32 @@ const CollectorReport = ({ dataList }) => {
             </View>
             <Text style={styles.headerText}>{reportDateTime}</Text>
           </View>
-          <Text style={styles.heading}>Users</Text>
+          <Text style={styles.heading}></Text>
           <View style={styles.table}>
             <View style={styles.tableRow}>
               <Text style={styles.tableColHeader}>Name</Text>
-              <Text style={styles.tableColHeader}>Email</Text>
-              <Text style={styles.tableColHeader}>Address</Text>
-              <Text style={styles.tableColHeader}>Telephone</Text>
+              <Text style={styles.tableColHeader}>Type</Text>
+              <Text style={styles.tableColHeader}>Description</Text>
+              <Text style={styles.tableColHeader}>Date</Text>
+              <Text style={styles.tableColHeader}>Time</Text>
+              <Text style={styles.tableColHeader}>Status</Text>
+              <Text style={styles.tableColHeader}>Recyclable Quantity</Text>
+              <Text style={styles.tableColHeader}>Cashback Price</Text>
+              <Text style={styles.tableColHeader}>Total Cost</Text>
+              <Text style={styles.tableColHeader}>Created At</Text>
             </View>
-            {dataList.map((user, index) => (
+            {dataList.map((request, index) => (
               <View key={index} style={styles.tableRow}>
-                <Text style={styles.tableCol}>{user.name}</Text>
-                <Text style={styles.tableCol}>{user.email}</Text>
-                <Text style={styles.tableCol}>{user.address}</Text>
-                <Text style={styles.tableCol}>{user.phone}</Text>
+                <Text style={styles.tableCol}>{request.name}</Text>
+                <Text style={styles.tableCol}>{request.type}</Text>
+                <Text style={styles.tableCol}>{request.description}</Text>
+                <Text style={styles.tableCol}>{request.date}</Text>
+                <Text style={styles.tableCol}>{request.time}</Text>
+                <Text style={styles.tableCol}>{request.status}</Text>
+                <Text style={styles.tableCol}>{request.recyclableQuantity}</Text>
+                <Text style={styles.tableCol}>{request.cashbackPrice}</Text>
+                <Text style={styles.tableCol}>{request.totalCost}</Text>
+                <Text style={styles.tableCol}>{request.createdAt}</Text>
               </View>
             ))}
           </View>
@@ -150,4 +162,4 @@ const CollectorReport = ({ dataList }) => {
   );
 };
 
-export default CollectorReport;
+export default ReqReport;

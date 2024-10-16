@@ -6,6 +6,7 @@ import storage from "../../../config/firebase.init";
 import Swal from "sweetalert2";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { IoMdDownload } from "react-icons/io";
+import Scroll from "../../../hooks/useScroll";
 
 const Profile = () => {
   const { currentUser } = useUser();
@@ -86,7 +87,6 @@ const Profile = () => {
   };
 
   // Function to download the QR code image
-  // Function to download the QR code image
   const downloadQRCode = (e) => {
     e.preventDefault(); // Prevent form submission
 
@@ -126,6 +126,7 @@ const Profile = () => {
 
   return (
     <div className="mt-20">
+      <Scroll/>
       <h1 className="mt-5 text-4xl font-bold text-center dark:text-white">
         Update <span className="text-secondary">Profile</span>
       </h1>

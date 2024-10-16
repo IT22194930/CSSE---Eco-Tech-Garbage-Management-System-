@@ -6,6 +6,11 @@ import { useNavigate } from "react-router-dom";
 import { GrUpdate } from "react-icons/gr";
 import { MdDelete } from "react-icons/md";
 import Swal from "sweetalert2";
+import * as XLSX from "xlsx";
+import { writeFile } from "xlsx";
+import CollectorReport from "./Reports/CollectorReports";
+import { BlobProvider } from "@react-pdf/renderer";
+import { FaFileExcel, FaFilePdf } from "react-icons/fa";
 
 const ManageCollectors = () => {
   const axiosFetch = useAxiosFetch();
@@ -14,6 +19,8 @@ const ManageCollectors = () => {
   const { currentUser } = useUser();
   const [collectors, setCollectors] = useState([]);
   const [searchQuery, setSearchQuery] = useState(""); // State for search query
+  const [roleFilter, setRoleFilter] = useState("");
+  const [dataList, setDataList] = useState([]);
 
   useEffect(() => {
     axiosFetch
@@ -23,6 +30,7 @@ const ManageCollectors = () => {
         // Sorting users by name in alphabetical order
         const sortedAdmins = collector.sort((a, b) => a.name.localeCompare(b.name));
         setCollectors(sortedAdmins);
+        setDataList(sortedAdmins);
       })
       .catch((err) => console.log(err));
   }, []);
@@ -54,6 +62,24 @@ const ManageCollectors = () => {
     });
   };
 
+  const generateExcelFile = () => {
+    const rearrangedDataList = dataList.map((user) => ({
+      Name: user.name,
+      Email: user.email,
+      Address: user.address,
+      Telephone: user.phone
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(rearrangedDataList);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Collecotrs Report");
+    writeFile(wb, "collectors_report.xlsx");
+  };
+
+  const handleButtonClick = () => {
+    generateExcelFile();
+  };
+
 //   Filter collectors by search query and role
   const filteredCollectors = collectors.filter((collector) => {
     const matchesSearch = collector?.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -75,6 +101,34 @@ const ManageCollectors = () => {
           onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full px-4 py-2 border rounded-md"
         />
+        <div
+            className="flex space-x-4"
+            data-aos="flip-up"
+            data-aos-duration="1000"
+          >
+            <BlobProvider
+              document={<CollectorReport dataList={dataList} />}
+              fileName="CollectorReport.pdf"
+            >
+              {({ url }) => (
+                <li className="flex items-center">
+                  <a href={url} target="_blank" className="flex items-center">
+                    <FaFilePdf className="text-3xl text-red-600" />
+                  </a>
+                </li>
+              )}
+            </BlobProvider>
+            <li className="flex items-center">
+              <a
+                href="#"
+                onClick={handleButtonClick}
+                className="flex items-center"
+              >
+                <FaFileExcel className="text-3xl text-green-600" />
+              </a>
+            </li>
+            
+          </div>
       </div>
 
       <div className="overflow-x-auto">

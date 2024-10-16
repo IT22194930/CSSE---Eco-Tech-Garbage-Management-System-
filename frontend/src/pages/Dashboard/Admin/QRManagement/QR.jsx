@@ -12,7 +12,6 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Scroll from "../../../../hooks/useScroll";
 import ScanImg from "../../../../assets/gallery/scanning.jpg";
-import MapComponent from "./MapComponent";
 import InquiryForm from "./InquiryForm";
 import InquiryImg from "../../../../assets/gallery/inquiry.png";
 
@@ -25,20 +24,28 @@ function App() {
     name: "",
     email: "",
     phone: "",
+    address: "",
+    userId: "",
   });
 
-  const [paymentDetails, setPaymentDetails] = useState({
-    amount: "",
-    transactionType: "",
-  });
   const [garbageRequests, setGarbageRequests] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSmallModalOpen, setIsSmallModalOpen] = useState(false);
   const [selectedRequestId, setSelectedRequestId] = useState(null);
   const [selectedAction, setSelectedAction] = useState(null);
   const [isInquiryModalOpen, setIsInquiryModalOpen] = useState(false);
+  const [transactionType, setTransactionType] = useState("Cash Back");
+  const [userId, setUserId] = useState("");
+  const [amount, setAmount] = useState("");
+  const [activeTab, setActiveTab] = useState("cashBack");
 
   const axiosSecure = useAxiosSecure();
+
+  useEffect(() => {
+    if (userDetails.userId) {
+      setUserId(userDetails.userId); // Set userId based on fetched userDetails
+    }
+  }, [userDetails]);
 
   // Handle QR code scanning
   const handleScan = (data) => {
@@ -62,14 +69,21 @@ function App() {
       if (!response.ok) throw new Error("Network response was not ok");
       const data = await response.json();
 
-      setUserDetails({ name: data.name, email: data.email, phone: data.phone });
+      setUserDetails({
+        userId: data._id,
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        address: data.address,
+      });
       const garbageRequestsResponse = await axiosSecure.get(
         `api/garbageRequests/user?userId=${data._id}`
       );
+      console.log(data._id);
       setGarbageRequests(
         garbageRequestsResponse.data.map((request) => ({
           ...request,
-          isInEditMode: false, // Add the isInEditMode property for each request
+          isInEditMode: false,
         }))
       );
 
@@ -116,38 +130,6 @@ function App() {
     };
   };
 
-  // Handle form input change for payment
-  const handlePaymentInputChange = (e) => {
-    setPaymentDetails({
-      ...paymentDetails,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  // Handle payment submission
-  const handlePaymentSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      await axiosSecure.post(
-        "/api/payments/updateAccountBalance",
-        {
-          userId: userDetails._id,
-          amount: Number(paymentDetails.amount) * -1,
-          transactionType: paymentDetails.transactionType,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      toast.success("Payment processed successfully!");
-    } catch (error) {
-      console.error("Error processing payment:", error);
-      toast.error("Payment failed");
-    }
-  };
-
   // Confirm action on a garbage request
   const confirmAction = (requestId, action) => {
     setSelectedRequestId(requestId);
@@ -156,8 +138,7 @@ function App() {
   };
 
   // Handle status update for garbage requests
-  // Handle status update for garbage requests
-  const handleUpdateStatus = async () => {
+  const addUpdateStatus = async () => {
     if (!selectedRequestId || !selectedAction) return;
     try {
       await axiosSecure.put(`/api/garbageRequests/${selectedRequestId}`, {
@@ -169,7 +150,7 @@ function App() {
             ? {
                 ...request,
                 status: selectedAction,
-                isInEditMode: false, // Set isInEditMode back to false after action
+                isInEditMode: false,
               }
             : request
         )
@@ -205,8 +186,53 @@ function App() {
     setIsInquiryModalOpen(true); // Open the InquiryForm modal
   };
 
+  const addCashBack = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axiosSecure.post(`api/collector/addCashBack`, {
+        userId,
+        amount,
+        transactionType,
+      });
+
+      if (response.status === 200) {
+        toast.success("Account balance updated successfully!");
+      }
+    } catch (error) {
+      toast.error(
+        "Error updating account balance: " + error.response?.data?.message ||
+          error.message
+      );
+    }
+  };
+
+  const addAdditionalPrice = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axiosSecure.post(
+        `api/collector/addAdditionalPrice`,
+        {
+          userId,
+          amount,
+          transactionType,
+        }
+      );
+
+      if (response.status === 200) {
+        toast.success("Account balance updated successfully!");
+      }
+    } catch (error) {
+      toast.error(
+        "Error updating account balance: " + error.response?.data?.message ||
+          error.message
+      );
+    }
+  };
+
   return (
-    <div className="bg-white pt-20 min-h-screen flex flex-col items-center">
+    <div className="bg-white pt-20 min-h-screen flex flex-col items-center justify-center">
       <Scroll />
       <h1 className="text-3xl sm:text-4xl font-bold mb-8 text-gray-800 text-center">
         QR Code Scanner
@@ -214,9 +240,35 @@ function App() {
       <div className="absolute right-1 top-1" onClick={handleInquiryClick}>
         <img src={InquiryImg} alt="Inquiry" style={{ cursor: "pointer" }} />
       </div>
-      <div className="w-[30%] sm:max-w-md">
-        <img src={ScanImg}></img>
-      </div>
+
+      {qrImage ? (
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-2 text-center">
+            Uploaded QR Code:
+          </h2>
+          <img
+            src={qrImage}
+            alt="Uploaded QR Code"
+            className="max-w-full sm:max-w-xs rounded-lg shadow-md"
+          />
+        </div>
+      ) : cameraActive ? (
+        <div className="border-4 border-gray-300 p-4 rounded-lg mb-6 max-w-xs sm:max-w-md">
+          <QrScanner
+            delay={300}
+            className="mx-auto"
+            style={{ height: 200, width: 300 }}
+            onError={handleError}
+            onScan={handleScan}
+          />
+        </div>
+      ) : (
+        <img
+          src={ScanImg}
+          alt="Scan QR Code"
+          className="max-w-[70%] sm:max-w-xs rounded-lg shadow-md my-4"
+        />
+      )}
 
       <button
         onClick={toggleCamera}
@@ -228,18 +280,6 @@ function App() {
       >
         {cameraActive ? "Turn off Camera" : "Turn on Camera"}
       </button>
-
-      {cameraActive && (
-        <div className="border-4 border-gray-300 p-4 rounded-lg mb-6 max-w-xs sm:max-w-md">
-          <QrScanner
-            delay={300}
-            className="mx-auto"
-            style={{ height: 240, width: 320 }}
-            onError={handleError}
-            onScan={handleScan}
-          />
-        </div>
-      )}
 
       <div className="flex flex-col items-center mb-6">
         <label
@@ -256,19 +296,6 @@ function App() {
           className="hidden"
         />
       </div>
-
-      {qrImage && (
-        <div className="mb-6">
-          <h2 className="text-lg font-semibold mb-2 text-center">
-            Uploaded QR Code:
-          </h2>
-          <img
-            src={qrImage}
-            alt="Uploaded QR Code"
-            className="max-w-full sm:max-w-xs rounded-lg shadow-md"
-          />
-        </div>
-      )}
 
       <LargeModal
         isOpen={isModalOpen}
@@ -288,6 +315,9 @@ function App() {
             <p className="mb-4">
               <strong>Phone:</strong> {userDetails.phone}
             </p>
+            <p className="mb-4">
+              <strong>Address:</strong> {userDetails.address}
+            </p>
 
             {garbageRequests.length > 0 ? (
               <div className="mt-6">
@@ -303,10 +333,7 @@ function App() {
                       <p className="mb-2">
                         <strong>Type:</strong> {request.type}
                       </p>
-                      <p className="mb-2">
-                        <strong>Address:</strong> {request.addressdivne1},{" "}
-                        {request.city}, {request.district}
-                      </p>
+
                       <p className="mb-2">
                         <strong>Description:</strong> {request.description}
                       </p>
@@ -324,6 +351,83 @@ function App() {
                           {request.status}
                         </span>
                       </p>
+                      <div className="space-y-4">
+                        <div className="flex space-x-4 border-b border-gray-300 mb-4">
+                          <button
+                            onClick={() => setActiveTab("cashBack")}
+                            className={`py-2 px-4 ${
+                              activeTab === "cashBack"
+                                ? "border-b-2 border-blue-500 text-blue-500"
+                                : "text-gray-500"
+                            }`}
+                          >
+                            Cash Back
+                          </button>
+                          <button
+                            onClick={() => setActiveTab("additionalFee")}
+                            className={`py-2 px-4 ${
+                              activeTab === "additionalFee"
+                                ? "border-b-2 border-blue-500 text-blue-500"
+                                : "text-gray-500"
+                            }`}
+                          >
+                            Additional Fee
+                          </button>
+                        </div>
+
+                        {/* Cash Back Form */}
+                        {activeTab === "cashBack" && (
+                          <form onSubmit={addCashBack} className="space-y-4">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700">
+                                Cash Back Amount
+                              </label>
+                              <input
+                                type="number"
+                                value={amount}
+                                onChange={(e) => setAmount(e.target.value)}
+                                className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm"
+                                required
+                              />
+                            </div>
+
+                            <button
+                              type="submit"
+                              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                            >
+                              Update Balance
+                            </button>
+                          </form>
+                        )}
+
+                        {/* Additional Fee Form */}
+                        {activeTab === "additionalFee" && (
+                          <form
+                            onSubmit={addAdditionalPrice}
+                            className="space-y-4"
+                          >
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700">
+                                Special waste Fee
+                              </label>
+                              <input
+                                type="number"
+                                value={amount}
+                                onChange={(e) => setAmount(e.target.value)}
+                                className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm"
+                                required
+                              />
+                            </div>
+
+                            <button
+                              type="submit"
+                              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                            >
+                              Update Balance
+                            </button>
+                          </form>
+                        )}
+                      </div>
 
                       {!request.isInEditMode ? (
                         <button
@@ -372,7 +476,7 @@ function App() {
           <p>Are you sure you want to {selectedAction} this request?</p>
           <div className="mt-6 flex justify-center space-x-4">
             <button
-              onClick={handleUpdateStatus}
+              onClick={addUpdateStatus}
               className="px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg"
             >
               Confirm
