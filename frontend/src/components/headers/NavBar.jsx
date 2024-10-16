@@ -148,17 +148,17 @@ const NavBar = () => {
             </div>
           </div>
 
-          {user &&
-          <div className="md:hidden">
-            <Link to={`/user-profile`}>
-              <img
-                src={currentUser?.photoUrl || userImg}
-                alt="User Avatar"
-                className="w-10 h-10 rounded-full object-cover border-4 border-secondary"
-              />
-            </Link>
-          </div>
-}
+          {user && (
+            <div className="md:hidden">
+              <Link to={`/user-profile`}>
+                <img
+                  src={currentUser?.photoUrl || userImg}
+                  alt="User Avatar"
+                  className="w-10 h-10 rounded-full object-cover border-4 border-secondary"
+                />
+              </Link>
+            </div>
+          )}
           {/* Navigational links */}
           <div className="hidden md:block">
             <div className="flex">
@@ -182,6 +182,25 @@ const NavBar = () => {
                     </NavLink>
                   </li>
                 ))}
+
+                {currentUser?.role === "admin" && (
+                  <li>
+                    <NavLink
+                      to="/manage-locations"
+                      className={({ isActive }) =>
+                        `font-bold ${
+                          isActive
+                            ? "text-secondary"
+                            : navBg.includes("bg-transparent") && isHome
+                            ? "text-white"
+                            : "text-black dark:text-white"
+                        } hover:text-secondary duration-300`
+                      }
+                    >
+                      Map
+                    </NavLink>
+                  </li>
+                )}
 
                 {/* based on users */}
                 {user ? null : isLogin ? (
@@ -330,6 +349,18 @@ const NavBar = () => {
                     className="block font-bold py-1 text-black rounded-xl hover:text-secondary"
                   >
                     QR Scan
+                  </NavLink>
+                </li>
+              )}
+
+              {currentUser?.role === "admin" && (
+                <li>
+                  <NavLink
+                    to="/manage-locations"
+                    onClick={toggleMobileMenu}
+                    className="block font-bold py-1 text-black rounded-xl hover:text-secondary"
+                  >
+                    Map
                   </NavLink>
                 </li>
               )}
