@@ -1,15 +1,15 @@
-import React, {useEffect, useState} from 'react';
-import {MdOutlineArrowBackIosNew} from "react-icons/md";
-import {Link, useNavigate} from 'react-router-dom';
-import {useLocation} from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { MdOutlineArrowBackIosNew } from "react-icons/md";
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import useUser from "../../hooks/useUser";
 import visa from '../../assets/gallery/cards/visa.png';
 import master from '../../assets/gallery/cards/mastercard.png';
 import amex from '../../assets/gallery/cards/amex.png';
-import axios, {HttpStatusCode} from 'axios';
+import axios, { HttpStatusCode } from 'axios';
+import Swal from 'sweetalert2'; // Import SweetAlert2
 
 const CardPayment = () => {
-    const {currentUser} = useUser();
+    const { currentUser } = useUser();
     const [cardNumber, setCardNumber] = useState('');
     const [formattedCardNumber, setFormattedCardNumber] = useState('');
     const [cardType, setCardType] = useState('');
@@ -17,9 +17,10 @@ const CardPayment = () => {
     const [cardHolderName, setCardHolderName] = useState('');
     const [cvv, setCvv] = useState('');
     const location = useLocation();
-    const {amount} = location.state || {};
+    const { amount } = location.state || {};
     const [clientSecret, setClientSecret] = useState();
     const navigate = useNavigate();
+
     useEffect(() => {
         const createPaymentIntent = async () => {
             if (currentUser && amount) {
@@ -46,12 +47,11 @@ const CardPayment = () => {
         createPaymentIntent();
     }, [amount, currentUser]);
 
-
     // Function to detect card type based on card number
     const detectCardType = (number) => {
-        const visaRegex = /^4[0-9]{0,}$/; // Visa starts with 4
-        const mastercardRegex = /^5[1-5][0-9]{0,}$/; // MasterCard starts with 51-55
-        const amexRegex = /^3[47][0-9]{0,}$/; // American Express starts with 34 or 37
+        const visaRegex = /^4[0-9]{0,}$/;
+        const mastercardRegex = /^5[1-5][0-9]{0,}$/;
+        const amexRegex = /^3[47][0-9]{0,}$/;
 
         if (visaRegex.test(number)) {
             return 'visa';
@@ -134,38 +134,49 @@ const CardPayment = () => {
                     },
                 });
             if (response.status === HttpStatusCode.Ok) {
-                alert('Payment successful!');
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Payment successful!',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
                 navigate("/payments");
             } else {
-                alert('Payment failed!');
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Payment failed!',
+                    text: 'Please check your details and try again.',
+                });
             }
         } catch (error) {
-            alert('Payment failed!');
+            Swal.fire({
+                icon: 'error',
+                title: 'Payment failed!',
+                text: 'Something went wrong. Please try again later.',
+            });
         }
-    }
-
+    };
 
     return (
-        <div className="min-h-screen bg-green-200 p-6 flex justify-center items-center">
+        <div className="min-h-screen p-6 flex justify-center items-center">
             <div className="max-w-lg w-full bg-white rounded-lg shadow-lg p-6">
                 <Link to="../../payments/make-payment">
                     <MdOutlineArrowBackIosNew className="text-3xl mb-4"/>
                 </Link>
 
-                {/* Header Section */}
-                <h2 className="text-center text-2xl font-bold mb-4">Card Payment</h2>
+                <h2 className="text-center text-2xl font-bold mb-8">Card Payment</h2>
 
-                <form onSubmit={handleSubmit}> {/* Add form tag */}
+                <form onSubmit={handleSubmit}>
                     {/* Card Number Input with Card Type Image */}
                     <div className="mb-4">
                         <label className="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
                         <div className="flex items-center">
-                            {renderCardTypeLogo()} {/* Card type image */}
+                            {renderCardTypeLogo()}
                             <input
                                 type="text"
                                 value={formattedCardNumber}
                                 onChange={handleCardNumberChange}
-                                maxLength="19" // Maximum length including spaces (16 digits + 3 spaces)
+                                maxLength="19"
                                 className="w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400 ml-4"
                                 placeholder="Enter card number"
                             />
@@ -185,14 +196,14 @@ const CardPayment = () => {
                     </div>
 
                     {/* Expiration Date and CVV */}
-                    <div className="mb-4 flex space-x-4">
+                    <div className="mb-10 flex space-x-4">
                         <div className="w-1/2">
                             <label className="block text-sm font-medium text-gray-700 mb-2">Expiration Date</label>
                             <input
                                 type="text"
                                 value={expiryDate}
                                 onChange={handleExpiryDateChange}
-                                maxLength="5" // MM/YY format has a max length of 5
+                                maxLength="5"
                                 className="w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
                                 placeholder="MM/YY"
                             />
@@ -204,7 +215,7 @@ const CardPayment = () => {
                                 type="password"
                                 value={cvv}
                                 onChange={handleCvvChange}
-                                maxLength={cardType === 'amex' ? 4 : 3} // Max length depends on card type
+                                maxLength={cardType === 'amex' ? 4 : 3}
                                 className="w-full px-4 py-2 border rounded-lg text-gray-700 focus:outline-none focus:ring-2 focus:ring-green-400"
                                 placeholder="CVV"
                             />
@@ -214,10 +225,10 @@ const CardPayment = () => {
                     {/* Submit Button */}
                     <button
                         type="submit"
-                        className="w-full bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300"
+                        className="w-full bg-secondary rounded-xl p-4 text-white px-20 hover:scale-105 duration-300"
                     >
                         {amount && <div>
-                            Pay -> Rs. {Number(amount).toFixed(2)}
+                            Pay Rs. {Number(amount).toFixed(2)}
                         </div>
                         }
                     </button>

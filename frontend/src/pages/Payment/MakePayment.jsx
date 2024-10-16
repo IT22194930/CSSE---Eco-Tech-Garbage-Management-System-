@@ -8,7 +8,7 @@ const MakePayment = () => {
     const navigate = useNavigate();
 
     return (
-        <div className="min-h-screen bg-green-200 p-6 flex justify-center items-center">
+        <div className="min-h-screen p-6 flex justify-center items-center">
             <div className="max-w-lg w-full bg-white rounded-lg shadow-lg p-6">
 
                 <Link to="/payments">
@@ -16,7 +16,7 @@ const MakePayment = () => {
                 </Link>
 
                 {/* Header Section */}
-                <h2 className="text-center text-2xl font-bold mb-4">Make Payment</h2>
+                <h2 className="text-center text-2xl font-bold mb-10">Make Payment</h2>
 
                 {/* Amount Input Section */}
                 <div className="mb-4">
@@ -31,7 +31,7 @@ const MakePayment = () => {
                 </div>
 
                 {/* Payment Method Section */}
-                <div className="mb-4">
+                <div className="mb-16">
                     <label className="block text-sm font-medium text-gray-700 mb-2">Select Payment Method</label>
                     <select
                         value={paymentMethod}
@@ -46,7 +46,7 @@ const MakePayment = () => {
 
                 {/* Submit Button */}
                 <button
-                    className="w-full bg-green-500 text-white py-2 rounded-lg font-semibold hover:bg-green-600"
+                    className="w-full bg-secondary rounded-xl p-4 text-white px-20 hover:scale-105 duration-300"
                     onClick={() => navigate(`/payments/card-payment`, {state: {amount}})}
                 >
                     Proceed to Payment
