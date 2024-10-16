@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { MdOutlineArrowBackIosNew } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
+import Scroll from "../../hooks/useScroll.jsx";
 
 const MakePayment = () => {
   const [paymentMethod, setPaymentMethod] = useState(""); // State for payment method
@@ -9,6 +10,7 @@ const MakePayment = () => {
 
   return (
     <div className="min-h-screen p-6 flex justify-center items-center">
+      <Scroll />
       <div className="max-w-lg w-full bg-white rounded-lg shadow-lg p-6">
         <Link to="/payments">
           <MdOutlineArrowBackIosNew className="text-3xl mb-4" />

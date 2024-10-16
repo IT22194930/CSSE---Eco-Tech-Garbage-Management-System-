@@ -6,7 +6,8 @@ import visa from "../../assets/gallery/cards/visa.png";
 import master from "../../assets/gallery/cards/mastercard.png";
 import amex from "../../assets/gallery/cards/amex.png";
 import axios, { HttpStatusCode } from "axios";
-import Swal from "sweetalert2"; // Import SweetAlert2
+import Swal from "sweetalert2";
+import Scroll from "../../hooks/useScroll.jsx";
 
 const CardPayment = () => {
   const { currentUser } = useUser();
@@ -168,6 +169,7 @@ const CardPayment = () => {
 
   return (
     <div className="min-h-screen p-6 flex justify-center items-center">
+      <Scroll />
       <div className="max-w-lg w-full bg-white rounded-lg shadow-lg p-6">
         <Link to="../../payments/make-payment">
           <MdOutlineArrowBackIosNew className="text-3xl mb-4" />
