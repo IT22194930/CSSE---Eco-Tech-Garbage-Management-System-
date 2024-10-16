@@ -5,10 +5,8 @@ import useUser from "../hooks/useUser";
 import logo from "../assets/logo.png";
 import { BiHomeAlt, BiLogInCircle } from "react-icons/bi";
 import { FaUsers, FaUserAlt } from "react-icons/fa";
-import { IoLocation } from "react-icons/io5";
 import { BsQrCodeScan } from "react-icons/bs";
 import { RiDashboardFill } from "react-icons/ri";
-import { CiFileOn } from "react-icons/ci";
 import Swal from "sweetalert2";
 import Scroll from "../hooks/useScroll";
 import Loader from "../components/Loader/Loader";
@@ -47,12 +45,6 @@ const adminNavItems = [
     icon: <AiFillSchedule className="text-2xl" />,
     label: "Schedules",
   },
-  // {
-  //   to: "/dashboard/manage-locations",
-  //   icon: <IoLocation className="text-2xl" />,
-  //   label: "Location Management",
-  // },
-  
   {
     to: "/dashboard/payment-details",
     icon: <MdPayments className="text-2xl" />,
@@ -153,7 +145,7 @@ const DashboardLayout = () => {
             </p>
             {role === "admin" &&
               adminNavItems.map((menuItem, index) => (
-                <li key={index} className="mb-2">
+                <li key={index} className="mb-1">
                   <NavLink
                     to={menuItem.to}
                     className={({ isActive }) =>
