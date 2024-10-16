@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import useUser from "../../hooks/useUser";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "../../components/Toast/customToast.css";
 
 const ScheduleRequest = () => {
   const { currentUser } = useUser();
@@ -37,11 +40,11 @@ const ScheduleRequest = () => {
 
   const handleNext = () => {
     if (activeTab === 0 && !validateTab0()) {
-      alert("Please fill out all required fields in Request Information.");
+      toast.error("Please fill out all required fields in Request Information.");
       return;
     }
     if (activeTab === 1 && !validateTab1()) {
-      alert("Please fill out all required fields in Pickup Details.");
+      toast.error("Please fill out all required fields in Pickup Details.");
       return;
     }
     setActiveTab(activeTab + 1);
@@ -74,7 +77,7 @@ const ScheduleRequest = () => {
       );
 
       if (response.status === 200 || response.status === 201) {
-        alert("Request saved successfully!");
+        toast.success("Request saved successfully!");
         setRequestInfo({ type: "", description: "" });
         setPickupDetails({
           date: "",
@@ -84,14 +87,14 @@ const ScheduleRequest = () => {
         navigate("/garbageRequest");
       } else {
         console.error("Response not OK:", response);
-        alert("Failed to save request. Please try again.");
+        toast.error("Failed to save request. Please try again.");
       }
     } catch (error) {
       console.error("Error occurred:", error);
       if (error.response) {
-        alert("Error occurred: " + error.response.data.message);
+        toast.error("Error occurred: " + error.response.data.message);
       } else {
-        alert("Error occurred: " + error.message);
+        toast.error("Error occurred: " + error.message);
       }
     }
   };
@@ -132,7 +135,7 @@ const ScheduleRequest = () => {
             if (validateTab0()) {
               setActiveTab(1);
             } else {
-              alert(
+              toast.error(
                 "Please complete the Request Information before proceeding."
               );
             }
@@ -149,7 +152,7 @@ const ScheduleRequest = () => {
             if (validateTab1()) {
               setActiveTab(2);
             } else {
-              alert("Please complete the Pickup Details before proceeding.");
+              toast.error("Please complete the Pickup Details before proceeding.");
             }
           }}
           disabled={!validateTab1()}
@@ -277,6 +280,7 @@ const ScheduleRequest = () => {
           </div>
         </div>
       )}
+      <ToastContainer/>
     </div>
   );
 };

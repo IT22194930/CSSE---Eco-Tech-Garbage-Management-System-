@@ -70,6 +70,10 @@ export const router = createBrowserRouter([
         element: <QRManagement />,
       },
       {
+        path: "manage-locations",
+        element: <LocationManagementDashboard />,
+      },
+      {
         path: "scheduleRequest",
         element: <ScheduleRequest />,
       },
