@@ -24,6 +24,7 @@ function App() {
     name: "",
     email: "",
     phone: "",
+    address: "",
     userId: "",
   });
 
@@ -73,6 +74,7 @@ function App() {
         name: data.name,
         email: data.email,
         phone: data.phone,
+        address: data.address,
       });
       const garbageRequestsResponse = await axiosSecure.get(
         `api/garbageRequests/user?userId=${data._id}`
@@ -230,7 +232,7 @@ function App() {
   };
 
   return (
-    <div className="bg-white pt-20 min-h-screen flex flex-col items-center">
+    <div className="bg-white pt-20 min-h-screen flex flex-col items-center justify-center">
       <Scroll />
       <h1 className="text-3xl sm:text-4xl font-bold mb-8 text-gray-800 text-center">
         QR Code Scanner
@@ -238,9 +240,35 @@ function App() {
       <div className="absolute right-1 top-1" onClick={handleInquiryClick}>
         <img src={InquiryImg} alt="Inquiry" style={{ cursor: "pointer" }} />
       </div>
-      <div className="w-[30%] sm:max-w-md">
-        <img src={ScanImg}></img>
-      </div>
+
+      {qrImage ? (
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-2 text-center">
+            Uploaded QR Code:
+          </h2>
+          <img
+            src={qrImage}
+            alt="Uploaded QR Code"
+            className="max-w-full sm:max-w-xs rounded-lg shadow-md"
+          />
+        </div>
+      ) : cameraActive ? (
+        <div className="border-4 border-gray-300 p-4 rounded-lg mb-6 max-w-xs sm:max-w-md">
+          <QrScanner
+            delay={300}
+            className="mx-auto"
+            style={{ height: 200, width: 300 }}
+            onError={handleError}
+            onScan={handleScan}
+          />
+        </div>
+      ) : (
+        <img
+          src={ScanImg}
+          alt="Scan QR Code"
+          className="max-w-[70%] sm:max-w-xs rounded-lg shadow-md my-4"
+        />
+      )}
 
       <button
         onClick={toggleCamera}
@@ -252,18 +280,6 @@ function App() {
       >
         {cameraActive ? "Turn off Camera" : "Turn on Camera"}
       </button>
-
-      {cameraActive && (
-        <div className="border-4 border-gray-300 p-4 rounded-lg mb-6 max-w-xs sm:max-w-md">
-          <QrScanner
-            delay={300}
-            className="mx-auto"
-            style={{ height: 240, width: 320 }}
-            onError={handleError}
-            onScan={handleScan}
-          />
-        </div>
-      )}
 
       <div className="flex flex-col items-center mb-6">
         <label
@@ -280,19 +296,6 @@ function App() {
           className="hidden"
         />
       </div>
-
-      {qrImage && (
-        <div className="mb-6">
-          <h2 className="text-lg font-semibold mb-2 text-center">
-            Uploaded QR Code:
-          </h2>
-          <img
-            src={qrImage}
-            alt="Uploaded QR Code"
-            className="max-w-full sm:max-w-xs rounded-lg shadow-md"
-          />
-        </div>
-      )}
 
       <LargeModal
         isOpen={isModalOpen}
@@ -312,6 +315,9 @@ function App() {
             <p className="mb-4">
               <strong>Phone:</strong> {userDetails.phone}
             </p>
+            <p className="mb-4">
+              <strong>Address:</strong> {userDetails.address}
+            </p>
 
             {garbageRequests.length > 0 ? (
               <div className="mt-6">
@@ -327,10 +333,7 @@ function App() {
                       <p className="mb-2">
                         <strong>Type:</strong> {request.type}
                       </p>
-                      <p className="mb-2">
-                        <strong>Address:</strong> {request.addressdivne1},{" "}
-                        {request.city}, {request.district}
-                      </p>
+
                       <p className="mb-2">
                         <strong>Description:</strong> {request.description}
                       </p>
@@ -349,7 +352,6 @@ function App() {
                         </span>
                       </p>
                       <div className="space-y-4">
-                        {/* Tabs */}
                         <div className="flex space-x-4 border-b border-gray-300 mb-4">
                           <button
                             onClick={() => setActiveTab("cashBack")}
@@ -406,7 +408,7 @@ function App() {
                           >
                             <div>
                               <label className="block text-sm font-medium text-gray-700">
-                                Additional Fee Amount
+                                Special waste Fee
                               </label>
                               <input
                                 type="number"
