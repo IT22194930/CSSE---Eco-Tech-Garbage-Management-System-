@@ -70,47 +70,49 @@ const PaymentHistory = () => {
   }, [startDate, endDate, filterStatus, filterType, transactionLog]);
 
   return (
-    <div className="min-h-screen bg-green- p-6 flex justify-center">
-      <div className="mt-16 mx-auto w-auto p-6 bg-white dark:bg-slate-900 dark:shadow-slate-500 shadow-lg rounded-lg text-center-w-lg overflow-hidden">
+    <div className="min-h-screen bg-green- p-4 flex justify-center sm:p-6 lg:mx-[30%]">
+      <div className="mt-16 mx-auto w-full max-w-4xl p-6 bg-white dark:bg-slate-900 dark:shadow-slate-500 shadow-lg rounded-lg text-center-w-lg overflow-hidden">
         {/* Payment History Filter Section */}
         <div className="bg-green-100 p-4 rounded-xl">
           <Link to="/payments">
-            <MdOutlineArrowBackIosNew className="text-3xl mb-4" />
+            <MdOutlineArrowBackIosNew className="text-2xl sm:text-3xl mb-4" />
           </Link>
-          <h2 className="text-center text-2xl font-bold text-brown-700 mb-4">
+          <h2 className="text-center text-xl sm:text-2xl font-bold text-brown-700 mb-4">
             Transaction History
           </h2>
 
-          <div className="flex justify-between space-x-2">
+          <div className="flex flex-col sm:flex-row justify-between space-y-2 sm:space-y-0 sm:space-x-2">
             <input
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="border border-gray-400 rounded-md p-2 w-full"
+              className="border border-gray-400 rounded-md p-2 w-full sm:w-1/3"
             />
             <input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="border border-gray-400 rounded-md p-2 w-full"
+              className="border border-gray-400 rounded-md p-2 w-full sm:w-1/3"
             />
 
             {/* Filter by Type */}
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="border border-gray-400 rounded-md p-2 w-full"
+              className="border border-gray-400 rounded-md p-2 w-full sm:w-1/3"
             >
               <option value="all">All Types</option>
-              <option value="deposit">Deposit</option>
-              <option value="withdrawal">Withdrawal</option>
+              <option value="Bill Payment">Bill Payment</option>
+              <option value="Cash Back">Cash Back</option>
+              <option value="Monthly Fee">Monthly Fee</option>
+              <option value="Special Waste Fee">Special Waste Fee</option>
               {/* Add more transaction types as needed */}
             </select>
           </div>
         </div>
 
         {/* Payment Cards Section with Scrollable View */}
-        <div className="p-4 space-y-4 max-h-96 overflow-y-auto">
+        <div className="p-4 space-y-4 max-h-96 overflow-y-auto mt-4">
           {filteredTransactions.map((transaction, index) => (
             <div
               key={index}

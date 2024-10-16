@@ -40,14 +40,14 @@ const PaymentHome = () => {
                 </div>
 
                 {/* Total Due Amount Section */}
-                {!isOverDue && <div className="bg-yellow-200 text-center py-4 rounded-xl">
+                {!isOverDue && <div className="bg-yellow-200 text-center py-4 rounded-xl mx-4">
                     <p className="text-xl font-semibold">Total Due Amount</p>
                     <p className="text-2xl text-red-600 font-bold">Rs. {amount.toFixed(2)}</p>
-                    <p className="text-sm">Overdue On: 20/08/2024</p>
+                    <p className="text-sm">Overdue On: Rs.6000.00</p>
                 </div>}
 
                 {/* Payment Overdue Section */}
-                {isOverDue && <div className="bg-red-200 text-center py-4 px-4 rounded-xl">
+                {isOverDue && <div className="bg-red-200 text-center py-4 px-4 rounded-xl mx-4">
                     <p className="text-xl font-bold text-red-600">Payment Overdue!!</p>
                     <p className="text-sm text-gray-700">
                         Dear customer, unfortunately one or more of your payments are overdue.
