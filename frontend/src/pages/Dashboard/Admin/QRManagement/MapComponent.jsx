@@ -1,93 +1,111 @@
 import React, { useEffect, useState } from "react";
 import tt from "@tomtom-international/web-sdk-maps";
 import "@tomtom-international/web-sdk-maps/dist/maps.css";
+import useAxiosSecure from "../../../../hooks/useAxiosSecure";
 
-const TrackingMap = () => {
+const TrackingMap = ({ userId }) => {
   const [marker, setMarker] = useState(null);
   const [map, setMap] = useState(null);
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
   const [error, setError] = useState(null);
   const [routeLine, setRouteLine] = useState(null);
+  const axiosSecure = useAxiosSecure();
 
-  // Destination coordinates (for example purposes, you can set your destination)
-  const destination = { lat: 34.0522, lng: -118.2437 }; // Example: Los Angeles
+  // Destination coordinates (example purposes)
+  const destination = { lat: 34.0522, lng: -118.2437 }; // Los Angeles
 
-  // Initialize the map
+  // Fetch user's garbage request by userId
   useEffect(() => {
-    const container = document.getElementById("map");
+    const fetchGarbageRequest = async () => {
+      console.log("Fetching garbage request for user ID:", userId);
 
-    if (container) {
-      const initialMap = tt.map({
-        key: "zpWMpFIL0L2YfyAwnfXY3PTNQezdw9RV",
-        container: container,
-        center: [0, 0], // Center initially at (0, 0)
-        zoom: 15,
-      });
-      setMap(initialMap);
+      try {
+        // Adjust the endpoint to fetch the garbage request for the specific userId
+        const response = await axiosSecure.get(
+          `/api/garbageRequests?userId=${userId}`
+        );
 
-      return () => {
-        initialMap.remove();
-      };
-    } else {
-      console.error("Map container not found!");
-    }
-  }, []); // Dependency array is empty, so this runs once on mount
+        // Ensure the response contains data
+        if (response.data.length > 0) {
+          const { latitude: lat, longitude: lng } = response.data[0]; // Assuming we get an array of requests
 
-  // Handle location updates
-  useEffect(() => {
-    const updateLocation = (position) => {
-      const { latitude: lat, longitude: lng } = position.coords;
+          // Log the latitude and longitude to the console
+          console.log(`User Latitude: ${lat}, User Longitude: ${lng}`);
 
-      setLatitude(lat);
-      setLongitude(lng);
+          setLatitude(lat);
+          setLongitude(lng);
 
-      if (map) {
-        // Update marker position
-        if (!marker) {
-          const newMarker = new tt.Marker().setLngLat([lng, lat]).addTo(map);
-          setMarker(newMarker);
+          if (map) {
+            // Update marker position or add a new one if it doesn't exist
+            if (!marker) {
+              console.log("Creating a new marker on the map");
+              const newMarker = new tt.Marker()
+                .setLngLat([lng, lat])
+                .addTo(map);
+              setMarker(newMarker);
+            } else {
+              console.log("Updating marker position on the map");
+              marker.setLngLat([lng, lat]);
+            }
+
+            // Center the map to the new location
+            console.log("Centering map to:", { lng, lat });
+            map.setCenter([lng, lat]);
+
+            // Request route from current location to destination
+            console.log(
+              "Requesting route from:",
+              { lat, lng },
+              "to destination:",
+              destination
+            );
+            getRoute(lat, lng, destination.lat, destination.lng);
+          }
         } else {
-          marker.setLngLat([lng, lat]);
+          console.error("No garbage requests found for this user.");
+          setError("No garbage requests found for this user.");
         }
-
-        map.setCenter([lng, lat]);
-
-        // Request route from current location to destination
-        getRoute(lat, lng, destination.lat, destination.lng);
+      } catch (error) {
+        console.error("Error fetching garbage request:", error);
+        setError("Unable to fetch location for the provided user.");
       }
     };
 
-    const handleError = (error) => {
-      console.error("Error getting location:", error.message);
-      setError(error.message);
-    };
-
-    if (navigator.geolocation) {
-      const watchId = navigator.geolocation.watchPosition(
-        updateLocation,
-        handleError,
-        {
-          enableHighAccuracy: true,
-          maximumAge: 10000,
-          timeout: 10000,
-        }
-      );
-
-      return () => {
-        navigator.geolocation.clearWatch(watchId);
-      };
-    } else {
-      console.error("Geolocation is not supported by this browser.");
-      setError("Geolocation is not supported by this browser.");
+    if (userId) {
+      fetchGarbageRequest();
     }
-  }, [map, marker]);
+  }, [userId, map, marker, axiosSecure]);
+
+  // Initialize the map after component has mounted
+  useEffect(() => {
+    if (!map) {
+      const container = document.getElementById("map");
+      if (container) {
+        console.log("Initializing map...");
+        const initialMap = tt.map({
+          key: "zpWMpFIL0L2YfyAwnfXY3PTNQezdw9RV", // Insert your TomTom API key here
+          container: container,
+          center: [0, 0], // Initial center of the map (you can change this if needed)
+          zoom: 15,
+        });
+        setMap(initialMap);
+
+        return () => {
+          console.log("Cleaning up map...");
+          initialMap.remove(); // Clean up the map on unmount
+        };
+      } else {
+        console.error("Map container not found!");
+      }
+    }
+  }, [map]);
 
   // Function to get the route
   const getRoute = (startLat, startLng, endLat, endLng) => {
     const url = `https://api.tomtom.com/routing/1/calculateRoute/${startLat},${startLng}:${endLat},${endLng}/json?key=zpWMpFIL0L2YfyAwnfXY3PTNQezdw9RV`;
 
-    console.log(url);
+    console.log("Fetching route from TomTom API with URL:", url);
 
     fetch(url)
       .then((response) => response.json())
@@ -99,11 +117,16 @@ const TrackingMap = () => {
             point.latitude,
           ]);
 
-          // Create a LineString to represent the route
+          console.log("Route fetched successfully:", geoJson);
+
+          // Remove existing routeLine if it exists
           if (routeLine) {
-            map.removeLayer(routeLine);
+            console.log("Removing existing route line from the map");
+            map.removeLayer("route");
+            map.removeSource("route");
           }
 
+          // Create a LineString to represent the route
           const lineLayer = {
             id: "route",
             type: "line",
@@ -127,6 +150,7 @@ const TrackingMap = () => {
             },
           };
 
+          console.log("Adding route line to the map");
           map.addSource("route", lineLayer.source);
           map.addLayer(lineLayer);
           setRouteLine(lineLayer);
@@ -139,16 +163,18 @@ const TrackingMap = () => {
       });
   };
 
-  // Check if latitude and longitude are valid before rendering the map
-  if (latitude === null || longitude === null) {
-    return <p>Loading your location...</p>;
-  }
-
   return (
     <div>
       <h3>Vehicle Tracking Map</h3>
       {error && <p style={{ color: "red" }}>{error}</p>}
-      <div id="map" style={{ width: "100%", height: "500px" }}></div>
+      <div
+        id="map"
+        style={{
+          width: "100%",
+          height: "500px",
+          position: "relative",
+        }}
+      ></div>
     </div>
   );
 };

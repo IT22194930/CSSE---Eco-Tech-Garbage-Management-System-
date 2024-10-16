@@ -111,7 +111,7 @@ const Footer = () => (
   </Text>
 );
 
-const CollectorReport = ({ dataList }) => {
+const PaymentReport = ({ dataList }) => {
   const reportDateTime = new Date().toLocaleString("en-US", {
     timeZone: "Asia/Colombo",
   });
@@ -126,20 +126,20 @@ const CollectorReport = ({ dataList }) => {
             </View>
             <Text style={styles.headerText}>{reportDateTime}</Text>
           </View>
-          <Text style={styles.heading}>Users</Text>
+          <Text style={styles.heading}></Text>
           <View style={styles.table}>
             <View style={styles.tableRow}>
-              <Text style={styles.tableColHeader}>Name</Text>
-              <Text style={styles.tableColHeader}>Email</Text>
-              <Text style={styles.tableColHeader}>Address</Text>
-              <Text style={styles.tableColHeader}>Telephone</Text>
+              <Text style={styles.tableColHeader}>ID</Text>
+              <Text style={styles.tableColHeader}>Amount</Text>
+              <Text style={styles.tableColHeader}>Transaction Type</Text>
+              <Text style={styles.tableColHeader}>Date</Text>
             </View>
-            {dataList.map((user, index) => (
+            {dataList.map((payment, index) => (
               <View key={index} style={styles.tableRow}>
-                <Text style={styles.tableCol}>{user.name}</Text>
-                <Text style={styles.tableCol}>{user.email}</Text>
-                <Text style={styles.tableCol}>{user.address}</Text>
-                <Text style={styles.tableCol}>{user.phone}</Text>
+                <Text style={styles.tableCol}>{payment._id}</Text>
+                <Text style={styles.tableCol}>{payment.amount}</Text>
+                <Text style={styles.tableCol}>{payment.transactionType}</Text>
+                <Text style={styles.tableCol}>{payment.date}</Text>
               </View>
             ))}
           </View>
@@ -150,4 +150,4 @@ const CollectorReport = ({ dataList }) => {
   );
 };
 
-export default CollectorReport;
+export default PaymentReport;

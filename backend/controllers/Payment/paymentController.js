@@ -64,6 +64,18 @@ class PaymentController {
         }
     }
 
+    async getAllTransactionLogs(req, res) {
+        try {
+            const transactionLogList = await TransactionLog.find();
+            if (transactionLogList.length > 0) {
+                return res.status(200).json({ transactionLogs: transactionLogList });
+            }
+            return res.status(200).json({ transactionLogs: [] });
+        } catch (error) {
+            return res.status(500).json({ error: true, message: error.message });
+        }
+    }
+
     async updateUserAccountBalance(req, res) {
         try {
             const {userId, amount, transactionType} = req.body;
