@@ -37,7 +37,7 @@ class PaymentController {
             }
             return res.status(200).json({
                 balance: user.balance,
-                isOverDue: user.balance > 10000
+                isOverDue: user.balance > 6000
             });
         } catch (error) {
             return res.status(500).json({error: true, message: error.message});
