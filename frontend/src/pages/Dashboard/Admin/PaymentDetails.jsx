@@ -14,22 +14,49 @@ const PaymentDetails = () => {
   const [paymentDetails, setPaymentDetails] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [paymentFilter, setpaymentFilter] = useState("");
+  const [userNames, setUserNames] = useState({});
 
   useEffect(() => {
     axiosFetch
       .get("/api/payments/")
       .then((res) => {
-        const data = Array.isArray(res.data.transactionLogs)
-          ? res.data.transactionLogs
-          : []; // Access the transactionLogs key
+        // Check if the transactionLogs field exists in the response and is an array
+        const data = Array.isArray(res.data?.transactionLogs) ? res.data.transactionLogs : []; 
         setPaymentDetails(data);
+        fetchUserNames(data); // Fetch user names based on user IDs in the data
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.error("Error fetching payments:", err)); // Log errors if the request fails
   }, []);
+  
 
+  const fetchUserNames = async (payments) => {
+    const updatedUserNames = { ...userNames };
+    const fetchPromises = payments.map(async (payment) => {
+      if (!updatedUserNames[payment.userId]) {
+        try {
+          const response = await axiosSecure.get(`api/payments/user?userId=${payment.userId}`);
+          updatedUserNames[payment.userId] = response.data?.userName || 'Unknown';
+        } catch (error) {
+          console.error(`Error fetching user name for user ID ${payment.userId}:`, error);
+          if (error.response) {
+            // If the server responded with a status other than 2xx
+            updatedUserNames[payment.userId] = `Error ${error.response.status}: ${error.response.data.message || 'User not found'}`;
+          } else {
+            // If no response was received
+            updatedUserNames[payment.userId] = 'Network error';
+          }
+        }
+      }
+    });
+  
+    await Promise.all(fetchPromises);
+    setUserNames(updatedUserNames);
+  };
+ 
   const generateExcelFile = () => {
     const filteredDataList = filteredPayment.map((payment) => ({
       Id: payment._id,
+      User: userNames[payment.userId] || "Unknown",
       Amount: payment.amount,
       TransactionType: payment.transactionType,
       Date: new Date(payment.date).toLocaleString(),
@@ -55,7 +82,9 @@ const PaymentDetails = () => {
   };
 
   const filteredPayment = Array.isArray(paymentDetails)
-    ? paymentDetails.filter((payment) => {
+  ? paymentDetails
+      .sort((a, b) => new Date(b.date) - new Date(a.date)) // Sort by date (latest first)
+      .filter((payment) => {
         const matchesSearch = payment.transactionType
           ?.toLowerCase()
           .includes(searchQuery.toLowerCase());
@@ -67,7 +96,8 @@ const PaymentDetails = () => {
 
         return matchesSearch && matchesPayment;
       })
-    : [];
+  : [];
+
 
   return (
     <div className="px-4 sm:px-0">
@@ -97,6 +127,7 @@ const PaymentDetails = () => {
             <option value="cashback">Cashback</option>
             <option value="monthly fee">Monthly Fee</option>
             <option value="bill payment">Bill Payment</option>
+            <option value="special waste fee">Special Waste Fee</option>
           </select>
           <BlobProvider
             document={<PaymentReport dataList={filteredPayment} />}
@@ -122,7 +153,6 @@ const PaymentDetails = () => {
           </li>
         </div>
       </div>
-
       <div className="overflow-x-auto">
         <div className="flex flex-col">
           <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
@@ -135,6 +165,9 @@ const PaymentDetails = () => {
                     <tr>
                       <th scope="col" className="px-4 py-4">
                         #
+                      </th>
+                      <th scope="col" className="px-4 py-4">
+                        User Name
                       </th>
                       <th scope="col" className="px-4 py-4">
                         Amount
@@ -158,6 +191,9 @@ const PaymentDetails = () => {
                       >
                         <td className="whitespace-nowrap px-4 py-4 font-medium">
                           {idx + 1}
+                        </td>
+                        <td className="whitespace-nowrap px-4 py-4">
+                          {userNames[payment.userId] || "Loading..."}
                         </td>
                         <td className="whitespace-nowrap px-4 py-4">
                           {payment?.amount}
