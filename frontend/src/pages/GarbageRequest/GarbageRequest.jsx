@@ -164,8 +164,6 @@ const GarbageRequest = () => {
     fetchDueAmount();
   }, [currentUser]);
 
-  console.log(isOverDue)
-
   if (!currentUser) {
     return (
       <div className="mt-20 mx-auto max-w-4xl p-6 bg-white dark:bg-slate-900 dark:shadow-slate-500 shadow-lg rounded-lg text-center">
