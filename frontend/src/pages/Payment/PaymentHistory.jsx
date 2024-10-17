@@ -3,6 +3,7 @@ import { MdOutlineArrowBackIosNew } from "react-icons/md";
 import { Link, useNavigate } from "react-router-dom";
 import axios, { HttpStatusCode } from "axios";
 import useUser from "../../hooks/useUser.jsx";
+import Scroll from "../../hooks/useScroll.jsx";
 
 const PaymentHistory = () => {
   const { currentUser } = useUser();
@@ -71,6 +72,7 @@ const PaymentHistory = () => {
 
   return (
     <div className="min-h-screen bg-green- p-4 flex justify-center sm:p-6 lg:mx-[30%]">
+      <Scroll />
       <div className="mt-16 mx-auto w-full max-w-4xl p-6 bg-white dark:bg-slate-900 dark:shadow-slate-500 shadow-lg rounded-lg text-center-w-lg overflow-hidden">
         {/* Payment History Filter Section */}
         <div className="bg-green-100 p-4 rounded-xl">

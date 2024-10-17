@@ -3,6 +3,7 @@ import {useNavigate} from 'react-router-dom';
 import axios, {HttpStatusCode} from 'axios';
 import useUser from '../../hooks/useUser.jsx';
 import garbage_money from '../../assets/gallery/cards/trash_money.png';
+import Scroll from '../../hooks/useScroll.jsx';
 
 const PaymentHome = () => {
     const [amount, setAmount] = useState(0);
@@ -30,6 +31,7 @@ const PaymentHome = () => {
 
     return (
         <div className="min-h-screen p-6 flex justify-center items-center mt-6">
+            <Scroll/>
             <div className="max-w-lg w-full bg-white rounded-lg shadow-lg p-6">
                 {/* Image Section */}
                 <div className="flex justify-center py-4 ">
