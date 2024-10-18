@@ -469,7 +469,7 @@ function App() {
                           </button>
                         </div>
                       ) : (
-                        <div className="mt-4 flex space-x-4">
+                        <div className="mt-4 flex space-x-4 justify-center">
                           <button
                             onClick={() =>
                               confirmAction(request._id, "Accepted")
