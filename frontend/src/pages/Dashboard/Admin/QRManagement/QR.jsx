@@ -14,6 +14,7 @@ import Scroll from "../../../../hooks/useScroll";
 import ScanImg from "../../../../assets/gallery/scanning.jpg";
 import InquiryForm from "./InquiryForm";
 import InquiryImg from "../../../../assets/gallery/inquiry.png";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 
 function App() {
   const [scanResult, setScanResult] = useState("");
@@ -38,6 +39,8 @@ function App() {
   const [userId, setUserId] = useState("");
   const [amount, setAmount] = useState("");
   const [activeTab, setActiveTab] = useState("cashBack");
+  const [isCashBackExpanded, setIsCashBackExpanded] = useState(false);
+  const [isAdditionalFeeExpanded, setIsAdditionalFeeExpanded] = useState(false);
 
   const axiosSecure = useAxiosSecure();
 
@@ -60,6 +63,16 @@ function App() {
   const handleError = (err) => {
     console.error("QR Scan Error: ", err);
     toast.error("Error scanning QR code");
+  };
+
+  const toggleCashBack = () => {
+    setIsCashBackExpanded(!isCashBackExpanded);
+    setIsAdditionalFeeExpanded(false); // Close other section
+  };
+
+  const toggleAdditionalFee = () => {
+    setIsAdditionalFeeExpanded(!isAdditionalFeeExpanded);
+    setIsCashBackExpanded(false); // Close other section
   };
 
   // Fetch user details based on scanned result
@@ -351,33 +364,49 @@ function App() {
                           {request.status}
                         </span>
                       </p>
-                      <div className="space-y-4">
+                      <div className="space-y-4 bg-white px-4 py-2 rounded-lg">
                         <div className="flex space-x-4 border-b border-gray-300 mb-4">
                           <button
-                            onClick={() => setActiveTab("cashBack")}
-                            className={`py-2 px-4 ${
+                            onClick={() => {
+                              setActiveTab("cashBack");
+                              toggleCashBack();
+                            }}
+                            className={`py-2 px-4 flex items-center ${
                               activeTab === "cashBack"
                                 ? "border-b-2 border-blue-500 text-blue-500"
                                 : "text-gray-500"
                             }`}
                           >
                             Cash Back
+                            {isCashBackExpanded ? (
+                              <FaChevronUp className="w-5 h-5 ml-2" />
+                            ) : (
+                              <FaChevronDown className="w-5 h-5 ml-2" />
+                            )}
                           </button>
                           <button
-                            onClick={() => setActiveTab("additionalFee")}
-                            className={`py-2 px-4 ${
+                            onClick={() => {
+                              setActiveTab("additionalFee");
+                              toggleAdditionalFee();
+                            }}
+                            className={`py-2 px-4 flex items-center ${
                               activeTab === "additionalFee"
                                 ? "border-b-2 border-blue-500 text-blue-500"
                                 : "text-gray-500"
                             }`}
                           >
-                            Additional Fee
+                            Special Fee
+                            {isAdditionalFeeExpanded ? (
+                              <FaChevronUp className="w-5 h-5 ml-2" />
+                            ) : (
+                              <FaChevronDown className="w-5 h-5 ml-2" />
+                            )}
                           </button>
                         </div>
 
                         {/* Cash Back Form */}
-                        {activeTab === "cashBack" && (
-                          <form onSubmit={addCashBack} className="space-y-4">
+                        {activeTab === "cashBack" && isCashBackExpanded && (
+                          <form onSubmit={addCashBack} className="space-y-4 ">
                             <div>
                               <label className="block text-sm font-medium text-gray-700">
                                 Cash Back Amount
@@ -401,41 +430,44 @@ function App() {
                         )}
 
                         {/* Additional Fee Form */}
-                        {activeTab === "additionalFee" && (
-                          <form
-                            onSubmit={addAdditionalPrice}
-                            className="space-y-4"
-                          >
-                            <div>
-                              <label className="block text-sm font-medium text-gray-700">
-                                Special waste Fee
-                              </label>
-                              <input
-                                type="number"
-                                value={amount}
-                                onChange={(e) => setAmount(e.target.value)}
-                                className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm"
-                                required
-                              />
-                            </div>
-
-                            <button
-                              type="submit"
-                              className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                        {activeTab === "additionalFee" &&
+                          isAdditionalFeeExpanded && (
+                            <form
+                              onSubmit={addAdditionalPrice}
+                              className="space-y-4"
                             >
-                              Update Balance
-                            </button>
-                          </form>
-                        )}
+                              <div>
+                                <label className="block text-sm font-medium text-gray-700">
+                                  Special Waste Fee
+                                </label>
+                                <input
+                                  type="number"
+                                  value={amount}
+                                  onChange={(e) => setAmount(e.target.value)}
+                                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm"
+                                  required
+                                />
+                              </div>
+
+                              <button
+                                type="submit"
+                                className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+                              >
+                                Update Balance
+                              </button>
+                            </form>
+                          )}
                       </div>
 
                       {!request.isInEditMode ? (
-                        <button
-                          onClick={() => toggleEditMode(request._id)}
-                          className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
-                        >
-                          Edit
-                        </button>
+                        <div className="flex items-center justify-center mt-4">
+                          <button
+                            onClick={() => toggleEditMode(request._id)}
+                            className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
+                          >
+                            Update Request Status
+                          </button>
+                        </div>
                       ) : (
                         <div className="mt-4 flex space-x-4">
                           <button

@@ -55,7 +55,7 @@ class WastePaymentController {
 
       await transactionService.updateAccountBalance(
         userId,
-        amount, // Adding the amount
+        amount * 1,
         transactionType
       );
       return res.status(200).json("Account balance updated..");
