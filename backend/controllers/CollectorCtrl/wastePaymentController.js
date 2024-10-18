@@ -1,10 +1,5 @@
-const User = require("../../models/User/User");
-const TransactionLog = require("../../models/User/TransactionLog");
-const PaymentGateway = require("../../services/PaymentGateway");
+// CollectorCtrl/wastePaymentController.js
 const UserTransactionService = require("../../services/UserTransactionService");
-
-const paymentGateway = PaymentGateway.getInstance();
-const transactionService = UserTransactionService.getInstance();
 
 class WastePaymentController {
   static instance;
@@ -33,6 +28,8 @@ class WastePaymentController {
         return res.status(400).json({ message: "User ID is required" });
       }
 
+      const transactionService = UserTransactionService.getInstance(); // Get instance here
+
       await transactionService.updateAccountBalance(
         userId,
         amount * -1, // Subtracting the amount for cashback
@@ -40,6 +37,7 @@ class WastePaymentController {
       );
       return res.status(200).json("Account balance updated..");
     } catch (error) {
+      console.error("Error in addCashBack:", error); // Log the error for debugging
       return res.status(500).json({ error: true, message: error.message });
     }
   }
@@ -53,13 +51,16 @@ class WastePaymentController {
         return res.status(400).json({ message: "User ID is required" });
       }
 
+      const transactionService = UserTransactionService.getInstance(); // Get instance here
+
       await transactionService.updateAccountBalance(
         userId,
-        amount * 1, // Adding the amount
+        amount, // Adding the amount
         transactionType
       );
       return res.status(200).json("Account balance updated..");
     } catch (error) {
+      console.error("Error in addAdditionalPrice:", error); // Log the error for debugging
       return res.status(500).json({ error: true, message: error.message });
     }
   }
