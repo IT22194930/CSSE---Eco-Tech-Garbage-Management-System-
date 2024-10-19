@@ -11,6 +11,8 @@ import { writeFile } from "xlsx";
 import CollectorReport from "./Reports/CollectorReports";
 import { BlobProvider } from "@react-pdf/renderer";
 import { FaFileExcel, FaFilePdf } from "react-icons/fa";
+import Button from "../../../components/Button/Button";
+import InputField from "../../../components/InputField/InputField";
 
 const ManageCollectors = () => {
   const axiosFetch = useAxiosFetch();
@@ -18,8 +20,7 @@ const ManageCollectors = () => {
   const navigate = useNavigate();
   const { currentUser } = useUser();
   const [collectors, setCollectors] = useState([]);
-  const [searchQuery, setSearchQuery] = useState(""); // State for search query
-  const [roleFilter, setRoleFilter] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [dataList, setDataList] = useState([]);
 
   useEffect(() => {
@@ -27,8 +28,9 @@ const ManageCollectors = () => {
       .get("/users")
       .then((res) => {
         const collector = res.data.filter((user) => user.role === "admin");
-        // Sorting users by name in alphabetical order
-        const sortedAdmins = collector.sort((a, b) => a.name.localeCompare(b.name));
+        const sortedAdmins = collector.sort((a, b) =>
+          a.name.localeCompare(b.name)
+        );
         setCollectors(sortedAdmins);
         setDataList(sortedAdmins);
       })
@@ -67,12 +69,12 @@ const ManageCollectors = () => {
       Name: user.name,
       Email: user.email,
       Address: user.address,
-      Telephone: user.phone
+      Telephone: user.phone,
     }));
 
     const ws = XLSX.utils.json_to_sheet(rearrangedDataList);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Collecotrs Report");
+    XLSX.utils.book_append_sheet(wb, ws, "Collectors Report");
     writeFile(wb, "collectors_report.xlsx");
   };
 
@@ -80,9 +82,10 @@ const ManageCollectors = () => {
     generateExcelFile();
   };
 
-//   Filter collectors by search query and role
   const filteredCollectors = collectors.filter((collector) => {
-    const matchesSearch = collector?.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = collector?.name
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
     return matchesSearch;
   });
 
@@ -94,41 +97,26 @@ const ManageCollectors = () => {
 
       {/* Search and Filter Inputs */}
       <div className="mb-4 flex gap-4">
-        <input
-          type="text"
+        <InputField
           placeholder="Search collectors by name"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-4 py-2 border rounded-md"
         />
-        <div
-            className="flex space-x-4"
-            data-aos="flip-up"
-            data-aos-duration="1000"
+        <div className="flex space-x-4">
+          <BlobProvider
+            document={<CollectorReport dataList={dataList} />}
+            fileName="CollectorReport.pdf"
           >
-            <BlobProvider
-              document={<CollectorReport dataList={dataList} />}
-              fileName="CollectorReport.pdf"
-            >
-              {({ url }) => (
-                <li className="flex items-center">
-                  <a href={url} target="_blank" className="flex items-center">
-                    <FaFilePdf className="text-3xl text-red-600" />
-                  </a>
-                </li>
-              )}
-            </BlobProvider>
-            <li className="flex items-center">
-              <a
-                href="#"
-                onClick={handleButtonClick}
-                className="flex items-center"
-              >
-                <FaFileExcel className="text-3xl text-green-600" />
-              </a>
-            </li>
-            
-          </div>
+            {({ url }) => (
+              <Button onClick={() => window.open(url)}>
+                <FaFilePdf className="text-3xl text-red-600" />
+              </Button>
+            )}
+          </BlobProvider>
+          <Button onClick={handleButtonClick}>
+            <FaFileExcel className="text-3xl text-green-600" />
+          </Button>
+        </div>
       </div>
 
       <div className="overflow-x-auto">
@@ -136,12 +124,10 @@ const ManageCollectors = () => {
           <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
             <div className="overflow-hidden">
               {filteredCollectors.length === 0 ? (
-                <p className="text-center text-gray-500">
-                  No collectors found
-                </p>
+                <p className="text-center text-gray-500">No collectors found</p>
               ) : (
                 <table className="min-w-full text-left text-sm font-light">
-                  <thead className="border-b font-medium hidden md:table-header-group">
+                  <thead className="border-b font-medium">
                     <tr>
                       <th scope="col" className="px-4 py-4">
                         #
@@ -164,7 +150,7 @@ const ManageCollectors = () => {
                     {filteredCollectors.map((collector, idx) => (
                       <tr
                         key={collector._id}
-                        className="border-b transition duration-300 ease-in-out hover:bg-neutral-100"
+                        className="border-b hover:bg-neutral-100"
                       >
                         <td className="whitespace-nowrap px-4 py-4 font-medium">
                           {idx + 1}
@@ -177,7 +163,7 @@ const ManageCollectors = () => {
                           />
                         </td>
                         <td className="whitespace-nowrap px-4 py-4">
-                          {collector?.name}{" "}
+                          {collector?.name}
                           {currentUser?._id === collector._id && (
                             <span className="ml-2 px-2 py-1 text-xs font-semibold text-white bg-blue-500 rounded-md">
                               You
@@ -185,71 +171,32 @@ const ManageCollectors = () => {
                           )}
                         </td>
                         <td className="whitespace-nowrap px-4 py-4">
-                          <span
+                          <Button
+                            className="bg-green-500 text-white flex items-center justify-between gap-2 px-4 py-2"
                             onClick={() =>
-                              navigate(`/dashboard/update-collector/${collector._id}`)
+                              navigate(
+                                `/dashboard/update-collector/${collector._id}`
+                              )
                             }
-                            className="inline-flex items-center gap-2 cursor-pointer bg-green-500 py-1 rounded-md px-2 text-white"
                           >
-                            Update <GrUpdate className="text-white" />
-                          </span>
+                            <span>Update</span>
+                            <GrUpdate className="text-white" />
+                          </Button>
                         </td>
                         <td className="whitespace-nowrap px-4 py-4">
-                          <span
+                          <Button
+                            className="bg-red-600 text-white flex items-center justify-between gap-2 px-4 py-2"
                             onClick={() => handleDelete(collector._id)}
-                            className="inline-flex items-center gap-2 cursor-pointer bg-red-600 py-1 rounded-md px-2 text-white"
                           >
-                            Delete <MdDelete className="text-white" />
-                          </span>
+                            <span>Delete</span>
+                            <MdDelete className="text-white" />
+                          </Button>
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               )}
-              
-              {/* Responsive Table for Mobile
-              {filteredUsers.length > 0 && (
-                <div className="md:hidden">
-                  {filteredUsers.map((user, idx) => (
-                    <div key={user._id} className="border-b py-4 flex flex-col">
-                      <div className="flex items-center justify-between">
-                        <span className="font-medium dark:text-white">#{idx + 1}</span>
-                        <img
-                          src={user?.photoUrl}
-                          alt=""
-                          className="h-[35px] w-[35px] rounded-full"
-                        />
-                      </div>
-                      <div className="flex justify-between mt-2">
-                        <span className="dark:text-white">{user?.name}</span>
-                        {currentUser?._id === user._id && (
-                          <span className="ml-2 px-2 py-1 text-xs font-semibold text-white bg-blue-500 rounded-md">
-                            You
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex justify-between mt-2">
-                        <span className="dark:text-white">{user?.role}</span>
-                        <span
-                          onClick={() =>
-                            navigate(`/dashboard/update-user/${user._id}`)
-                          }
-                          className="cursor-pointer bg-green-500 py-1 rounded-md px-2 text-white"
-                        >
-                          Update
-                        </span>
-                        <span
-                          onClick={() => handleDelete(user._id)}
-                          className="cursor-pointer bg-red-600 py-1 rounded-md px-2 text-white"
-                        >
-                          Delete
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )} */}
             </div>
           </div>
         </div>

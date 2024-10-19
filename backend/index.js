@@ -12,7 +12,7 @@ const {
 // Middleware
 app.use(
   cors({
-    methods: ["GET", "POST", "PUT", "DELETE"], // explicitly allow POST requests
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH"], // explicitly allow POST requests
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );

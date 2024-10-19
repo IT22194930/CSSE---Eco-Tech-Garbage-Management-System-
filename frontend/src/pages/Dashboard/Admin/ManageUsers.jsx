@@ -12,6 +12,8 @@ import { FaFileExcel, FaFilePdf } from "react-icons/fa";
 import { HiRefresh } from "react-icons/hi";
 import * as XLSX from "xlsx";
 import { writeFile } from "xlsx";
+import Button from "../../../components/Button/Button";
+import InputField from "../../../components/InputField/InputField";
 
 const ManageUsers = () => {
   const axiosFetch = useAxiosFetch();
@@ -107,51 +109,25 @@ const ManageUsers = () => {
 
       {/* Search and Filter Inputs */}
       <div className="mb-4 flex gap-4">
-        <input
-          type="text"
+        <InputField
           placeholder="Search users by name"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-4 py-2 border rounded-md"
         />
-
-        <select
-          value={roleFilter}
-          onChange={(e) => setRoleFilter(e.target.value)}
-          className="px-4 py-2 border rounded-md"
-        >
-          <option value="">All Roles</option>
-          <option value="admin">Admin</option>
-          <option value="user">User</option>
-        </select>
-
-        <div
-          className="flex space-x-4"
-          data-aos="flip-up"
-          data-aos-duration="1000"
-        >
+        <div className="flex space-x-4">
           <BlobProvider
             document={<UserReport dataList={filteredUsers} />}
             fileName="UserReport.pdf"
           >
             {({ url }) => (
-              <li className="flex items-center">
-                <a href={url} target="_blank" className="flex items-center">
-                  <FaFilePdf className="text-3xl text-red-600" />
-                </a>
-              </li>
+              <Button onClick={() => window.open(url)}>
+                <FaFilePdf className="text-3xl text-red-600" />
+              </Button>
             )}
           </BlobProvider>
-
-          <li className="flex items-center">
-            <a
-              href="#"
-              onClick={handleButtonClick}
-              className="flex items-center"
-            >
-              <FaFileExcel className="text-3xl text-green-600" />
-            </a>
-          </li>
+          <Button onClick={handleButtonClick}>
+            <FaFileExcel className="text-3xl text-green-600" />
+          </Button>
         </div>
       </div>
 
@@ -213,22 +189,26 @@ const ManageUsers = () => {
                           {user?.role}
                         </td>
                         <td className="whitespace-nowrap px-4 py-4">
-                          <span
+                          <Button
+                            className="bg-green-500 text-white flex items-center justify-between gap-2 px-4 py-2"
                             onClick={() =>
-                              navigate(`/dashboard/update-user/${user._id}`)
+                              navigate(
+                                navigate(`/dashboard/update-user/${user._id}`)
+                              )
                             }
-                            className="inline-flex items-center gap-2 cursor-pointer bg-green-500 py-1 rounded-md px-2 text-white"
                           >
-                            Update <GrUpdate className="text-white" />
-                          </span>
+                            <span>Update</span>
+                            <GrUpdate className="text-white" />
+                          </Button>
                         </td>
                         <td className="whitespace-nowrap px-4 py-4">
-                          <span
+                          <Button
+                            className="bg-red-600 text-white flex items-center justify-between gap-2 px-4 py-2"
                             onClick={() => handleDelete(user._id)}
-                            className="inline-flex items-center gap-2 cursor-pointer bg-red-600 py-1 rounded-md px-2 text-white"
                           >
-                            Delete <MdDelete className="text-white" />
-                          </span>
+                            <span>Delete</span>
+                            <MdDelete className="text-white" />
+                          </Button>
                         </td>
                       </tr>
                     ))}

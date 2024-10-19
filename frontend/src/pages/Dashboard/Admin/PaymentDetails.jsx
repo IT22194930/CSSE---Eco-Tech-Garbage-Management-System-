@@ -5,54 +5,50 @@ import { BlobProvider } from "@react-pdf/renderer";
 import { FaFileExcel, FaFilePdf } from "react-icons/fa";
 import * as XLSX from "xlsx";
 import { writeFile } from "xlsx";
-import { MdDelete } from "react-icons/md";
+import Swal from "sweetalert2"; // Make sure you import Swal
 import PaymentReport from "./Reports/PaymentReports";
+import Button from "../../../components/Button/Button";
+import InputField from "../../../components/InputField/InputField";
 
 const PaymentDetails = () => {
   const axiosFetch = useAxiosFetch();
   const axiosSecure = useAxiosSecure();
   const [paymentDetails, setPaymentDetails] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [paymentFilter, setpaymentFilter] = useState("");
+  const [paymentFilter, setPaymentFilter] = useState("");
   const [userNames, setUserNames] = useState({});
 
   useEffect(() => {
     axiosFetch
       .get("/api/payments/")
       .then((res) => {
-        // Check if the transactionLogs field exists in the response and is an array
-        const data = Array.isArray(res.data?.transactionLogs) ? res.data.transactionLogs : []; 
+        const data = Array.isArray(res.data?.transactionLogs) ? res.data.transactionLogs : [];
         setPaymentDetails(data);
-        fetchUserNames(data); // Fetch user names based on user IDs in the data
+        fetchUserNames(data);
       })
-      .catch((err) => console.error("Error fetching payments:", err)); // Log errors if the request fails
+      .catch((err) => console.error("Error fetching payments:", err));
   }, []);
-  
 
   const fetchUserNames = async (payments) => {
     const updatedUserNames = { ...userNames };
     const fetchPromises = payments.map(async (payment) => {
       if (!updatedUserNames[payment.userId]) {
         try {
-          const response = await axiosSecure.get(`api/payments/user?userId=${payment.userId}`);
-          updatedUserNames[payment.userId] = response.data?.userName || 'Unknown';
+          const response = await axiosSecure.get(`users?id=${payment.userId}`);
+          updatedUserNames[payment.userId] = response.data?.name || 'Unknown';
         } catch (error) {
           console.error(`Error fetching user name for user ID ${payment.userId}:`, error);
-          if (error.response) {
-            // If the server responded with a status other than 2xx
-            updatedUserNames[payment.userId] = `Error ${error.response.status}: ${error.response.data.message || 'User not found'}`;
-          } else {
-            // If no response was received
-            updatedUserNames[payment.userId] = 'Network error';
-          }
+          updatedUserNames[payment.userId] = error.response
+            ? `Error ${error.response.status}: ${error.response.data.message || 'User not found'}`
+            : 'Network error';
         }
       }
     });
   
     await Promise.all(fetchPromises);
     setUserNames(updatedUserNames);
-  };
- 
+  };  
+
   const generateExcelFile = () => {
     const filteredDataList = filteredPayment.map((payment) => ({
       Id: payment._id,
@@ -82,22 +78,14 @@ const PaymentDetails = () => {
   };
 
   const filteredPayment = Array.isArray(paymentDetails)
-  ? paymentDetails
-      .sort((a, b) => new Date(b.date) - new Date(a.date)) // Sort by date (latest first)
-      .filter((payment) => {
-        const matchesSearch = payment.transactionType
-          ?.toLowerCase()
-          .includes(searchQuery.toLowerCase());
-
-        const matchesPayment = paymentFilter
-          ? payment?.transactionType?.toLowerCase() ===
-            paymentFilter.toLowerCase()
-          : true;
-
-        return matchesSearch && matchesPayment;
-      })
-  : [];
-
+    ? paymentDetails
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .filter((payment) => {
+          const matchesSearch = payment.transactionType?.toLowerCase().includes(searchQuery.toLowerCase());
+          const matchesPayment = paymentFilter ? payment?.transactionType?.toLowerCase() === paymentFilter.toLowerCase() : true;
+          return matchesSearch && matchesPayment;
+        })
+    : [];
 
   return (
     <div className="px-4 sm:px-0">
@@ -105,54 +93,42 @@ const PaymentDetails = () => {
 
       {/* Search and Filter Inputs */}
       <div className="mb-4 flex gap-4">
-        <input
+        <InputField
           type="text"
           placeholder="Search payment by user name"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-4 py-2 border rounded-md"
         />
 
-        <div
-          className="flex space-x-4"
-          data-aos="flip-up"
-          data-aos-duration="1000"
-        >
-          <select
-            value={paymentFilter}
-            onChange={(e) => setpaymentFilter(e.target.value)}
-            className="px-4 py-2 border rounded-md"
-          >
-            <option value="">All Types</option>
-            <option value="cashback">Cashback</option>
-            <option value="monthly fee">Monthly Fee</option>
-            <option value="bill payment">Bill Payment</option>
-            <option value="special waste fee">Special Waste Fee</option>
-          </select>
-          <BlobProvider
-            document={<PaymentReport dataList={filteredPayment} />}
-            fileName="PaymentDetailReport.pdf"
-          >
-            {({ url }) => (
-              <li className="flex items-center">
-                <a href={url} target="_blank" className="flex items-center">
-                  <FaFilePdf className="text-3xl text-red-600" />
-                </a>
-              </li>
-            )}
-          </BlobProvider>
+        <InputField
+          type="select"
+          value={paymentFilter}
+          onChange={(e) => setPaymentFilter(e.target.value)}
+          options={[
+            { value: "", label: "All Types" },
+            { value: "cashback", label: "Cashback" },
+            { value: "monthly fee", label: "Monthly Fee" },
+            { value: "bill payment", label: "Bill Payment" },
+            { value: "special waste fee", label: "Special Waste Fee" },
+          ]}
+        />
 
-          <li className="flex items-center">
-            <a
-              href="#"
-              onClick={handleButtonClick}
-              className="flex items-center"
-            >
-              <FaFileExcel className="text-3xl text-green-600" />
+        <BlobProvider
+          document={<PaymentReport dataList={filteredPayment} />}
+          fileName="PaymentDetailReport.pdf"
+        >
+          {({ url }) => (
+            <a href={url} target="_blank" className="flex items-center">
+              <FaFilePdf className="text-3xl text-red-600" />
             </a>
-          </li>
-        </div>
+          )}
+        </BlobProvider>
+
+        <Button onClick={handleButtonClick} className="flex items-center">
+          <FaFileExcel className="text-3xl text-green-600" />
+        </Button>
       </div>
+
       <div className="overflow-x-auto">
         <div className="flex flex-col">
           <div className="inline-block min-w-full py-2 sm:px-6 lg:px-8">
@@ -163,24 +139,11 @@ const PaymentDetails = () => {
                 <table className="min-w-full text-left text-sm font-light">
                   <thead className="border-b font-medium hidden md:table-header-group">
                     <tr>
-                      <th scope="col" className="px-4 py-4">
-                        #
-                      </th>
-                      <th scope="col" className="px-4 py-4">
-                        User Name
-                      </th>
-                      <th scope="col" className="px-4 py-4">
-                        Amount
-                      </th>
-                      <th scope="col" className="px-4 py-4">
-                        Transaction Type
-                      </th>
-                      <th scope="col" className="px-4 py-4">
-                        Date
-                      </th>
-                      {/* <th scope="col" className="px-4 py-4">
-                        DELETE
-                      </th> */}
+                      <th scope="col" className="px-4 py-4">#</th>
+                      <th scope="col" className="px-4 py-4">User Name</th>
+                      <th scope="col" className="px-4 py-4">Amount</th>
+                      <th scope="col" className="px-4 py-4">Transaction Type</th>
+                      <th scope="col" className="px-4 py-4">Date</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -189,29 +152,11 @@ const PaymentDetails = () => {
                         key={payment._id}
                         className="border-b transition duration-300 ease-in-out hover:bg-neutral-100"
                       >
-                        <td className="whitespace-nowrap px-4 py-4 font-medium">
-                          {idx + 1}
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-4">
-                          {userNames[payment.userId] || "Loading..."}
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-4">
-                          {payment?.amount}
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-4">
-                          {payment?.transactionType}
-                        </td>
-                        <td className="whitespace-nowrap px-4 py-4">
-                          {payment?.date}
-                        </td>
-                        {/* <td className="whitespace-nowrap px-4 py-4">
-                          <span
-                            onClick={() => handleDelete(payment._id)}
-                            className="inline-flex items-center gap-2 cursor-pointer bg-red-600 py-1 rounded-md px-2 text-white"
-                          >
-                            Delete <MdDelete className="text-white" />
-                          </span>
-                        </td> */}
+                        <td className="whitespace-nowrap px-4 py-4 font-medium">{idx + 1}</td>
+                        <td className="whitespace-nowrap px-4 py-4">{userNames[payment.userId] || "Loading..."}</td>
+                        <td className="whitespace-nowrap px-4 py-4">{payment?.amount}</td>
+                        <td className="whitespace-nowrap px-4 py-4">{payment?.transactionType}</td>
+                        <td className="whitespace-nowrap px-4 py-4">{payment?.date}</td>
                       </tr>
                     ))}
                   </tbody>
