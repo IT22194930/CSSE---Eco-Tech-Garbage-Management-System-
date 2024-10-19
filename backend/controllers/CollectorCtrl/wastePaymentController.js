@@ -1,4 +1,3 @@
-// CollectorCtrl/wastePaymentController.js
 const UserTransactionService = require("../../services/UserTransactionService");
 
 class WastePaymentController {
@@ -22,22 +21,21 @@ class WastePaymentController {
   async addCashBack(req, res) {
     try {
       const { userId, amount } = req.body;
-      const transactionType = "Cash Back"; // Hardcoded as Cash Back for this method
+      const transactionType = "Cash Back";
 
       if (!userId) {
         return res.status(400).json({ message: "User ID is required" });
       }
 
-      const transactionService = UserTransactionService.getInstance(); // Get instance here
+      const transactionService = UserTransactionService.getInstance(); // Get instance
 
       await transactionService.updateAccountBalance(
         userId,
-        amount * -1, // Subtracting the amount for cashback
+        amount * -1,
         transactionType
       );
       return res.status(200).json("Account balance updated..");
     } catch (error) {
-      console.error("Error in addCashBack:", error); // Log the error for debugging
       return res.status(500).json({ error: true, message: error.message });
     }
   }
@@ -45,13 +43,13 @@ class WastePaymentController {
   async addAdditionalPrice(req, res) {
     try {
       const { userId, amount } = req.body;
-      const transactionType = "Special Waste Fee"; // Hardcoded as Additional Fee for this method
+      const transactionType = "Special Waste Fee";
 
       if (!userId) {
         return res.status(400).json({ message: "User ID is required" });
       }
 
-      const transactionService = UserTransactionService.getInstance(); // Get instance here
+      const transactionService = UserTransactionService.getInstance(); // Get instance
 
       await transactionService.updateAccountBalance(
         userId,
@@ -60,7 +58,6 @@ class WastePaymentController {
       );
       return res.status(200).json("Account balance updated..");
     } catch (error) {
-      console.error("Error in addAdditionalPrice:", error); // Log the error for debugging
       return res.status(500).json({ error: true, message: error.message });
     }
   }
