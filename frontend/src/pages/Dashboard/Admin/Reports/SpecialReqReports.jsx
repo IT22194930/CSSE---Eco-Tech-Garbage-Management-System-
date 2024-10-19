@@ -142,7 +142,7 @@ const SpecialReqReport = ({ dataList }) => {
             </View>
             {dataList.map((specialReq, index) => (
               <View key={index} style={styles.tableRow}>
-                <Text style={styles.tableCol}>{specialReq.name}</Text>
+                <Text style={styles.tableCol}>{specialReq.username}</Text>
                 <Text style={styles.tableCol}>{specialReq.type}</Text>
                 <Text style={styles.tableCol}>{specialReq.description}</Text>
                 <Text style={styles.tableCol}>{specialReq.date}</Text>
