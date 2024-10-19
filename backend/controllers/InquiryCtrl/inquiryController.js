@@ -1,4 +1,3 @@
-// controllers/inquiryController.js
 const Inquiry = require("../../models/Inquiry/Inquiry");
 
 class InquiryController {
