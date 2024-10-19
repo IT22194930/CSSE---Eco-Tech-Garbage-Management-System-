@@ -15,6 +15,7 @@ import ScanImg from "../../../../assets/gallery/scanning.jpg";
 import InquiryForm from "./InquiryForm";
 import InquiryImg from "../../../../assets/gallery/inquiry.png";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
+import Button from "../../../../components/Button/Button";
 
 function App() {
   const [scanResult, setScanResult] = useState("");
@@ -283,7 +284,7 @@ function App() {
         />
       )}
 
-      <button
+      <Button
         onClick={toggleCamera}
         className={`px-6 py-3 rounded-lg text-white mb-6 transition-all duration-300 ${
           cameraActive
@@ -292,7 +293,7 @@ function App() {
         }`}
       >
         {cameraActive ? "Turn off Camera" : "Turn on Camera"}
-      </button>
+      </Button>
 
       <div className="flex flex-col items-center mb-6">
         <label
@@ -366,7 +367,7 @@ function App() {
                       </p>
                       <div className="space-y-4 bg-white px-4 py-2 rounded-lg">
                         <div className="flex space-x-4 border-b border-gray-300 mb-4">
-                          <button
+                          <Button
                             onClick={() => {
                               setActiveTab("cashBack");
                               toggleCashBack();
@@ -383,8 +384,8 @@ function App() {
                             ) : (
                               <FaChevronDown className="w-5 h-5 ml-2" />
                             )}
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             onClick={() => {
                               setActiveTab("additionalFee");
                               toggleAdditionalFee();
@@ -401,7 +402,7 @@ function App() {
                             ) : (
                               <FaChevronDown className="w-5 h-5 ml-2" />
                             )}
-                          </button>
+                          </Button>
                         </div>
 
                         {/* Cash Back Form */}
@@ -420,12 +421,12 @@ function App() {
                               />
                             </div>
 
-                            <button
+                            <Button
                               type="submit"
                               className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                             >
                               Update Balance
-                            </button>
+                            </Button>
                           </form>
                         )}
 
@@ -449,43 +450,43 @@ function App() {
                                 />
                               </div>
 
-                              <button
+                              <Button
                                 type="submit"
                                 className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
                               >
                                 Update Balance
-                              </button>
+                              </Button>
                             </form>
                           )}
                       </div>
 
                       {!request.isInEditMode ? (
                         <div className="flex items-center justify-center mt-4">
-                          <button
+                          <Button
                             onClick={() => toggleEditMode(request._id)}
                             className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg"
                           >
                             Update Request Status
-                          </button>
+                          </Button>
                         </div>
                       ) : (
                         <div className="mt-4 flex space-x-4 justify-center">
-                          <button
+                          <Button
                             onClick={() =>
                               confirmAction(request._id, "Accepted")
                             }
                             className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg"
                           >
                             Accept
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             onClick={() =>
                               confirmAction(request._id, "Rejected")
                             }
                             className="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg"
                           >
                             Reject
-                          </button>
+                          </Button>
                         </div>
                       )}
                     </div>
@@ -507,18 +508,18 @@ function App() {
         <div className="text-center">
           <p>Are you sure you want to {selectedAction} this request?</p>
           <div className="mt-6 flex justify-center space-x-4">
-            <button
+            <Button
               onClick={addUpdateStatus}
               className="px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg"
             >
               Confirm
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => setIsSmallModalOpen(false)}
               className="px-6 py-2 bg-gray-400 hover:bg-gray-500 text-white rounded-lg"
             >
               Cancel
-            </button>
+            </Button>
           </div>
         </div>
       </SmallModal>
