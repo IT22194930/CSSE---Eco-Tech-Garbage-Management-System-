@@ -132,7 +132,7 @@ const SchedulesWithExport = () => {
     {
       accessor: "createdAt",
       label: "Created At",
-      cell: (item) => new Date(item.createdAt).toLocaleString(),
+      cell: (item) => new Date(item.createdAt).toLocaleDateString(),
     },
   ];
 
