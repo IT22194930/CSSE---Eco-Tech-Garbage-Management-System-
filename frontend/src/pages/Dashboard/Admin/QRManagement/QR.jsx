@@ -16,6 +16,7 @@ import InquiryForm from "./InquiryForm";
 import InquiryImg from "../../../../assets/gallery/inquiry.png";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import Button from "../../../../components/Button/Button";
+import Swal from "sweetalert2";
 
 function App() {
   const [scanResult, setScanResult] = useState("");
@@ -169,7 +170,21 @@ function App() {
             : request
         )
       );
-      toast.success(`Status updated to ${selectedAction}`);
+      if (selectedAction === "Accepted") {
+        Swal.fire({
+          title: "Accepted!",
+          text: "User Request Accepted successfully.",
+          icon: "success",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.reload(); // Reload only after "OK" is clicked
+          }
+        });
+      }
+      if (selectedAction === "Rejected") {
+        toast.warn(`Request ${selectedAction}`);
+      }
+
       setIsSmallModalOpen(false);
     } catch (error) {
       console.error("Error updating status:", error);
@@ -412,13 +427,18 @@ function App() {
                               <label className="block text-sm font-medium text-gray-700">
                                 Cash Back Amount
                               </label>
-                              <input
-                                type="number"
-                                value={amount}
-                                onChange={(e) => setAmount(e.target.value)}
-                                className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm"
-                                required
-                              />
+                              <div className="relative mt-1">
+                                <span className="absolute left-2 top-2 text-gray-500">
+                                  Rs:
+                                </span>
+                                <input
+                                  type="number"
+                                  value={amount}
+                                  onChange={(e) => setAmount(e.target.value)}
+                                  className="pl-10 p-2 block w-full border border-gray-300 rounded-md shadow-sm"
+                                  required
+                                />
+                              </div>
                             </div>
 
                             <Button
@@ -441,13 +461,18 @@ function App() {
                                 <label className="block text-sm font-medium text-gray-700">
                                   Special Waste Fee
                                 </label>
-                                <input
-                                  type="number"
-                                  value={amount}
-                                  onChange={(e) => setAmount(e.target.value)}
-                                  className="mt-1 p-2 block w-full border border-gray-300 rounded-md shadow-sm"
-                                  required
-                                />
+                                <div className="relative mt-1">
+                                  <span className="absolute left-2 top-2 text-gray-500">
+                                    Rs:
+                                  </span>
+                                  <input
+                                    type="number"
+                                    value={amount}
+                                    onChange={(e) => setAmount(e.target.value)}
+                                    className="pl-10 p-2 block w-full border border-gray-300 rounded-md shadow-sm"
+                                    required
+                                  />
+                                </div>
                               </div>
 
                               <Button

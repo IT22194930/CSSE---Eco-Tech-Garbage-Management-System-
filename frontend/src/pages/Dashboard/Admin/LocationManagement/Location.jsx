@@ -209,7 +209,12 @@ const LiveLocationMap = () => {
       <div
         ref={mapContainer}
         id="map"
-        style={{ width: "100%", height: "500px", marginBottom: "20px" }}
+        style={{
+          width: "100%",
+          height: "650px",
+          marginBottom: "20px",
+          marginTop: "10px",
+        }}
       />
     </div>
   );
