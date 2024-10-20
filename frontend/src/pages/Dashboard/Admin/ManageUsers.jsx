@@ -29,8 +29,8 @@ const ManageUsers = () => {
     axiosFetch
       .get("/users")
       .then((res) => {
-        // Sorting users by name in alphabetical order
-        const sortedUsers = res.data.sort((a, b) =>
+        const user = res.data.filter((user) => user.role === "user");
+        const sortedUsers = user.sort((a, b) =>
           a.name.localeCompare(b.name)
         );
         setUsers(sortedUsers);

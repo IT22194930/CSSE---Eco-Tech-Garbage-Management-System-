@@ -102,7 +102,7 @@ const SpecialRequests = () => {
     { label: "Recyclable Quantity", accessor: "recyclableQuantity", cell: (item) => item.recyclableQuantity },
     { label: "Cashback Price", accessor: "cashbackPrice", cell: (item) => item.cashbackPrice },
     { label: "Total Cost", accessor: "totalCost", cell: (item) => item.totalCost },
-    { label: "Created At", accessor: "createdAt", cell: (item) => new Date(item.createdAt).toLocaleString() },
+    { label: "Created At", accessor: "createdAt", cell: (item) => new Date(item.createdAt).toLocaleDateString() },
   ];
 
   return (
