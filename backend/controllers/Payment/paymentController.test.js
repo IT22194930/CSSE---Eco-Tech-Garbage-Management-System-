@@ -59,7 +59,7 @@ describe('PaymentController Tests', () => {
   
   describe('getTransactionLog', () => {
 
-    // Test case 1: Should return transaction log for a valid user with existing transactions
+    // Test case 4: Should return transaction log for a valid user with existing transactions
     it('should return transaction log for a valid user', async () => {
       const mockTransactionLog = [{ userId: '123', amount: 5000 }]; 
       TransactionLog.find.mockResolvedValue(mockTransactionLog); 
@@ -71,7 +71,7 @@ describe('PaymentController Tests', () => {
       expect(response.body.transactionLog[0].amount).toBe(5000); 
     });
 
-    // Test case 2: Should return an empty transaction log if the user has no logs
+    // Test case 5: Should return an empty transaction log if the user has no logs
     it('should return empty transaction log for a user with no logs', async () => {
       TransactionLog.find.mockResolvedValue([]); 
 
@@ -81,7 +81,7 @@ describe('PaymentController Tests', () => {
       expect(response.body.transactionLog).toHaveLength(0); 
     });
     
-    // Test case 3: Should return 500 on server error during transaction log lookup
+    // Test case 6: Should return 500 on server error during transaction log lookup
     it('should return 500 on server error', async () => {
       TransactionLog.find.mockRejectedValue(new Error('Server error')); 
 

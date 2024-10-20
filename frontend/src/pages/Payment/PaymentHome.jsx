@@ -65,14 +65,14 @@ const PaymentHome = () => {
                 <div className="p-4 space-y-4">
                     <button
                         onClick={() => navigate(`/payments/make-payment`)}
-                        className="w-full bg-secondary rounded-xl p-4  text-white px-20 hover:scale-105 duration-300"
+                        className="w-full bg-secondary rounded-xl p-4  text-white px-10 hover:scale-105 duration-300"
                     >
                         Make Payments
                     </button>
 
                     <button
                         onClick={() => navigate(`/payments/payment-history`)}
-                        className="w-full bg-secondary rounded-xl p-4 text-white px-20 hover:scale-105 duration-300"
+                        className="w-full bg-secondary rounded-xl p-4 text-white px-10 hover:scale-105 duration-300"
                     >
                         View Transaction History
                     </button>

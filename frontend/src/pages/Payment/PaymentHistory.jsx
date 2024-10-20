@@ -75,11 +75,11 @@ const PaymentHistory = () => {
       <Scroll />
       <div className="mt-16 mx-auto w-full max-w-4xl p-6 bg-white dark:bg-slate-900 dark:shadow-slate-500 shadow-lg rounded-lg text-center-w-lg overflow-hidden">
         {/* Payment History Filter Section */}
-        <div className="bg-green-100 p-4 rounded-xl">
+        <div className="bg-secondary p-4 rounded-xl">
           <Link to="/payments">
             <MdOutlineArrowBackIosNew className="text-2xl sm:text-3xl mb-4" />
           </Link>
-          <h2 className="text-center text-xl sm:text-2xl font-bold text-brown-700 mb-4">
+          <h2 className="text-center text-xl sm:text-2xl font-bold text-white mb-4">
             Transaction History
           </h2>
 
@@ -88,27 +88,27 @@ const PaymentHistory = () => {
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="border border-gray-400 rounded-md p-2 w-full sm:w-1/3"
+              className="border border-gray-400 rounded-lg p-2 w-full sm:w-1/3"
             />
             <input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="border border-gray-400 rounded-md p-2 w-full sm:w-1/3"
+              className="border border-gray-400 rounded-lg p-2 w-full sm:w-1/3"
             />
 
             {/* Filter by Type */}
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="border border-gray-400 rounded-md p-2 w-full sm:w-1/3"
+              className="border border-gray-400 rounded-lg p-2 w-full sm:w-1/3"
             >
               <option value="all">All Types</option>
               <option value="Bill Payment">Bill Payment</option>
               <option value="Cash Back">Cash Back</option>
               <option value="Monthly Fee">Monthly Fee</option>
               <option value="Special Waste Fee">Special Waste Fee</option>
-              {/* Add more transaction types as needed */}
+              
             </select>
           </div>
         </div>
