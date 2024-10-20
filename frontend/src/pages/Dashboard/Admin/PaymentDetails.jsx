@@ -34,7 +34,7 @@ const PaymentDetails = () => {
     const fetchPromises = payments.map(async (payment) => {
       if (!updatedUserNames[payment.userId]) {
         try {
-          const response = await axiosSecure.get(`users?id=${payment.userId}`);
+          const response = await axiosSecure.get(`users/${payment.userId}`);
           updatedUserNames[payment.userId] = response.data?.name || 'Unknown';
         } catch (error) {
           console.error(`Error fetching user name for user ID ${payment.userId}:`, error);
