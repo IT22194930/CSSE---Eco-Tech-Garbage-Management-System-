@@ -77,7 +77,7 @@ const PaymentHistory = () => {
         {/* Payment History Filter Section */}
         <div className="bg-secondary p-4 rounded-xl">
           <Link to="/payments">
-            <MdOutlineArrowBackIosNew className="text-2xl sm:text-3xl mb-4" />
+            <MdOutlineArrowBackIosNew className="text-2xl sm:text-3xl mb-4 text-white" />
           </Link>
           <h2 className="text-center text-xl sm:text-2xl font-bold text-white mb-4">
             Transaction History
