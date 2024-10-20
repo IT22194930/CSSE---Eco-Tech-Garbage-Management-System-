@@ -7,6 +7,10 @@ import Swal from "sweetalert2";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { IoMdDownload } from "react-icons/io";
 import Scroll from "../../../hooks/useScroll";
+import InquiryForm from "../../Dashboard/Admin/QRManagement/InquiryForm";
+import InquiryImg from "../../../assets/gallery/inquiry.png";
+import SmallModal from "../../../components/Modal/Modal";
+import { ToastContainer, toast } from "react-toastify";
 
 const Profile = () => {
   const { currentUser } = useUser();
@@ -23,6 +27,11 @@ const Profile = () => {
     address: userCredentials?.address || "",
     photoUrl: userCredentials?.photoUrl || "",
   });
+  const [isInquiryModalOpen, setIsInquiryModalOpen] = useState(false);
+
+  const handleInquiryClick = () => {
+    setIsInquiryModalOpen(true); // Open the InquiryForm modal
+  };
 
   useEffect(() => {
     if (img) {
@@ -126,7 +135,7 @@ const Profile = () => {
 
   return (
     <div className="mt-20">
-      <Scroll/>
+      <Scroll />
       <h1 className="mt-5 text-4xl font-bold text-center dark:text-white">
         Update <span className="text-secondary">Profile</span>
       </h1>
@@ -168,7 +177,7 @@ const Profile = () => {
                     </div>
                   )}
 
-                  <div className="text-center mt-3 flex-1 justify-center">
+                  <div className="text-center mt-3 flex-1 justify-center my-auto">
                     <button
                       className="bg-secondary text-white px-4 py-2 rounded-lg flex items-center justify-center gap-2 hover:bg-secondary-dark transition duration-300"
                       onClick={downloadQRCode}
@@ -177,6 +186,19 @@ const Profile = () => {
                       <IoMdDownload className="text-2xl" />
                       Download QR
                     </button>
+
+                    <div
+                      className="flex flex-row my-auto bg-secondary rounded-lg mt-3"
+                      onClick={handleInquiryClick}
+                    >
+                      <img
+                        src={InquiryImg}
+                        alt="Inquiry"
+                        style={{ cursor: "pointer" }}
+                      />
+                      <p className="my-auto text-white -ml-3">Inquiries</p>
+                      
+                    </div>
                   </div>
                 </div>
                 <div>
@@ -299,6 +321,16 @@ const Profile = () => {
           </div>
         </div>
       </section>
+
+      <SmallModal
+        isOpen={isInquiryModalOpen}
+        onClose={() => setIsInquiryModalOpen(false)}
+        title="Inquiry Form"
+      >
+        <InquiryForm onClose={() => setIsInquiryModalOpen(false)} />
+      </SmallModal>
+
+      <ToastContainer />
     </div>
   );
 };

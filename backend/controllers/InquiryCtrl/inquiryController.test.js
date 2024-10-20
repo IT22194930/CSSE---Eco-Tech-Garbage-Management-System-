@@ -29,7 +29,6 @@ describe("Inquiry Controller", () => {
       };
       Inquiry.prototype.save = jest.fn().mockResolvedValueOnce(true);
 
-      // Act
       const response = await request(app)
         .post("/api/inquiries")
         .send(requestBody);
@@ -45,7 +44,7 @@ describe("Inquiry Controller", () => {
       const response = await request(app)
         .post("/api/inquiries")
         .send({ topic: "" });
-      expect(response.status).toBe(400); // Correct expectation
+      expect(response.status).toBe(400);
     });
 
     // Negative Test Case: Internal server error during inquiry creation
@@ -59,7 +58,6 @@ describe("Inquiry Controller", () => {
         .fn()
         .mockRejectedValueOnce(new Error("Server error"));
 
-      // Act
       const response = await request(app)
         .post("/api/inquiries")
         .send(requestBody);
@@ -81,7 +79,6 @@ describe("Inquiry Controller", () => {
       ];
       Inquiry.find = jest.fn().mockResolvedValueOnce(mockInquiries);
 
-      // Act
       const response = await request(app).get("/api/inquiries");
 
       // Assert
@@ -95,7 +92,6 @@ describe("Inquiry Controller", () => {
       // Arrange
       Inquiry.find = jest.fn().mockRejectedValueOnce(new Error("Server error"));
 
-      // Act
       const response = await request(app).get("/api/inquiries");
 
       // Assert
@@ -116,7 +112,6 @@ describe("Inquiry Controller", () => {
       };
       Inquiry.findById = jest.fn().mockResolvedValueOnce(mockInquiry);
 
-      // Act
       const response = await request(app).get("/api/inquiries/1");
 
       // Assert
@@ -131,7 +126,6 @@ describe("Inquiry Controller", () => {
       // Arrange
       Inquiry.findById = jest.fn().mockResolvedValueOnce(null);
 
-      // Act
       const response = await request(app).get("/api/inquiries/1");
 
       // Assert
@@ -147,7 +141,6 @@ describe("Inquiry Controller", () => {
         .fn()
         .mockRejectedValueOnce(new Error("Server error"));
 
-      // Act
       const response = await request(app).get("/api/inquiries/1");
 
       // Assert
