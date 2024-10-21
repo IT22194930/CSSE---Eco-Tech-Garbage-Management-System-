@@ -32,15 +32,14 @@ const ScheduleRequest = () => {
   };
 
   const validateTab1 = () => {
-    return (
-      pickupDetails.date !== "" &&
-      pickupDetails.time !== ""
-    );
+    return pickupDetails.date !== "" && pickupDetails.time !== "";
   };
 
   const handleNext = () => {
     if (activeTab === 0 && !validateTab0()) {
-      toast.error("Please fill out all required fields in Request Information.");
+      toast.error(
+        "Please fill out all required fields in Request Information."
+      );
       return;
     }
     if (activeTab === 1 && !validateTab1()) {
@@ -65,7 +64,7 @@ const ScheduleRequest = () => {
   const handleConfirm = async () => {
     const requestData = {
       userId,
-      username : username,
+      username: username,
       ...requestInfo,
       ...pickupDetails,
     };
@@ -152,7 +151,9 @@ const ScheduleRequest = () => {
             if (validateTab1()) {
               setActiveTab(2);
             } else {
-              toast.error("Please complete the Pickup Details before proceeding.");
+              toast.error(
+                "Please complete the Pickup Details before proceeding."
+              );
             }
           }}
           disabled={!validateTab1()}
@@ -164,7 +165,9 @@ const ScheduleRequest = () => {
       {/*  Tab 0 - Request Information */}
       {activeTab === 0 && (
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold dark:text-white">Request Information</h2>
+          <h2 className="text-xl font-semibold dark:text-white">
+            Request Information
+          </h2>
           <select
             name="type"
             value={requestInfo.type}
@@ -207,7 +210,9 @@ const ScheduleRequest = () => {
       {/* Tab 1 - Pickup Details */}
       {activeTab === 1 && (
         <div className="space-y-2 mt-4">
-          <h2 className="text-xl font-semibold dark:text-white mt-3">Pickup Details</h2>
+          <h2 className="text-xl font-semibold dark:text-white mt-3">
+            Pickup Details
+          </h2>
           <label htmlFor="date" className="block text-gray-700 font-bold mb-2">
             Pickup Date
           </label>
@@ -216,11 +221,12 @@ const ScheduleRequest = () => {
             name="date"
             value={pickupDetails.date}
             onChange={handleChangePickupDetails}
+            min={new Date().toISOString().split("T")[0]} // Sets min date to today's date
             className="w-full border border-gray-300 rounded-lg p-2 dark:bg-slate-600  dark:text-white"
             required
           />
 
-          <label htmlFor="date" className="block text-gray-700 font-bold mb-2">
+          <label htmlFor="time" className="block text-gray-700 font-bold mb-2">
             Pickup Time
           </label>
           <input
@@ -251,7 +257,9 @@ const ScheduleRequest = () => {
       {/* Tab 2 - Review & Confirm */}
       {activeTab === 2 && (
         <div className="space-y-4">
-          <h2 className="text-xl font-semibold dark:text-white">Review & Confirm</h2>
+          <h2 className="text-xl font-semibold dark:text-white">
+            Review & Confirm
+          </h2>
           <p className="dark:text-white">
             <strong>Type:</strong> {requestInfo.type}
           </p>
@@ -280,7 +288,7 @@ const ScheduleRequest = () => {
           </div>
         </div>
       )}
-      <ToastContainer/>
+      <ToastContainer />
     </div>
   );
 };

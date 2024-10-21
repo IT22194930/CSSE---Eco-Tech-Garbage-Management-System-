@@ -1,7 +1,6 @@
 const GarbageRequest = require("../../models/GarbageRequest/garbageRequest");
 const GarbageRequestController = require("./garbageRequestController");
 
-// Mock the GarbageRequest model
 jest.mock("../../models/GarbageRequest/garbageRequest");
 
 describe("GarbageRequestController", () => {

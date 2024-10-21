@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { AuthContext } from "../../utilities/providers/AuthProvider";
 import Swal from "sweetalert2";
 import useUser from "../../hooks/useUser";
+import logo from "../../assets/logo.png";
 
 const navLinks = [
   { name: "Home", route: "/" },
@@ -140,7 +141,7 @@ const NavBar = () => {
             </div>
             <div onClick={() => navigate("/")} className="pl-5">
               <h1 className="text-2xl font-bold inline-flex gap-3 items-center">
-                EcoTech <img src="/logo.png" alt="" className="w-8 h-8" />
+                EcoTech <img src={logo} alt="" className="w-8 h-8" />
               </h1>
               <p className="font-bold text-[13px] tracking-[6px]">
                 Clean Green Efficient
